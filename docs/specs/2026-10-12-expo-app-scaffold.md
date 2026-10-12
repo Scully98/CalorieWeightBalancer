@@ -521,11 +521,11 @@ sequenceDiagram
 
 #### To-Dos
 
-- 🔲 Run `npm run lint`, `npm run typecheck`, `npm run format`; all exit 0 and `git status` stays clean afterwards
-- 🔲 Delete `.expo/` and `expo-env.d.ts`, then run `npm run typecheck` again (fresh-clone case)
-- 🔲 Confirm `npx expo start` shows the Hello page in light and dark appearance
-- 🔲 Mark this spec's to-dos as done and commit (`docs: mark Expo scaffold spec as done`)
-- 🔲 Push `setup` to `origin`
+- ✅ Run `npm run lint`, `npm run typecheck`, `npm run format`; all exit 0 and `git status` stays clean afterwards
+- ✅ Delete `.expo/` and `expo-env.d.ts`, then run `npm run typecheck` again (fresh-clone case)
+- ✅ Confirm `npx expo start` shows the Hello page in light and dark appearance _(in M5 mit lokalem und EAS-Build geprüft)_
+- ✅ Mark this spec's to-dos as done and commit (`docs: mark Expo scaffold spec as done`)
+- ✅ Push `setup` to `origin`
 - 🔲 Julius: open a PR `setup` → `main` on github.com titled `Set up Expo app scaffold` with summary, key decisions (simulator-only profile, bundle ID), test steps, and the closing line `🤖 Generated with [Claude Code](https://claude.com/claude-code)`
 
 #### Notes / Constraints
