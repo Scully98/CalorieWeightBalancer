@@ -480,7 +480,7 @@ sequenceDiagram
 
 ---
 
-### Milestone 6 — README „Setup“
+### ✅ Milestone 6 — README „Setup“
 
 > Ein kurzer Abschnitt „Setup“ beschreibt, wie man installiert und startet.
 
@@ -494,12 +494,12 @@ sequenceDiagram
 
 #### To-Dos
 
-- 🔲 Document prerequisites: Node.js LTS (tested with 22.16.0) and npm; macOS with Xcode and CocoaPods for local builds; Expo account and `eas-cli` (via `npx eas-cli@latest`) for cloud builds
-- 🔲 Document install: `npm install`
-- 🔲 Document the development build: `npx expo run:ios` (local) or `eas build --profile development --platform ios` plus `eas build:run --platform ios --latest` (cloud, simulator); rebuild after native dependency changes
-- 🔲 Document start: `npx expo start`, then `i`; note that Expo Go is not supported
-- 🔲 Document scripts `npm run lint`, `npm run format`, `npm run typecheck`
-- 🔲 Commit (`docs: add setup section to README`)
+- ✅ Document prerequisites: Node.js LTS (tested with 22.16.0) and npm; macOS with Xcode and CocoaPods for local builds; Expo account and `eas-cli` (via `npx eas-cli@latest`) for cloud builds
+- ✅ Document install: `npm install`
+- ✅ Document the development build: `npx expo run:ios` (local) or `eas build --profile development --platform ios` plus `eas build:run --platform ios --latest` (cloud, simulator); rebuild after native dependency changes
+- ✅ Document start: `npx expo start`, then `i`; note that Expo Go is not supported
+- ✅ Document scripts `npm run lint`, `npm run format`, `npm run typecheck`
+- ✅ Commit (`docs: add setup section to README`)
 
 #### Notes / Constraints
 
