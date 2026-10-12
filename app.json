@@ -2,6 +2,7 @@
   "expo": {
     "name": "Kcalwaage",
     "slug": "calorieweightbalancer",
+    "scheme": "calorieweightbalancer",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -10,6 +11,10 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.scully98.calorieweightbalancer"
+    },
+    "plugins": ["expo-router"],
+    "experiments": {
+      "typedRoutes": true
     }
   }
 }

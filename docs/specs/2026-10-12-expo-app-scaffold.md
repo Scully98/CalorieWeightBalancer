@@ -239,7 +239,7 @@ sequenceDiagram
 
 ---
 
-### Milestone 4 — Expo Router & Hello-Seite
+### ✅ Milestone 4 — Expo Router & Hello-Seite
 
 > Die App startet über Expo Router auf der Route `/`, die zentriert „Hello Kcalwaage“ zeigt, schwarz auf weiß und im Dark Mode weiß auf schwarz.
 
@@ -262,16 +262,16 @@ sequenceDiagram
 
 #### To-Dos
 
-- 🔲 Install Expo Router: `npx expo install expo-router expo-linking expo-constants react-native-safe-area-context react-native-screens`
-- 🔲 Set `"main": "expo-router/entry"` and remove `index.ts` and `App.tsx`
-- 🔲 Add `scheme`, `expo-router` plugin and `typedRoutes` to `app.json`
-- 🔲 Add the `@/*` path alias and the Expo type includes to `tsconfig.json`
-- 🔲 Create color tokens in `src/theme/colors.ts`: light `foreground #000000`, `background #FFFFFF`; dark inverted; `accent`, `plus`, `minus` equal `foreground` in V1
-- 🔲 Create `src/theme/use-colors.ts`
-- 🔲 Create `src/app/_layout.tsx` with `ThemeProvider` (navigation background from the `background` token), `Stack` with `headerShown: false` and `StatusBar style="auto"`
-- 🔲 Create `src/app/index.tsx`: full-screen `View` with `background` token, centered `Text` „Hello Kcalwaage“ in `foreground` token, system font, Dynamic Type left on
-- 🔲 Run `npm run format`, `npm run lint`, `npm run typecheck`; all exit 0
-- 🔲 Commit (`feat: add Expo Router with Hello Kcalwaage screen`)
+- ✅ Install Expo Router: `npx expo install expo-router expo-linking expo-constants react-native-safe-area-context react-native-screens`
+- ✅ Set `"main": "expo-router/entry"` and remove `index.ts` and `App.tsx`
+- ✅ Add `scheme`, `expo-router` plugin and `typedRoutes` to `app.json`
+- ✅ Add the `@/*` path alias and the Expo type includes to `tsconfig.json`
+- ✅ Create color tokens in `src/theme/colors.ts`: light `foreground #000000`, `background #FFFFFF`; dark inverted; `accent`, `plus`, `minus` equal `foreground` in V1
+- ✅ Create `src/theme/use-colors.ts`
+- ✅ Create `src/app/_layout.tsx` with `ThemeProvider` (navigation background from the `background` token), `Stack` with `headerShown: false` and `StatusBar style="auto"`
+- ✅ Create `src/app/index.tsx`: full-screen `View` with `background` token, centered `Text` „Hello Kcalwaage“ in `foreground` token, system font, Dynamic Type left on
+- ✅ Run `npm run format`, `npm run lint`, `npm run typecheck`; all exit 0 _(zusätzlich `npx expo export --platform ios`: Bundle baut; `expo-doctor` 21/21)_
+- ✅ Commit (`feat: add Expo Router with Hello Kcalwaage screen`)
 
 #### Notes / Constraints
 
