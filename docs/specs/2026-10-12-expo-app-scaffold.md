@@ -28,7 +28,7 @@ Dieses Paket legt im Branch `setup` das technische Grundgerüst der Kcalwaage-Ap
 | 1 | `eas.json` enthält nur das Profil `development` für den iOS-Simulator (`developmentClient: true`, `distribution: "internal"`, `ios.simulator: true`) | Entscheidung Julius 2026-10-12. Ein einzelnes Profil kann nicht Simulator und Gerät zugleich bedienen (`ios.simulator: true` erzeugt eine `.app`, die nicht aufs iPhone geht). Gerätebuilds brauchen den bezahlten Apple Developer Account und registrierte Geräte; das Geräteprofil kommt, sobald der Account aktiv ist | `development` (Gerät) + `development-simulator`; `development` (Simulator) + `development-device` |
 | 2 | Bundle-ID `com.scully98.calorieweightbalancer` | Entscheidung Julius 2026-10-12. Unabhängig vom Arbeitstitel „Kcalwaage“ (Markenprüfung offen), passt zu Repo und Expo-Account `scully98`. Nach Registrierung in App Store Connect nicht mehr änderbar, für Nutzer unsichtbar | `com.scully98.kcalwaage`, `de.juliusfocke.kcalwaage` |
 | 3 | Development Build für die Abnahme auf zwei Wegen: lokal mit `npx expo run:ios` und zusätzlich `eas init` + EAS-Cloud-Build mit Profil `development` | Entscheidung Julius 2026-10-12 („Beides“). Mit `expo-dev-client` zeigt `npx expo start` die Seite nur in einem installierten Development Build; Expo Go ist laut CLAUDE.md ausgeschlossen. Lokal für schnelle Abnahme (Xcode 26.6, CocoaPods 1.16.2 und iPhone-Simulatoren sind vorhanden), EAS-Build als Nachweis, dass `eas.json` funktioniert | nur lokal; nur EAS |
-| 4 | Repo vor dem ersten `npm install` aus OneDrive verschieben (Vorschlag `~/dev/CalorieWeightBalancer`) | Entscheidung Julius 2026-10-12. `node_modules` (zehntausende Dateien) und der generierte `ios/`-Ordner würden sonst synchronisiert; das bremst und kann Metro und Xcode mit Dateisperren stören | in OneDrive bleiben |
+| 4 | Repo vor dem ersten `npm install` aus OneDrive nach `~/Documents/CalorieWeightBalancer` verschoben | Entscheidung Julius 2026-10-12, Verschieben erledigt am 2026-10-12. `node_modules` (zehntausende Dateien) und der generierte `ios/`-Ordner würden sonst synchronisiert; das bremst und kann Metro und Xcode mit Dateisperren stören. `~/Documents` selbst wird nicht synchronisiert (iCloud „Schreibtisch & Dokumente“ aus, OneDrive liegt nur im Unterordner `~/Documents/OneDrive`) | in OneDrive bleiben; `~/dev/CalorieWeightBalancer` |
 | 5 | Basis ist das Template `blank-typescript@sdk-57`, Expo Router wird von Hand ergänzt; nicht das `default`-Template | Das Default-Template bringt Tabs, Beispielkomponenten, Reanimated, Gesture Handler, Web, `@expo/ui` und Glass Effect mit, die man sofort wieder löschen müsste; Ziel ist eine leichte App | `default` + `npm run reset-project` |
 | 6 | Routen unter `src/app/`, Pfad-Alias `@/*` → `./src/*`, `experiments.typedRoutes: true` | Konvention des aktuellen SDK-57-Default-Templates; hält den Repo-Root frei für Konfiguration und später `targets/widget/` | `app/` im Root |
 | 7 | Nur iOS: `"platforms": ["ios"]`, `ios.supportsTablet: false`, keine Android- und Web-Konfiguration und keine Android-/Web-Assets aus dem Template | CLAUDE.md: V1 nur iPhone | Android-/Web-Teile des Templates behalten |
@@ -48,7 +48,7 @@ Dieses Paket legt im Branch `setup` das technische Grundgerüst der Kcalwaage-Ap
 
 | Milestone | Delivers | 🟢 Add | 🟠 Change | 🔴 Delete | Depends On |
 |-----------|----------|--------|-----------|-----------|------------|
-| M1 — Vorbereitung | Spec committet, Repo außerhalb von OneDrive | 1 | 0 | 0 | — |
+| M1 — Vorbereitung | Spec committet, Repo unter `~/Documents/CalorieWeightBalancer` | 1 | 0 | 0 | — |
 | M2 — Expo-Grundgerüst | Expo SDK 57 mit TypeScript im Repo-Root | 8 | 0 | 0 | M1 |
 | M3 — ESLint & Prettier | Lint-/Format-Konfiguration, Skripte `lint`, `format`, `typecheck` | 3 | 2 | 0 | M2 |
 | M4 — Expo Router & Hello-Seite | Route `/` mit „Hello Kcalwaage“, Farb-Tokens, Dark Mode | 4 | 4 | 2 | M3 |
@@ -77,7 +77,7 @@ Ein Commit pro Milestone (M5 zwei), Messages auf Englisch, jede endet mit `Co-Au
 
 ---
 
-### Milestone 1 — Vorbereitung
+### ✅ Milestone 1 — Vorbereitung
 
 > Die Spec liegt im Repo, und das Repo liegt außerhalb von OneDrive, bevor `node_modules` entsteht.
 
@@ -91,14 +91,15 @@ Ein Commit pro Milestone (M5 zwei), Messages auf Englisch, jede endet mit `Co-Au
 
 #### To-Dos
 
-- 🔲 Commit this spec on `setup` and push it to `origin/setup`
-- 🔲 Move the repo out of OneDrive to the target path (Julius, see Open Question 2)
-- 🔲 Reopen VS Code and Claude Code in the new path and check out `setup`
-- 🔲 Verify `git status` is clean and `git log` shows the spec commit
+- ✅ Commit this spec on `setup` (`125f0f8`)
+- ✅ Push the spec commit to `origin/setup`
+- ✅ Move the repo out of OneDrive to `~/Documents/CalorieWeightBalancer`
+- ✅ Reopen VS Code and Claude Code in the new path and check out `setup`
+- ✅ Verify `git status` is clean and `git log` shows the spec commit
 
 #### Notes / Constraints
 
-> Das Verschieben macht Julius selbst: Die laufende VS-Code- und Claude-Code-Sitzung hat das Repo als Arbeitsverzeichnis. Wird statt `mv` frisch geklont, muss die Spec vorher gepusht sein. Ab hier gelten alle Pfade relativ zum neuen Repo-Root.
+> Das Verschieben macht Julius selbst: Die laufende VS-Code- und Claude-Code-Sitzung hat das Repo als Arbeitsverzeichnis. Wird statt `mv` frisch geklont, muss die Spec vorher gepusht sein. Ab hier gelten alle Pfade relativ zum neuen Repo-Root `~/Documents/CalorieWeightBalancer`.
 
 ---
 
@@ -523,11 +524,11 @@ sequenceDiagram
 - 🔲 Confirm `npx expo start` shows the Hello page in light and dark appearance
 - 🔲 Mark this spec's to-dos as done and commit (`docs: mark Expo scaffold spec as done`)
 - 🔲 Push `setup` to `origin`
-- 🔲 Open a PR `setup` → `main` titled `Set up Expo app scaffold` with summary, key decisions (simulator-only profile, bundle ID), test steps, and the closing line `🤖 Generated with [Claude Code](https://claude.com/claude-code)`
+- 🔲 Julius: open a PR `setup` → `main` on github.com titled `Set up Expo app scaffold` with summary, key decisions (simulator-only profile, bundle ID), test steps, and the closing line `🤖 Generated with [Claude Code](https://claude.com/claude-code)`
 
 #### Notes / Constraints
 
-> `gh` ist auf dem Mac nicht angemeldet (Open Question 1). Der PR enthält auch den bereits vorhandenen Commit `24a803b claude skills` (CLAUDE.md, `.claude/`), siehe Concerns-Log Nr. 5. `expo-env.d.ts` und `.expo/types` (typed routes) entstehen erst durch `npx expo start`; `typecheck` muss auch ohne sie grün sein, damit es später in CI läuft.
+> Den PR öffnet Julius selbst über die GitHub-Weboberfläche (Concerns-Log Nr. 8). Der PR enthält auch den bereits vorhandenen Commit `24a803b claude skills` (CLAUDE.md, `.claude/`), siehe Concerns-Log Nr. 5. `expo-env.d.ts` und `.expo/types` (typed routes) entstehen erst durch `npx expo start`; `typecheck` muss auch ohne sie grün sein, damit es später in CI läuft.
 
 ---
 
@@ -535,8 +536,7 @@ sequenceDiagram
 
 | # | Question | Owner | Impact if Unresolved |
 |---|----------|-------|----------------------|
-| 1 | ❓ `gh` ist nicht angemeldet (`gh auth status`: not logged in). `gh auth login` vor M7 ausführen, oder den PR über die GitHub-Weboberfläche öffnen? | Julius | Blockiert das Öffnen des PR in M7 (Push über HTTPS/Keychain geht vermutlich trotzdem) |
-| 2 | ❓ Zielpfad nach dem Verschieben aus OneDrive (Vorschlag `~/dev/CalorieWeightBalancer`)? | Julius | Blockiert M1 und damit alles Weitere |
+| — | Keine offenen Fragen | — | — |
 
 ## Concerns & Decisions Log
 
@@ -544,8 +544,9 @@ sequenceDiagram
 |---|------|---------|------------|
 | 1 | ⚠️ Concern | Anforderung „eas.json mit Profil "development" für iOS Simulator und Gerät“: Ein einzelnes EAS-Profil kann nicht beides bauen (`ios.simulator: true` erzeugt eine `.app`, die nicht aufs Gerät geht) | Nur `development` für den Simulator; Geräteprofil später, wenn der Apple Developer Account aktiv ist — Julius 2026-10-12 |
 | 2 | ⚠️ Concern | „Fertig, wenn `npx expo start` die Hello-Seite zeigt“: Mit `expo-dev-client` geht das nur mit installiertem Development Build; Expo Go ist laut CLAUDE.md ausgeschlossen | Lokal `npx expo run:ios` und zusätzlich `eas init` + EAS-Simulator-Build — Julius 2026-10-12 |
-| 3 | 💡 Alternative | Repo liegt in OneDrive; `node_modules` und `ios/` würden synchronisiert (Last, Dateisperren für Metro/Xcode) | Repo vor `npm install` verschieben — Julius 2026-10-12 |
+| 3 | 💡 Alternative | Repo liegt in OneDrive; `node_modules` und `ios/` würden synchronisiert (Last, Dateisperren für Metro/Xcode) | Repo vor `npm install` verschieben — Julius 2026-10-12; verschoben nach `~/Documents/CalorieWeightBalancer` (statt Vorschlag `~/dev/`) — Julius 2026-10-12 |
 | 4 | ⚠️ Concern | Bundle-ID ist nach Registrierung in App Store Connect nicht mehr änderbar, der Name „Kcalwaage“ ist nur Arbeitstitel | `com.scully98.calorieweightbalancer` — Julius 2026-10-12 |
 | 5 | ⚠️ Concern | Der PR gegen `main` enthält auch den Commit `24a803b claude skills` mit CLAUDE.md inklusive Abschnitt „Recht und Geschäft“ (Nebentätigkeitsklausel, geplante zweite kostenpflichtige App, Gewerbe). Das Repo ist öffentlich, `setup` ist schon auf `origin` gepusht | Open — Julius entscheidet, ob dieser Abschnitt öffentlich in `main` landen soll |
 | 6 | 💡 Alternative | CI und Tests gehören laut Plan zu Schritt 1 („Lint und Tests in CI“), sind aber nicht Teil dieses Auftrags. Für die spätere CI wäre ein Skript `format:check` (`prettier --check .`) nötig, weil `format` Dateien schreibt statt zu prüfen | Open — Vorschlag: `format:check` schon in M3 mit anlegen, CI und Tests in einer eigenen Spec |
 | 7 | ⚠️ Concern | `typecheck` auf frischem Klon: `expo-env.d.ts` und `.expo/types` (typed routes) sind gitignored und entstehen erst durch `npx expo start` | Abgesichert durch To-do in M7 (Typecheck ohne diese Dateien) |
+| 8 | ⚠️ Concern | `gh` ist nicht angemeldet (`gh auth status`: not logged in), der PR in M7 lässt sich nicht per CLI öffnen | Julius öffnet den PR selbst über die GitHub-Weboberfläche; Claude pusht nur — Julius 2026-10-12 |
