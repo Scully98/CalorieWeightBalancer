@@ -319,7 +319,7 @@ Die App selbst hat keine Tastaturkürzel: reine Touch-App fürs iPhone, keine We
 
 ---
 
-### Milestone 5 — Development Build & EAS
+### ✅ Milestone 5 — Development Build & EAS
 
 > Die App läuft als Development Build im Simulator, lokal gebaut und per EAS gebaut, und `npx expo start` zeigt darin die Hello-Seite.
 
@@ -340,12 +340,13 @@ Die App selbst hat keine Tastaturkürzel: reine Touch-App fürs iPhone, keine We
 - ✅ 🆕 Pin `react-dom` to `19.2.3` via `npx expo install react-dom` _(Peer-Konflikt, siehe Concerns-Log Nr. 10)_
 - ✅ Create `eas.json` (see snippet below)
 - ✅ Commit (`chore: add expo-dev-client and EAS development profile`)
-- 🔲 Build and launch locally: `npx expo run:ios` (iPhone simulator, e.g. iPhone 16 Pro); confirm „Hello Kcalwaage“ in light and dark appearance
+- ✅ Build and launch locally: `npx expo run:ios` (iPhone simulator, e.g. iPhone 16 Pro); confirm „Hello Kcalwaage“ in light and dark appearance _(Build erfolgreich, 0 Fehler; der Auto-Start scheiterte an einem hängenden Simulator (`simctl openurl` Code 60, auch Safari startete nicht), nach Simulator-Neustart per `npx expo start --ios` geprüft; Prebuild änderte das Skript `ios`, siehe Concerns-Log Nr. 11)_
 - ✅ Link the EAS project: `npx eas-cli@latest init` (creates `@scully98/calorieweightbalancer` on expo.dev, writes `owner` and `extra.eas.projectId`) _(`--account scully98 --force --non-interactive --no-icon`; projectId `de4dd1f6-a787-4a9e-9e1a-595ca2bdf781`; von `eas init` mitgeschriebenes leeres `extra.router` entfernt, das Router-Plugin setzt es zur Laufzeit)_
 - ✅ Commit (`chore: link EAS project`)
-- 🔲 Run the cloud build: `npx eas-cli@latest build --profile development --platform ios`
-- 🔲 Install and launch the EAS build: `npx eas-cli@latest build:run --platform ios --latest`
-- 🔲 Run `npx expo start`, press `i`, and confirm the Hello page in the development build (acceptance criterion)
+- ✅ Run the cloud build: `npx eas-cli@latest build --profile development --platform ios` _(Build `811bf8cb-8c7d-45a6-aa30-083a9e686250`, erfolgreich)_
+- ✅ Install and launch the EAS build: `npx eas-cli@latest build:run --platform ios --latest`
+- ✅ Run `npx expo start`, press `i`, and confirm the Hello page in the development build (acceptance criterion) _(mit `npx expo start --ios` im EAS-Build: zentriert, hell #000 auf #FFF, dunkel invertiert, Screenshots geprüft)_
+- ✅ 🆕 Commit (`chore: use expo run:ios for the ios script`)
 
 #### Notes / Constraints
 
@@ -553,3 +554,4 @@ sequenceDiagram
 | 8 | ⚠️ Concern | `gh` ist nicht angemeldet (`gh auth status`: not logged in), der PR in M7 lässt sich nicht per CLI öffnen | Julius öffnet den PR selbst über die GitHub-Weboberfläche; Claude pusht nur — Julius 2026-10-12 |
 | 9 | ⚠️ Concern | `npm audit` nach M2: 22 Funde (7 moderat, 15 hoch), alle transitiv in Expo-Build-Werkzeugen (`braces`, `node-forge`, `uuid`), nicht im App-Bundle. `npm audit fix --force` würde auf `expo@44` zurückstufen | Nicht behoben; bei Expo-Patch-Releases `npx expo install --fix` ausführen — Claude 2026-10-12 |
 | 10 | ⚠️ Concern | `npm install` brach in M5 mit `ERESOLVE` ab: `expo-router` zieht über Radix-UI und `vaul` (Web-Tabs) `react-dom` als Pflicht-Peer nach, npm wählte `react-dom@19.3.0`, das `react@^19.3.0` verlangt; das Projekt hat `react@19.2.3`. Das Lockfile aus M4 enthielt diese ungültige Auflösung bereits | `react-dom@19.2.3` per `npx expo install react-dom` als direkte Dependency (SDK-57-Version laut `bundledNativeModules.json`); wird auf iOS nicht gebündelt — Claude 2026-10-12 |
+| 11 | 💡 Alternative | `npx expo run:ios` (Prebuild) setzt das Skript `ios` in `package.json` auf `expo run:ios`; M2 sah `expo start --ios` vor. Zurücksetzen würde den Arbeitsbaum nach jedem lokalen Build wieder ändern | `ios` = `expo run:ios` übernommen (Expo-Konvention für Development Builds); Metro startet weiter über `start` — Claude 2026-10-12 |
