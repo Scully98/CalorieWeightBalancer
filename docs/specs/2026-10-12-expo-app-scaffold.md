@@ -330,15 +330,16 @@ Die App selbst hat keine Tastaturkürzel: reine Touch-App fürs iPhone, keine We
 | Color | File | Action |
 |-------|------|--------|
 | 🟢 | `eas.json` | Profil `development` für den iOS-Simulator |
-| 🟠 | `package.json` | Dependency `expo-dev-client` |
+| 🟠 | `package.json` | Dependencies `expo-dev-client`, `react-dom` (Concerns-Log Nr. 10) |
 | 🟠 | `package-lock.json` | Neue Dependency |
 | 🟠 | `app.json` | `owner` `scully98` und `extra.eas.projectId` durch `eas init` |
 
 #### To-Dos
 
-- 🔲 Install `expo-dev-client`: `npx expo install expo-dev-client`
-- 🔲 Create `eas.json` (see snippet below)
-- 🔲 Commit (`chore: add expo-dev-client and EAS development profile`)
+- ✅ Install `expo-dev-client`: `npx expo install expo-dev-client`
+- ✅ 🆕 Pin `react-dom` to `19.2.3` via `npx expo install react-dom` _(Peer-Konflikt, siehe Concerns-Log Nr. 10)_
+- ✅ Create `eas.json` (see snippet below)
+- ✅ Commit (`chore: add expo-dev-client and EAS development profile`)
 - 🔲 Build and launch locally: `npx expo run:ios` (iPhone simulator, e.g. iPhone 16 Pro); confirm „Hello Kcalwaage“ in light and dark appearance
 - 🔲 Link the EAS project: `npx eas-cli@latest init` (creates `@scully98/calorieweightbalancer` on expo.dev, writes `owner` and `extra.eas.projectId`)
 - 🔲 Commit (`chore: link EAS project`)
@@ -551,3 +552,4 @@ sequenceDiagram
 | 7 | ⚠️ Concern | `typecheck` auf frischem Klon: `expo-env.d.ts` und `.expo/types` (typed routes) sind gitignored und entstehen erst durch `npx expo start` | Abgesichert durch To-do in M7 (Typecheck ohne diese Dateien) |
 | 8 | ⚠️ Concern | `gh` ist nicht angemeldet (`gh auth status`: not logged in), der PR in M7 lässt sich nicht per CLI öffnen | Julius öffnet den PR selbst über die GitHub-Weboberfläche; Claude pusht nur — Julius 2026-10-12 |
 | 9 | ⚠️ Concern | `npm audit` nach M2: 22 Funde (7 moderat, 15 hoch), alle transitiv in Expo-Build-Werkzeugen (`braces`, `node-forge`, `uuid`), nicht im App-Bundle. `npm audit fix --force` würde auf `expo@44` zurückstufen | Nicht behoben; bei Expo-Patch-Releases `npx expo install --fix` ausführen — Claude 2026-10-12 |
+| 10 | ⚠️ Concern | `npm install` brach in M5 mit `ERESOLVE` ab: `expo-router` zieht über Radix-UI und `vaul` (Web-Tabs) `react-dom` als Pflicht-Peer nach, npm wählte `react-dom@19.3.0`, das `react@^19.3.0` verlangt; das Projekt hat `react@19.2.3`. Das Lockfile aus M4 enthielt diese ungültige Auflösung bereits | `react-dom@19.2.3` per `npx expo install react-dom` als direkte Dependency (SDK-57-Version laut `bundledNativeModules.json`); wird auf iOS nicht gebündelt — Claude 2026-10-12 |
