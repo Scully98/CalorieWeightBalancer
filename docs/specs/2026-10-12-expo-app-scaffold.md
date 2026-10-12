@@ -138,7 +138,7 @@ Ein Commit pro Milestone (M5 zwei), Messages auf Englisch, jede endet mit `Co-Au
 
 ---
 
-### Milestone 3 — ESLint & Prettier
+### ✅ Milestone 3 — ESLint & Prettier
 
 > Lint, Formatierung und Typprüfung sind eingerichtet, bevor eigener Code entsteht, damit jeder folgende Commit schon sauber formatiert ist.
 
@@ -156,12 +156,12 @@ Ein Commit pro Milestone (M5 zwei), Messages auf Englisch, jede endet mit `Co-Au
 
 #### To-Dos
 
-- 🔲 Install dev tools: `npx expo install eslint eslint-config-expo prettier eslint-config-prettier -- --save-dev`
-- 🔲 Create `eslint.config.js` with Expo flat config and `eslint-config-prettier/flat` last
-- 🔲 Create `.prettierrc.json` and `.prettierignore`
-- 🔲 Add scripts `"lint": "expo lint"`, `"format": "prettier --write ."`, `"typecheck": "tsc --noEmit"`
-- 🔲 Run `npm run format`, `npm run lint`, `npm run typecheck`; all exit 0
-- 🔲 Commit (`chore: add ESLint, Prettier and lint/format/typecheck scripts`)
+- ✅ Install dev tools: `npx expo install eslint eslint-config-expo prettier eslint-config-prettier -- --save-dev` _(`expo install` legte `eslint-config-expo` unter `dependencies` ab; von Hand nach `devDependencies` verschoben)_
+- ✅ Create `eslint.config.js` with Expo flat config and `eslint-config-prettier/flat` last
+- ✅ Create `.prettierrc.json` and `.prettierignore`
+- ✅ Add scripts `"lint": "expo lint"`, `"format": "prettier --write ."`, `"typecheck": "tsc --noEmit"`
+- ✅ Run `npm run format`, `npm run lint`, `npm run typecheck`; all exit 0 _(Prettier ergänzte nur den fehlenden Zeilenumbruch am Ende von `README.md`)_
+- ✅ Commit (`chore: add ESLint, Prettier and lint/format/typecheck scripts`)
 
 #### Notes / Constraints
 
