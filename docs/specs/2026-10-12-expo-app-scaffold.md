@@ -341,8 +341,8 @@ Die App selbst hat keine Tastaturkürzel: reine Touch-App fürs iPhone, keine We
 - ✅ Create `eas.json` (see snippet below)
 - ✅ Commit (`chore: add expo-dev-client and EAS development profile`)
 - 🔲 Build and launch locally: `npx expo run:ios` (iPhone simulator, e.g. iPhone 16 Pro); confirm „Hello Kcalwaage“ in light and dark appearance
-- 🔲 Link the EAS project: `npx eas-cli@latest init` (creates `@scully98/calorieweightbalancer` on expo.dev, writes `owner` and `extra.eas.projectId`)
-- 🔲 Commit (`chore: link EAS project`)
+- ✅ Link the EAS project: `npx eas-cli@latest init` (creates `@scully98/calorieweightbalancer` on expo.dev, writes `owner` and `extra.eas.projectId`) _(`--account scully98 --force --non-interactive --no-icon`; projectId `de4dd1f6-a787-4a9e-9e1a-595ca2bdf781`; von `eas init` mitgeschriebenes leeres `extra.router` entfernt, das Router-Plugin setzt es zur Laufzeit)_
+- ✅ Commit (`chore: link EAS project`)
 - 🔲 Run the cloud build: `npx eas-cli@latest build --profile development --platform ios`
 - 🔲 Install and launch the EAS build: `npx eas-cli@latest build:run --platform ios --latest`
 - 🔲 Run `npx expo start`, press `i`, and confirm the Hello page in the development build (acceptance criterion)
