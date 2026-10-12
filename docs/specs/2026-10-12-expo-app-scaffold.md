@@ -103,7 +103,7 @@ Ein Commit pro Milestone (M5 zwei), Messages auf Englisch, jede endet mit `Co-Au
 
 ---
 
-### Milestone 2 — Expo-Grundgerüst
+### ✅ Milestone 2 — Expo-Grundgerüst
 
 > Ein lauffähiges Expo-SDK-57-Projekt mit TypeScript liegt im Repo-Root, ohne die bestehenden Dateien anzutasten.
 
@@ -124,13 +124,13 @@ Ein Commit pro Milestone (M5 zwei), Messages auf Englisch, jede endet mit `Co-Au
 
 #### To-Dos
 
-- 🔲 Create the template in a temporary folder outside the repo: `npx create-expo-app@latest <tmp>/kcal-scaffold --template blank-typescript@sdk-57 --no-install`
-- 🔲 Copy the template files into the repo root without overwriting `README.md`, `LICENSE.md`, `CLAUDE.md`, `.claude/`, `docs/`
-- 🔲 Remove the template `LICENSE` (0BSD), Android icons and `favicon.png` before committing
-- 🔲 Update `package.json`: `name`, `private`, `license`; keep scripts `start` and `ios`, drop `android` and `web`
-- 🔲 Update `app.json`: `name` `Kcalwaage`, `slug` `calorieweightbalancer`, `platforms: ["ios"]`, `ios.supportsTablet: false`, `ios.bundleIdentifier` `com.scully98.calorieweightbalancer`, `userInterfaceStyle: "automatic"`; remove `android` and `web` blocks
-- 🔲 Run `npm install`
-- 🔲 Commit (`chore: scaffold Expo app from blank TypeScript template`)
+- ✅ Create the template in a temporary folder outside the repo: `npx create-expo-app@latest <tmp>/kcal-scaffold --template blank-typescript@sdk-57 --no-install`
+- ✅ Copy the template files into the repo root without overwriting `README.md`, `LICENSE.md`, `CLAUDE.md`, `.claude/`, `docs/` _(nur die acht Dateien aus der Tabelle; Template-Extras `AGENTS.md`, `.claude/settings.json` und `assets/splash-icon.png` nicht übernommen)_
+- ✅ Remove the template `LICENSE` (0BSD), Android icons and `favicon.png` before committing _(Template-`LICENSE` ist MIT, nicht 0BSD; nicht kopiert)_
+- ✅ Update `package.json`: `name`, `private`, `license`; keep scripts `start` and `ios`, drop `android` and `web`
+- ✅ Update `app.json`: `name` `Kcalwaage`, `slug` `calorieweightbalancer`, `platforms: ["ios"]`, `ios.supportsTablet: false`, `ios.bundleIdentifier` `com.scully98.calorieweightbalancer`, `userInterfaceStyle: "automatic"`; remove `android` and `web` blocks
+- ✅ Run `npm install` _(Typecheck grün; `npm audit` siehe Concerns-Log Nr. 9)_
+- ✅ Commit (`chore: scaffold Expo app from blank TypeScript template`)
 
 #### Notes / Constraints
 
@@ -550,3 +550,4 @@ sequenceDiagram
 | 6 | 💡 Alternative | CI und Tests gehören laut Plan zu Schritt 1 („Lint und Tests in CI“), sind aber nicht Teil dieses Auftrags. Für die spätere CI wäre ein Skript `format:check` (`prettier --check .`) nötig, weil `format` Dateien schreibt statt zu prüfen | Open — Vorschlag: `format:check` schon in M3 mit anlegen, CI und Tests in einer eigenen Spec |
 | 7 | ⚠️ Concern | `typecheck` auf frischem Klon: `expo-env.d.ts` und `.expo/types` (typed routes) sind gitignored und entstehen erst durch `npx expo start` | Abgesichert durch To-do in M7 (Typecheck ohne diese Dateien) |
 | 8 | ⚠️ Concern | `gh` ist nicht angemeldet (`gh auth status`: not logged in), der PR in M7 lässt sich nicht per CLI öffnen | Julius öffnet den PR selbst über die GitHub-Weboberfläche; Claude pusht nur — Julius 2026-10-12 |
+| 9 | ⚠️ Concern | `npm audit` nach M2: 22 Funde (7 moderat, 15 hoch), alle transitiv in Expo-Build-Werkzeugen (`braces`, `node-forge`, `uuid`), nicht im App-Bundle. `npm audit fix --force` würde auf `expo@44` zurückstufen | Nicht behoben; bei Expo-Patch-Releases `npx expo install --fix` ausführen — Claude 2026-10-12 |

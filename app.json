@@ -1,0 +1,15 @@
+{
+  "expo": {
+    "name": "Kcalwaage",
+    "slug": "calorieweightbalancer",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "platforms": ["ios"],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.scully98.calorieweightbalancer"
+    }
+  }
+}
