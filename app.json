@@ -11,9 +11,33 @@
     "platforms": ["ios"],
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.scully98.calorieweightbalancer"
+      "bundleIdentifier": "com.scully98.calorieweightbalancer",
+      "entitlements": {
+        "com.apple.security.application-groups": [
+          "group.com.scully98.calorieweightbalancer"
+        ]
+      }
     },
-    "plugins": ["expo-router"],
+    "plugins": [
+      "expo-router",
+      [
+        "@kingstinct/react-native-healthkit",
+        {
+          "NSHealthShareUsageDescription": "Kcalwaage reads dietary, resting and active energy, weight, body fat, lean body mass, height, age and sex to calculate your calorie balance. Your data stays on your iPhone.",
+          "NSHealthUpdateUsageDescription": false,
+          "background": false
+        }
+      ],
+      "@bacons/apple-targets",
+      [
+        "expo-localization",
+        {
+          "supportedLocales": {
+            "ios": ["de", "en"]
+          }
+        }
+      ]
+    ],
     "experiments": {
       "typedRoutes": true
     },
@@ -21,6 +45,10 @@
       "eas": {
         "projectId": "de4dd1f6-a787-4a9e-9e1a-595ca2bdf781"
       }
+    },
+    "locales": {
+      "de": "./src/i18n/native/de.json",
+      "en": "./src/i18n/native/en.json"
     }
   }
 }

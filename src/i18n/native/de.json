@@ -1,0 +1,6 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "Kcalwaage",
+    "NSHealthShareUsageDescription": "Kcalwaage liest Nahrungs-, Ruhe- und Aktivenergie, Gewicht, Körperfett, Magermasse, Größe, Alter und Geschlecht, um deine Kalorienbilanz zu berechnen. Die Daten bleiben auf deinem iPhone."
+  }
+}

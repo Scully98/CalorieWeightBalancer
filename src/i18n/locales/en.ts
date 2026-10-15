@@ -1,0 +1,108 @@
+import type { de } from './de';
+
+export const en: typeof de = {
+  common: {
+    next: 'Next',
+    skip: 'Skip',
+    stepOf: 'Step {{current}} of {{count}}',
+  },
+  intro: {
+    vision: {
+      title: 'You count. You track. And nothing happens?',
+      body: "Often it's the small errors: labels, portions and watches are a little off – every single day.",
+      calories: 'Calories',
+      burned: 'Burned',
+      weight: 'Weight',
+      relation: '↓ put into relation over weeks',
+      resultLabel: 'your month, honestly calculated',
+      resultValue: '{{min}} to {{max}} kcal',
+      resultSign: 'Plus = ate more than you burned',
+      footer:
+        'Kcalwaage factors in the margin of error and shows you an honest range instead of false precision – and checks it against your scale.',
+      a11y: 'Calories, energy burned and weight put into relation over weeks',
+    },
+    bigPicture: {
+      title: "One bad day doesn't ruin a month.",
+      body: 'Get out of all-or-nothing. See what adds up over weeks – in kcal and kg of fat.',
+      legendMinus: 'Deficit day',
+      legendPizza: 'Pizza night',
+      legendEmpty: 'no entry',
+      total: '30 days combined',
+      fat: 'Fat saved ≈ {{kcal}} kcal',
+      theoretical: '(theoretical)',
+      footer:
+        'The pizza night? Balanced out after 3 days. Days without an entry can count as neutral.',
+      a11y: '30 days: 27 deficit days, one pizza night, 2 days without an entry',
+    },
+    health: {
+      title: 'Nothing works without your Health data',
+      body: "Kcalwaage doesn't measure anything itself. It adds up your Apple Health values and lays them out clearly – locally, read-only, nothing leaves your iPhone.",
+      rows: {
+        food: { label: 'Dietary energy', detail: 'what goes in' },
+        burn: { label: 'Resting & active energy', detail: 'what goes out' },
+        weight: { label: 'Weight', detail: 'check against the scale' },
+        composition: {
+          label: 'Body fat, lean mass',
+          detail: 'fat vs. muscle',
+        },
+        profile: {
+          label: 'Height, age, sex',
+          detail: 'estimate resting energy',
+        },
+      },
+      noteTitle: 'Good to know',
+      note1:
+        'Yazio, MyFitnessPal & co. need to sync with Apple Health in their settings.',
+      note2: 'So does your scale app.',
+      note3: 'Apple Watch measures energy burned most accurately.',
+      allow: 'Allow Health access',
+      caption: 'Opens the iOS dialog · Not medical advice',
+    },
+    found: {
+      title: "Here's what we found",
+      body: "iOS doesn't tell us what you declined – we show what actually arrives.",
+      loading: 'Looking for data …',
+      bmr: {
+        title: 'We need a little more for your resting energy',
+        body: 'We estimate it once using Mifflin-St Jeor. No daily entries.',
+        weight: 'Weight',
+        age: 'Age',
+        height: 'Height',
+        sex: 'Sex',
+        years: 'years',
+        fromHealth: '{{value}} · Health',
+        sexMale: 'm',
+        sexFemale: 'f',
+        sexUnspecified: 'not specified',
+        sexOther: 'other',
+        result: 'Resting energy',
+        estimated: 'ESTIMATED',
+        range: '{{min}}–{{max}} {{unit}}',
+      },
+      checkPermissions: 'Check permissions',
+      start: "Let's go",
+      rows: {
+        food: 'Food',
+        active: 'Active energy',
+        weight: 'Weight',
+        resting: 'Resting energy',
+        bodyFat: 'Body fat',
+      },
+      detail: {
+        since: '{{source}} · since {{date}}',
+        daily: '{{source}} · daily',
+        daysOf7: '{{source}} · {{count}} of 7 days',
+        lastOn: '{{source}} · last on {{date}}',
+        measurements_one: '{{source}} · {{count}} measurement',
+        measurements_other: '{{source}} · {{count}} measurements',
+        missing: 'missing',
+        missingEstimate: 'missing → estimate',
+        optional: 'optional',
+      },
+      status: {
+        found: 'found',
+        missing: 'missing',
+      },
+    },
+  },
+};
