@@ -1,0 +1,5 @@
+package-lock.json
+.claude/
+CLAUDE.md
+LICENSE.md
+docs/specs/

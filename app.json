@@ -1,0 +1,26 @@
+{
+  "expo": {
+    "name": "Kcalwaage",
+    "slug": "calorieweightbalancer",
+    "owner": "scully98",
+    "scheme": "calorieweightbalancer",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "platforms": ["ios"],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.scully98.calorieweightbalancer"
+    },
+    "plugins": ["expo-router"],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "de4dd1f6-a787-4a9e-9e1a-595ca2bdf781"
+      }
+    }
+  }
+}
