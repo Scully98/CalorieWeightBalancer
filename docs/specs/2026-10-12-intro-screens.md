@@ -355,7 +355,7 @@ sequenceDiagram
 
 ---
 
-### Milestone 7 — Intro-Routing, Seiten 3a & 3b
+### ✅ Milestone 7 — Intro-Routing, Seiten 3a & 3b
 
 > Die App startet ohne abgeschlossenes Intro auf 3a, und die beiden Vision-Seiten sind fertig.
 
@@ -378,18 +378,20 @@ sequenceDiagram
 
 #### To-Dos
 
-- 🔲 Update `src/app/_layout.tsx`: `<Stack.Protected guard={introCompleted}>` around `index`, `<Stack.Protected guard={!introCompleted}>` around `intro`; keep `ThemeProvider` and `StatusBar`
-- 🔲 Create `src/app/intro/_layout.tsx` with a `Stack` (`headerShown: false`, `gestureEnabled: true`) and initial route `vision`; verify the guard redirect lands on `/intro/vision` (fallback: `<Redirect href="/intro/vision" />` in the guard branch)
-- 🔲 Create `IntroLayout` (props `step`, `onSkip?`, `footer`, `children`): `SafeAreaView` (top, bottom) in `background`; header row with `PageIndicator count={4}` and optional `LinkButton` "Überspringen"; `ScrollView` with `keyboardDismissMode="interactive"` for title, text and content; footer outside the scroll view with the buttons; `KeyboardAvoidingView` (`behavior="padding"`) so inputs stay visible
-- 🔲 Create `BalanceBarsIllustration`: `Card` with rows "Kalorien" (bar filled `foreground`), "Verbrauch" (bar outlined), "Gewicht" (bar dashed), `Divider`, "↓ über Wochen ins Verhältnis gesetzt", result label, result value (`number`), sign caption; one accessibility label for the whole card
-- 🔲 Create `MonthGridIllustration`: 30 `DayCell`s in 3 rows of 10, square via `aspectRatio: 1`, gap 6; `empty` at index 5 and 21 (row-major, 0-based), `pizza` at index 12, all others `minus`; `minus` = filled `foreground`, `empty` = dashed outline, `pizza` = outline with diagonal hatch (rotated 1.5-pt lines in `foreground`, `overflow: 'hidden'`); legend with mini cells "Minus-Tag", "Pizza-Abend", "kein Eintrag"; one accessibility label ("30 Tage: 27 Minus-Tage, ein Pizza-Abend, 2 Tage ohne Eintrag")
-- 🔲 Create screen `vision.tsx` (3a) with `step={0}`, skip → `router.push('/intro/health')`, primary button "Weiter" → `router.push('/intro/big-picture')`
-- 🔲 Create screen `big-picture.tsx` (3b) with `step={1}`, skip → `router.push('/intro/health')`, grid, result `Card` ("30 Tage zusammen", `numberLarge` "−0,8 kg" via `formatSigned`, "Fett eingespart ≈ −6.200 kcal (theoretisch)"), footer text, "Weiter" → `router.push('/intro/health')`
-- 🔲 Add the 3a and 3b texts (table below) to `de.ts` and `en.ts`
-- 🔲 Add the `__DEV__`-only button "Reset intro (dev)" to `src/app/index.tsx` calling `resetIntro()`
-- 🔲 Check in the simulator: fresh install opens 3a; Weiter/Überspringen/back gesture; light and dark; largest Accessibility text size scrolls; VoiceOver reads page indicator and illustrations as one element each
-- 🔲 Run `npm run lint`, `npm run typecheck`, `npm run format`; all exit 0
-- 🔲 Commit (`feat: add intro routing with vision and big picture screens`)
+- ✅ Update `src/app/_layout.tsx`: `<Stack.Protected guard={introCompleted}>` around `index`, `<Stack.Protected guard={!introCompleted}>` around `intro`; keep `ThemeProvider` and `StatusBar` _(der Guard leitet ohne `<Redirect>` korrekt auf `/intro/vision` um)_
+- ✅ Create `src/app/intro/_layout.tsx` with a `Stack` (`headerShown: false`, `gestureEnabled: true`) and initial route `vision`; verify the guard redirect lands on `/intro/vision` (fallback: `<Redirect href="/intro/vision" />` in the guard branch) _(`unstable_settings.initialRouteName = 'vision'`, `contentStyle` in `background`; Komponente heißt `IntroStackLayout`)_
+- ✅ Create `IntroLayout` (props `step`, `onSkip?`, `footer`, `children`): `SafeAreaView` (top, bottom) in `background`; header row with `PageIndicator count={4}` and optional `LinkButton` "Überspringen"; `ScrollView` with `keyboardDismissMode="interactive"` for title, text and content; footer outside the scroll view with the buttons; `KeyboardAvoidingView` (`behavior="padding"`) so inputs stay visible
+- ✅ Create `BalanceBarsIllustration`: `Card` with rows "Kalorien" (bar filled `foreground`), "Verbrauch" (bar outlined), "Gewicht" (bar dashed), `Divider`, "↓ über Wochen ins Verhältnis gesetzt", result label, result value (`number`), sign caption; one accessibility label for the whole card
+- ✅ Create `MonthGridIllustration`: 30 `DayCell`s in 3 rows of 10, square via `aspectRatio: 1`, gap 6; `empty` at index 5 and 21 (row-major, 0-based), `pizza` at index 12, all others `minus`; `minus` = filled `foreground`, `empty` = dashed outline, `pizza` = outline with diagonal hatch (rotated 1.5-pt lines in `foreground`, `overflow: 'hidden'`); legend with mini cells "Minus-Tag", "Pizza-Abend", "kein Eintrag"; one accessibility label ("30 Tage: 27 Minus-Tage, ein Pizza-Abend, 2 Tage ohne Eintrag")
+- ✅ Create screen `vision.tsx` (3a) with `step={0}`, skip → `router.push('/intro/health')`, primary button "Weiter" → `router.push('/intro/big-picture')`
+- ✅ Create screen `big-picture.tsx` (3b) with `step={1}`, skip → `router.push('/intro/health')`, grid, result `Card` ("30 Tage zusammen", `numberLarge` "−0,8 kg" via `formatSigned`, "Fett eingespart ≈ −6.200 kcal (theoretisch)"), footer text, "Weiter" → `router.push('/intro/health')` _(„(theoretisch)“ als `caption` in `muted` hinter der Fett-Zeile)_
+- ✅ Add the 3a and 3b texts (table below) to `de.ts` and `en.ts`
+- ✅ Add the `__DEV__`-only button "Reset intro (dev)" to `src/app/index.tsx` calling `resetIntro()` _(als `LinkButton`)_
+- ✅ Check in the simulator: fresh install opens 3a; Weiter/Überspringen/back gesture; light and dark; largest Accessibility text size scrolls; VoiceOver reads page indicator and illustrations as one element each _(per Release-Build: frische App-Group öffnet 3a, Layout wie Wireframe, Grafik und Spanne korrekt; Tippen, Zurück-Geste, 3b, Dunkel, Textgröße und VoiceOver prüft M10, weil Claude im Simulator nicht tippen kann, siehe Concerns-Log Nr. 21)_
+- ✅ Run `npm run lint`, `npm run typecheck`, `npm run format`; all exit 0
+- ✅ Commit (`feat: add intro routing with vision and big picture screens`)
+- ✅ 🆕 Create a placeholder `src/app/intro/health.tsx` _(damit `/intro/health` existiert und die typisierten Routen kompilieren; M9 ersetzt ihn)_
+- ✅ 🆕 Regenerate typed routes (`.expo/types/router.d.ts`) by starting Metro once _(`expo start` erzeugt sie, sonst kennt `tsc` `/intro/*` nicht)_
 
 #### Notes / Constraints
 
@@ -1059,3 +1061,4 @@ Keine App-Kürzel (siehe 3a, 3b). Auf 3d gibt es Zahlenfelder; im Simulator kann
 | 18 | ⚠️ Concern | `@bacons/apple-targets` warnt bei jedem `expo install`/`expo start`: „Expo config is missing required ios.appleTeamId property … iOS builds may fail“. Ohne bezahlten Account gibt es keine Team-ID | Für Simulator-Builds ohne Targets folgenlos (Build in M2 fehlerfrei); `ios.appleTeamId` mit dem Developer Account setzen, spätestens in Schritt 9 (Widget) — Claude 2026-10-15 |
 | 19 | ⚠️ Concern | `xcrun simctl openurl` auf den Dev-Client-Link zeigt im Simulator den iOS-Dialog „In ‚Kcalwaage‘ öffnen?“; ohne Bedienungshilfen-Recht für `osascript` kann Claude ihn nicht bestätigen, Screenshots bleiben verdeckt | Sichtprüfungen per Release-Build (`npx expo run:ios --configuration Release`, JS eingebettet, kein Metro, kein Deep Link); Simulator-Neustart räumt den Dialog weg — Claude 2026-10-15 |
 | 20 | ⚠️ Concern | Hermes in RN 0.86 hat kein `Intl.PluralRules` (Prüfung im Dev-Build: `typeof Intl.PluralRules` = `undefined`); i18next bräuchte es für `_one`/`_other` | Polyfill `intl-pluralrules` 2.0.1 (2023-07-06, ISC, keine Abhängigkeiten) exakt gepinnt, als erster Import in `src/i18n/index.ts`; Open Question 3 damit beantwortet — Claude 2026-10-15 |
+| 21 | ⚠️ Concern | Claude kann im Simulator nicht tippen: `simctl` hat keine Tap-Funktion, `osascript` fehlt das Bedienungshilfen-Recht, und jeder Deep Link (`simctl openurl`) zeigt den Dialog „In ‚Kcalwaage‘ öffnen?“. Damit lassen sich der Health-Dialog („Erlauben“), Testdaten in der Health-App, Zurück-Geste und VoiceOver nicht durch Claude prüfen | Seitenlayouts per Release-Build mit temporärem, nicht committetem Vorschau-Modus (automatisches Weiterschalten, Mock-Scan für 3d); Hell/Dunkel per `simctl ui appearance`, Textgröße per `simctl ui content_size`, Sprache per Startargument `-AppleLanguages`. Health-Dialog, echte Health-Daten und Gesten prüft Julius in M10 — Claude 2026-10-15 |
