@@ -32,5 +32,29 @@ export const de = {
         'Der Pizza-Abend? Nach 3 Tagen ausgeglichen. Tage ohne Eintrag kannst du neutral zählen.',
       a11y: '30 Tage: 27 Minus-Tage, ein Pizza-Abend, 2 Tage ohne Eintrag',
     },
+    found: {
+      rows: {
+        food: 'Nahrung',
+        active: 'Aktivenergie',
+        weight: 'Gewicht',
+        resting: 'Ruheenergie',
+        bodyFat: 'Körperfett',
+      },
+      detail: {
+        since: '{{source}} · seit {{date}}',
+        daily: '{{source}} · täglich',
+        daysOf7: '{{source}} · an {{count}} von 7 Tagen',
+        lastOn: '{{source}} · zuletzt am {{date}}',
+        measurements_one: '{{source}} · {{count}} Messung',
+        measurements_other: '{{source}} · {{count}} Messungen',
+        missing: 'fehlt',
+        missingEstimate: 'fehlt → schätzen',
+        optional: 'optional',
+      },
+      status: {
+        found: 'gefunden',
+        missing: 'fehlt',
+      },
+    },
   },
 };

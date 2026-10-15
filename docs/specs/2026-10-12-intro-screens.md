@@ -616,22 +616,22 @@ Die Textgröße für die Dynamic-Type-Prüfung wird ohne Kürzel geändert: Eins
 
 #### To-Dos
 
-- 🔲 Create `src/health/read-types.ts` with the nine identifiers from Key Decision 13
-- 🔲 Create `requestReadAccess()`: `requestAuthorization({ toRead: READ_TYPES })`; returns `{ ok: true }` or `{ ok: false, error }` (catches); never throws
-- 🔲 Create `scanHealthData(now)` running all queries with `Promise.all`, each wrapped so an error yields "no data" for that type:
+- ✅ Create `src/health/read-types.ts` with the nine identifiers from Key Decision 13 _(dazu `QUANTITY` mit den sieben Mengentypen)_
+- ✅ Create `requestReadAccess()`: `requestAuthorization({ toRead: READ_TYPES })`; returns `{ ok: true }` or `{ ok: false, error }` (catches); never throws _(Typ `ReadAccessResult`)_
+- ✅ Create `scanHealthData(now)` running all queries with `Promise.all`, each wrapped so an error yields "no data" for that type: _(16 Abfragen in einem `Promise.all`, jede über `safe()` abgesichert; `lastDate` zusätzlich für „zuletzt am“; Statistik-Buckets zusätzlich auf die 7 Tage gefiltert)_
   - Every row type: `getMostRecentQuantitySample(id, unit)` → `hasData`, `latestSourceRevision`, `latestValue`
   - Nahrung: `queryQuantitySamples(DietaryEnergyConsumed, { limit: 1, ascending: true, unit: 'kcal' })` → `firstDate` (`startDate`)
   - Aktiv- und Ruheenergie: `queryStatisticsCollectionForQuantity(id, ['cumulativeSum'], startOfToday, { day: 1 }, { unit: 'kcal', filter: { date: { startDate: startOfToday − 7 days, endDate: startOfToday } } })` → `daysWithData` = buckets with `sumQuantity.quantity > 0`
   - Gewicht: `queryQuantitySamples(BodyMass, { limit: 0, unit: 'kg' }).length` → `count`
   - Körperfett: like Gewicht for `BodyFatPercentage`; if none, `LeanBodyMass`; row counts as found if either exists
   - Profile: `getMostRecentQuantitySample(BodyMass, 'kg')`, `getMostRecentQuantitySample(Height, 'cm')`, `getDateOfBirthAsync()`, `getBiologicalSexAsync()`
-- 🔲 Create `sourceLabel(sourceRevision)`: `productType` starting with `iPhone` → "iPhone", starting with `Watch` → "Apple Watch", otherwise `source.name`
-- 🔲 Create `buildFoundRows()` with fixed row order Nahrung, Aktivenergie, Gewicht, Ruheenergie, Körperfett and the detail rules from Key Decision 9 and the table below; dates via `Intl.DateTimeFormat(locale, { day: 'numeric', month: 'short' })`, with year if not the current year
-- 🔲 Test `buildFoundRows` and `sourceLabel`: 7/7 days → "täglich"; 5/7 → "an 5 von 7 Tagen"; 0/7 with older data → "zuletzt am …"; 1 vs 14 measurements (plural); first date this year vs last year; missing rows per type ("fehlt", "fehlt → schätzen", "optional"); `productType` `iPhone15,2` → "iPhone", `Watch6,1` → "Apple Watch", Health app entry → "Health"
-- 🔲 Create `useHealthScan()`: runs `scanHealthData(new Date())` on mount and on `AppState` change to `active`; returns `{ status: 'loading' | 'done', scan }`
-- 🔲 Enter test data in the simulator's Health app (Nahrungsenergie on several days, Aktivenergie, Gewicht 3×, Größe, Geburtsdatum, Geschlecht; no Ruheenergie), log the raw objects returned by each query once, and add them as 🔗 External Payload block to this milestone (Key Decision 10)
-- 🔲 Run `npm test`, `npm run lint`, `npm run typecheck`, `npm run format`; all exit 0
-- 🔲 Commit (`feat: add HealthKit read access and intro data scan`)
+- ✅ Create `sourceLabel(sourceRevision)`: `productType` starting with `iPhone` → "iPhone", starting with `Watch` → "Apple Watch", otherwise `source.name`
+- ✅ Create `buildFoundRows()` with fixed row order Nahrung, Aktivenergie, Gewicht, Ruheenergie, Körperfett and the detail rules from Key Decision 9 and the table below; dates via `Intl.DateTimeFormat(locale, { day: 'numeric', month: 'short' })`, with year if not the current year
+- ✅ Test `buildFoundRows` and `sourceLabel`: 7/7 days → "täglich"; 5/7 → "an 5 von 7 Tagen"; 0/7 with older data → "zuletzt am …"; 1 vs 14 measurements (plural); first date this year vs last year; missing rows per type ("fehlt", "fehlt → schätzen", "optional"); `productType` `iPhone15,2` → "iPhone", `Watch6,1` → "Apple Watch", Health app entry → "Health" _(7 Tests mit echter i18next-Instanz und `de`; Node-ICU liefert „20. Nov. 2025“, „1. Sept.“)_
+- ✅ Create `useHealthScan()`: runs `scanHealthData(new Date())` on mount and on `AppState` change to `active`; returns `{ status: 'loading' | 'done', scan }`
+- 🔲 🛑 Enter test data in the simulator's Health app (Nahrungsenergie on several days, Aktivenergie, Gewicht 3×, Größe, Geburtsdatum, Geschlecht; no Ruheenergie), log the raw objects returned by each query once, and add them as 🔗 External Payload block to this milestone (Key Decision 10) _(blocked: Claude kann im Simulator nicht tippen, Concerns-Log Nr. 21; Julius trägt die Testdaten ein, Claude loggt die Objekte und ergänzt den 🔗-Block, siehe M10)_
+- ✅ Run `npm test`, `npm run lint`, `npm run typecheck`, `npm run format`; all exit 0
+- ✅ Commit (`feat: add HealthKit read access and intro data scan`)
 
 #### Notes / Constraints
 

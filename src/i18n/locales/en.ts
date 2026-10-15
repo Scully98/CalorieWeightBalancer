@@ -34,5 +34,29 @@ export const en: typeof de = {
         'The pizza night? Balanced out after 3 days. Days without an entry can count as neutral.',
       a11y: '30 days: 27 deficit days, one pizza night, 2 days without an entry',
     },
+    found: {
+      rows: {
+        food: 'Food',
+        active: 'Active energy',
+        weight: 'Weight',
+        resting: 'Resting energy',
+        bodyFat: 'Body fat',
+      },
+      detail: {
+        since: '{{source}} · since {{date}}',
+        daily: '{{source}} · daily',
+        daysOf7: '{{source}} · {{count}} of 7 days',
+        lastOn: '{{source}} · last on {{date}}',
+        measurements_one: '{{source}} · {{count}} measurement',
+        measurements_other: '{{source}} · {{count}} measurements',
+        missing: 'missing',
+        missingEstimate: 'missing → estimate',
+        optional: 'optional',
+      },
+      status: {
+        found: 'found',
+        missing: 'missing',
+      },
+    },
   },
 };
