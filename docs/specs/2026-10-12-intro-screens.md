@@ -213,7 +213,7 @@ Ein Commit pro Milestone, Messages auf Englisch, jede endet mit `Co-Authored-By:
 
 ---
 
-### Milestone 4 — Rechenbausteine & Jest
+### ✅ Milestone 4 — Rechenbausteine & Jest
 
 > Die reinen Funktionen für Grundumsatz, Alter und Zahlenformat sind unabhängig von React und HealthKit und mit Unit-Tests abgesichert.
 
@@ -235,17 +235,18 @@ Ein Commit pro Milestone, Messages auf Englisch, jede endet mit `Co-Authored-By:
 
 #### To-Dos
 
-- 🔲 Install `npx expo install jest-expo jest @types/jest -- --save-dev` (move to `devDependencies` by hand if `expo install` puts them under `dependencies`, as happened with `eslint-config-expo`)
-- 🔲 Add `"test": "jest"` and `"jest": { "preset": "jest-expo", "moduleNameMapper": { "^@/(.*)$": "<rootDir>/src/$1" } }` to `package.json`
-- 🔲 Create `src/core/bmr.ts`: `type Sex = 'male' | 'female' | 'unspecified'`; `SEX_CONSTANT = { male: 5, female: -161, unspecified: -78 }`; `estimateRestingEnergy({ weightKg, heightCm, ageYears, sex })` = `10 · weightKg + 6.25 · heightCm − 5 · ageYears + SEX_CONSTANT[sex]` in kcal/day, unrounded
-- 🔲 Create `src/core/age.ts`: `ageInYears(dateOfBirth: Date, on: Date)` in full years, birthday counts from that day
-- 🔲 Create `src/core/format.ts`: `formatNumber(value, locale, fractionDigits)`, `formatSigned(value, locale, fractionDigits)` with `+` for positive and U+2212 for negative, `formatApproxKcal(value, locale)` rounding to 10 kcal (`≈ 1.800 kcal`), `parseLocaleNumber(text)` accepting `,` and `.` as decimal separator, returning `undefined` for invalid input
-- 🔲 Test `estimateRestingEnergy`: 82.4 kg / 182 cm / 34 y / male = 1796.5; female = 1630.5; unspecified = 1713.5
-- 🔲 Test `ageInYears`: day before birthday, on birthday, 29 February birth date in a non-leap year
-- 🔲 Test formatting: `formatApproxKcal(1796.5, 'de-DE')` = `≈ 1.800 kcal`, `formatSigned(-0.8, 'de-DE', 1)` = `−0,8`, `formatSigned(-6200, 'en-US', 0)` = `−6,200`, `formatSigned(800, 'de-DE', 0)` = `+800`; `parseLocaleNumber('82,4')` = 82.4, `parseLocaleNumber('abc')` = undefined
-- 🔲 Add `npm test` to the "Checks" list in `README.md`
-- 🔲 Run `npm test`, `npm run lint`, `npm run typecheck`, `npm run format`; all exit 0
-- 🔲 Commit (`feat: add resting energy estimate, formatting helpers and Jest`)
+- ✅ Install `npx expo install jest-expo jest @types/jest -- --save-dev` (move to `devDependencies` by hand if `expo install` puts them under `dependencies`, as happened with `eslint-config-expo`) _(`jest-expo` 57.0.6, `jest` 29.7, `@types/jest` 29.5.14; wieder unter `dependencies` gelandet, von Hand verschoben)_
+- ✅ Add `"test": "jest"` and `"jest": { "preset": "jest-expo", "moduleNameMapper": { "^@/(.*)$": "<rootDir>/src/$1" } }` to `package.json`
+- ✅ Create `src/core/bmr.ts`: `type Sex = 'male' | 'female' | 'unspecified'`; `SEX_CONSTANT = { male: 5, female: -161, unspecified: -78 }`; `estimateRestingEnergy({ weightKg, heightCm, ageYears, sex })` = `10 · weightKg + 6.25 · heightCm − 5 · ageYears + SEX_CONSTANT[sex]` in kcal/day, unrounded
+- ✅ Create `src/core/age.ts`: `ageInYears(dateOfBirth: Date, on: Date)` in full years, birthday counts from that day
+- ✅ Create `src/core/format.ts`: `formatNumber(value, locale, fractionDigits)`, `formatSigned(value, locale, fractionDigits)` with `+` for positive and U+2212 for negative, `formatApproxKcal(value, locale)` rounding to 10 kcal (`≈ 1.800 kcal`), `parseLocaleNumber(text)` accepting `,` and `.` as decimal separator, returning `undefined` for invalid input
+- ✅ Test `estimateRestingEnergy`: 82.4 kg / 182 cm / 34 y / male = 1796.5; female = 1630.5; unspecified = 1713.5
+- ✅ Test `ageInYears`: day before birthday, on birthday, 29 February birth date in a non-leap year
+- ✅ Test formatting: `formatApproxKcal(1796.5, 'de-DE')` = `≈ 1.800 kcal`, `formatSigned(-0.8, 'de-DE', 1)` = `−0,8`, `formatSigned(-6200, 'en-US', 0)` = `−6,200`, `formatSigned(800, 'de-DE', 0)` = `+800`; `parseLocaleNumber('82,4')` = 82.4, `parseLocaleNumber('abc')` = undefined _(zusätzlich: Null nach Rundung ohne Vorzeichen, `+1.200`, `8,2,4` und `-5` ungültig)_
+- ✅ Add `npm test` to the "Checks" list in `README.md`
+- ✅ Run `npm test`, `npm run lint`, `npm run typecheck`, `npm run format`; all exit 0
+- ✅ Commit (`feat: add resting energy estimate, formatting helpers and Jest`)
+- ✅ 🆕 Add `"types": ["jest"]` to `tsconfig.json` _(TypeScript 6 lädt `@types/*` nicht mehr automatisch, sonst kennt `tsc` `describe`/`it`/`expect` nicht)_
 
 #### Notes / Constraints
 

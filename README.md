@@ -38,3 +38,4 @@ Checks:
 - `npm run lint`: ESLint
 - `npm run format`: Prettier (writes changes)
 - `npm run typecheck`: TypeScript
+- `npm test`: Jest unit tests
