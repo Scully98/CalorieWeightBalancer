@@ -279,7 +279,7 @@ sequenceDiagram
 
 ---
 
-### Milestone 5 — Wiederverwendbare Komponenten
+### ✅ Milestone 5 — Wiederverwendbare Komponenten
 
 > Alle UI-Bausteine der vier Seiten existieren einmal, lesen Farben nur über `useColors()` und Schrift nur über `typography.ts`.
 
@@ -303,19 +303,19 @@ sequenceDiagram
 
 #### To-Dos
 
-- 🔲 Create `AppText` wrapping `Text` with `variant` and `tone`; never sets `allowFontScaling={false}`
-- 🔲 Create `Button`: min height 52, full width, pill radius; `primary` = background `foreground`, text `background`; `secondary` = border `border.thick` in `foreground`, text `foreground`; `disabled` = colors from `muted`; `accessibilityRole="button"`, `accessibilityState={{ disabled }}`
-- 🔲 Create `LinkButton`: `AppText variant="secondary" tone="muted"`, hit slop 12, `accessibilityRole="button"`
-- 🔲 Create `Card`: border `border.thick` in `foreground`, radius `radius.card`, padding `space` 16; `dashed` uses `borderStyle: 'dashed'`
-- 🔲 Create `Divider`: `solid` = `border.thin` in `foreground`; `dashed` = dashed `border.thin` in `muted`
-- 🔲 Create `PageIndicator`: active step = pill 24 × 10 filled `foreground`, others = circle 10 × 10 outlined `foreground`; one accessibility element with label "Schritt 2 von 4" / "Step 2 of 4"
-- 🔲 Create `InfoRow`: row with label (`body`) left and detail (`secondary`, `muted`) right, wraps to two lines at large text sizes; optional `children` replace the detail (for inputs)
-- 🔲 Create `StatusRow` and `StatusIcon`: `found` = filled circle `foreground` with "✓" in `background`; `missing` = dashed circle outline `foreground`; icon size follows the label font size; accessibility label combines label, status and detail (e.g. "Nahrung, gefunden, Yazio, seit 3. März")
-- 🔲 Create `SegmentedControl`: outlined pill container, selected segment filled `foreground` with `background` text, `accessibilityRole="radiogroup"` / `"radio"` with `checked` state; allows no selection (`value: undefined`)
-- 🔲 Create `NumberField`: `TextInput` with underline `border.thick` in `foreground`, unit label right, right-aligned text, `keyboardType` `number-pad` or `decimal-pad`, parses via `parseLocaleNumber`, optional `hint` shown in `muted` below when invalid
-- 🔲 Create `Badge`: border `border.thin` `foreground`, `caption` uppercase, small radius
-- 🔲 Run `npm run lint`, `npm run typecheck`, `npm run format`; all exit 0
-- 🔲 Commit (`feat: add reusable UI components`)
+- ✅ Create `AppText` wrapping `Text` with `variant` and `tone`; never sets `allowFontScaling={false}`
+- ✅ Create `Button`: min height 52, full width, pill radius; `primary` = background `foreground`, text `background`; `secondary` = border `border.thick` in `foreground`, text `foreground`; `disabled` = colors from `muted`; `accessibilityRole="button"`, `accessibilityState={{ disabled }}`
+- ✅ Create `LinkButton`: `AppText variant="secondary" tone="muted"`, hit slop 12, `accessibilityRole="button"`
+- ✅ Create `Card`: border `border.thick` in `foreground`, radius `radius.card`, padding `space` 16; `dashed` uses `borderStyle: 'dashed'`
+- ✅ Create `Divider`: `solid` = `border.thin` in `foreground`; `dashed` = dashed `border.thin` in `muted` _(gestrichelt als oben abgeschnittene gestrichelte Box, weil iOS gestrichelte Rahmen nur ringsum zeichnet)_
+- ✅ Create `PageIndicator`: active step = pill 24 × 10 filled `foreground`, others = circle 10 × 10 outlined `foreground`; one accessibility element with label "Schritt 2 von 4" / "Step 2 of 4" _(Label kommt als Prop aus `common.stepOf`)_
+- ✅ Create `InfoRow`: row with label (`body`) left and detail (`secondary`, `muted`) right, wraps to two lines at large text sizes; optional `children` replace the detail (for inputs)
+- ✅ Create `StatusRow` and `StatusIcon`: `found` = filled circle `foreground` with "✓" in `background`; `missing` = dashed circle outline `foreground`; icon size follows the label font size; accessibility label combines label, status and detail (e.g. "Nahrung, gefunden, Yazio, seit 3. März") _(Icon-Größe 22 pt × `fontScale`; Accessibility-Label kommt als Prop)_
+- ✅ Create `SegmentedControl`: outlined pill container, selected segment filled `foreground` with `background` text, `accessibilityRole="radiogroup"` / `"radio"` with `checked` state; allows no selection (`value: undefined`) _(Rahmen mit `radius.card` statt Pille, damit drei Segmente bei großer Schrift umbrechen können)_
+- ✅ Create `NumberField`: `TextInput` with underline `border.thick` in `foreground`, unit label right, right-aligned text, `keyboardType` `number-pad` or `decimal-pad`, parses via `parseLocaleNumber`, optional `hint` shown in `muted` below when invalid _(bleibt textgesteuert (`value`, `onChangeText`); Parsen mit `parseLocaleNumber` und Grenzen prüft `resolveBmrInputs` (M9), das Feld zeigt `hint`, wenn `invalid`)_
+- ✅ Create `Badge`: border `border.thin` `foreground`, `caption` uppercase, small radius
+- ✅ Run `npm run lint`, `npm run typecheck`, `npm run format`; all exit 0
+- ✅ Commit (`feat: add reusable UI components`)
 
 #### Notes / Constraints
 
