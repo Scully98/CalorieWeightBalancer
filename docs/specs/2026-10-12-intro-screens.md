@@ -723,19 +723,19 @@ sequenceDiagram
 
 #### To-Dos
 
-- 🔲 Create screen `health.tsx` (3c) with `step={2}`, no skip; data list as `InfoRow`s with a solid `Divider` on top and dashed `Divider`s between; dashed `Card` "Wichtig vorab" with three bullet lines; footer: primary `Button` "Health-Zugriff erlauben" and caption "Öffnet den iOS-Dialog · Keine medizinische Beratung"
-- 🔲 Wire the 3c button: disable while pending, `await requestReadAccess()`, then `router.push('/intro/found')` in both outcomes (on error 3d explains missing data; log the error in `__DEV__`)
-- 🔲 Create `resolveBmrInputs(scan, userInput, now)`: for each of weight, age, height, sex return `{ source: 'health', value }` or `{ source: 'input', value?, valid }`; age from `ageInYears(dateOfBirth, now)`; sex `male`/`female` from Health as is, `other` → `unspecified` shown as "andere", `notSet` → editable; ranges from Key Decision 24; `estimate` = `estimateRestingEnergy()` when all four are present and valid, else `undefined`
-- 🔲 Test `resolveBmrInputs`: all from Health (no editable fields), height missing (only height editable), out-of-range height counts as missing, `other` → −78 and not editable, `notSet` + "keine Angabe" → −78, Wireframe example → 1796.5
-- 🔲 Create `FoundList` rendering `buildFoundRows()` as `StatusRow`s
-- 🔲 Create `BmrCard`: `Card` with title, explanation, four `InfoRow`s (Health value as "‹Wert› · Health" or `NumberField`/`SegmentedControl` "m | w | keine Angabe"), `Divider`, result row "Grundumsatz" + `formatApproxKcal(estimate)` + `Badge` "GESCHÄTZT", or "–" while incomplete
-- 🔲 Create screen `found.tsx` (3d) with `step={3}`, no skip; loading state ("Suche Daten …") while `useHealthScan` runs; `FoundList`; `BmrCard` only when the Ruheenergie row is missing; footer with `Button secondary` "Berechtigungen prüfen" and `Button primary` "Los geht's" side by side (stacked at Accessibility text sizes)
-- 🔲 Wire "Berechtigungen prüfen" to `Linking.openSettings()`; on return `useHealthScan` re-runs; already entered values stay
-- 🔲 Wire "Los geht's": disabled while the card is visible and `estimate` is `undefined` (Key Decision 17); on press call `completeIntro()` with only the user-entered fields (`weightRecordedOn`/`ageRecordedOn` = today), the guard then routes to `/`
-- 🔲 Add the 3c and 3d texts (tables below) to `de.ts` and `en.ts`
-- 🔲 Check in Settings → Apps → Kcalwaage whether a "Health" entry exists after the request (Open Question 4); if not, switch to `x-apple-health://` and record the decision here
-- 🔲 Run `npm test`, `npm run lint`, `npm run typecheck`, `npm run format`; all exit 0
-- 🔲 Commit (`feat: add Health access and found data intro screens`)
+- ✅ Create screen `health.tsx` (3c) with `step={2}`, no skip; data list as `InfoRow`s with a solid `Divider` on top and dashed `Divider`s between; dashed `Card` "Wichtig vorab" with three bullet lines; footer: primary `Button` "Health-Zugriff erlauben" and caption "Öffnet den iOS-Dialog · Keine medizinische Beratung" _(Platzhalter aus M7 ersetzt; Keys `intro.health.rows.*.label`/`.detail`)_
+- ✅ Wire the 3c button: disable while pending, `await requestReadAccess()`, then `router.push('/intro/found')` in both outcomes (on error 3d explains missing data; log the error in `__DEV__`)
+- ✅ Create `resolveBmrInputs(scan, userInput, now)`: for each of weight, age, height, sex return `{ source: 'health', value }` or `{ source: 'input', value?, valid }`; age from `ageInYears(dateOfBirth, now)`; sex `male`/`female` from Health as is, `other` → `unspecified` shown as "andere", `notSet` → editable; ranges from Key Decision 24; `estimate` = `estimateRestingEnergy()` when all four are present and valid, else `undefined` _(dazu `toStoredProfile()` und `LIMITS`; Health-Werte werden nicht gegen die Grenzen geprüft)_
+- ✅ Test `resolveBmrInputs`: all from Health (no editable fields), height missing (only height editable), out-of-range height counts as missing, `other` → −78 and not editable, `notSet` + "keine Angabe" → −78, Wireframe example → 1796.5 _(7 Tests inkl. `toStoredProfile`: nur Eingaben, mit Datum, nichts aus Health)_
+- ✅ Create `FoundList` rendering `buildFoundRows()` as `StatusRow`s
+- ✅ Create `BmrCard`: `Card` with title, explanation, four `InfoRow`s (Health value as "‹Wert› · Health" or `NumberField`/`SegmentedControl` "m | w | keine Angabe"), `Divider`, result row "Grundumsatz" + `formatApproxKcal(estimate)` + `Badge` "GESCHÄTZT", or "–" while incomplete _(Einheit fürs Alter über neuen Key `intro.found.bmr.years` „Jahre“/„years“)_
+- ✅ Create screen `found.tsx` (3d) with `step={3}`, no skip; loading state ("Suche Daten …") while `useHealthScan` runs; `FoundList`; `BmrCard` only when the Ruheenergie row is missing; footer with `Button secondary` "Berechtigungen prüfen" and `Button primary` "Los geht's" side by side (stacked at Accessibility text sizes) _(Buttons ab `fontScale` > 1,3 untereinander)_
+- ✅ Wire "Berechtigungen prüfen" to `Linking.openSettings()`; on return `useHealthScan` re-runs; already entered values stay
+- ✅ Wire "Los geht's": disabled while the card is visible and `estimate` is `undefined` (Key Decision 17); on press call `completeIntro()` with only the user-entered fields (`weightRecordedOn`/`ageRecordedOn` = today), the guard then routes to `/`
+- ✅ Add the 3c and 3d texts (tables below) to `de.ts` and `en.ts`
+- 🔲 🛑 Check in Settings → Apps → Kcalwaage whether a "Health" entry exists after the request (Open Question 4); if not, switch to `x-apple-health://` and record the decision here _(blocked: braucht Tippen im Simulator, Concerns-Log Nr. 21; Julius prüft in M10)_
+- ✅ Run `npm test`, `npm run lint`, `npm run typecheck`, `npm run format`; all exit 0
+- ✅ Commit (`feat: add Health access and found data intro screens`)
 
 #### Notes / Constraints
 
