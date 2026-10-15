@@ -39,7 +39,7 @@ export function NumberField({
           placeholderTextColor={colors.muted}
           selectionColor={colors.foreground}
           style={[
-            typography.body,
+            { fontSize: typography.body.fontSize },
             styles.input,
             { color: colors.foreground, borderColor: colors.foreground },
           ]}

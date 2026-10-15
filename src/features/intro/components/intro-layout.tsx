@@ -4,6 +4,7 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   StyleSheet,
+  useWindowDimensions,
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -31,6 +32,15 @@ export function IntroLayout({
 }: IntroLayoutProps) {
   const colors = useColors();
   const { t } = useTranslation();
+  const { fontScale } = useWindowDimensions();
+  // At large text sizes a pinned footer would cover most of the screen, so it
+  // scrolls with the content instead.
+  const footerInScroll = fontScale > 1.3;
+  const footerView = (
+    <View style={footerInScroll ? styles.footerInScroll : styles.footer}>
+      {footer}
+    </View>
+  );
 
   return (
     <SafeAreaView
@@ -57,8 +67,9 @@ export function IntroLayout({
           contentContainerStyle={styles.content}
         >
           {children}
+          {footerInScroll ? footerView : null}
         </ScrollView>
-        <View style={styles.footer}>{footer}</View>
+        {footerInScroll ? null : footerView}
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -80,6 +91,10 @@ const styles = StyleSheet.create({
     paddingTop: space.l,
     paddingBottom: space.xl,
     gap: space.l,
+  },
+  footerInScroll: {
+    paddingTop: space.m,
+    gap: space.s,
   },
   footer: {
     paddingHorizontal: space.xl,

@@ -35,7 +35,9 @@ function DayCell({ kind, size }: { kind: DayKind; size?: number }) {
     <View
       style={[
         styles.cell,
-        size ? { width: size, height: size } : styles.gridCell,
+        size
+          ? { width: size, height: size, borderWidth: 1.5 }
+          : styles.gridCell,
         {
           borderColor: colors.foreground,
           borderStyle: kind === 'empty' ? 'dashed' : 'solid',
