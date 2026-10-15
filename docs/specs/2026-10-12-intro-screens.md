@@ -323,7 +323,7 @@ sequenceDiagram
 
 ---
 
-### Milestone 6 — App-Group-Speicher
+### ✅ Milestone 6 — App-Group-Speicher
 
 > Intro-Status und Profilwerte liegen in der App Group und sind synchron lesbar, mit Tests für Serialisierung und Fehlerfälle.
 
@@ -339,15 +339,15 @@ sequenceDiagram
 
 #### To-Dos
 
-- 🔲 Create `src/storage/app-group.ts` exporting `APP_GROUP` and `appGroupStorage = new ExtensionStorage(APP_GROUP)`
-- 🔲 Create `src/storage/settings.ts` with keys `introCompleted` (`'1'` or absent) and `profile.v1` (JSON string of `StoredProfile = { heightCm?: number; sex?: Sex; weightKg?: number; weightRecordedOn?: string; ageYears?: number; ageRecordedOn?: string }`, dates as `YYYY-MM-DD`)
-- 🔲 Implement `useIntroCompleted()` with `useSyncExternalStore` (subscribe list inside the module, snapshot from `appGroupStorage.get('introCompleted') === '1'`)
-- 🔲 Implement `completeIntro(profile: StoredProfile)`: write `profile.v1` (only defined fields), then `introCompleted`, then notify subscribers
-- 🔲 Implement `getProfile()`: parse `profile.v1`, return `{}` for missing or invalid JSON
-- 🔲 Implement `resetIntro()`: remove both keys, notify subscribers (used only by the dev button)
-- 🔲 Test with `jest.mock('@bacons/apple-targets')` (in-memory map): round trip, invalid JSON → `{}`, reset clears both keys, subscribers are notified
-- 🔲 Run `npm test`, `npm run lint`, `npm run typecheck`, `npm run format`; all exit 0
-- 🔲 Commit (`feat: add App Group settings storage`)
+- ✅ Create `src/storage/app-group.ts` exporting `APP_GROUP` and `appGroupStorage = new ExtensionStorage(APP_GROUP)`
+- ✅ Create `src/storage/settings.ts` with keys `introCompleted` (`'1'` or absent) and `profile.v1` (JSON string of `StoredProfile = { heightCm?: number; sex?: Sex; weightKg?: number; weightRecordedOn?: string; ageYears?: number; ageRecordedOn?: string }`, dates as `YYYY-MM-DD`)
+- ✅ Implement `useIntroCompleted()` with `useSyncExternalStore` (subscribe list inside the module, snapshot from `appGroupStorage.get('introCompleted') === '1'`) _(Abo-Funktion als `subscribeToSettings` exportiert, damit Tests sie nutzen können; dazu `isIntroCompleted()`)_
+- ✅ Implement `completeIntro(profile: StoredProfile)`: write `profile.v1` (only defined fields), then `introCompleted`, then notify subscribers
+- ✅ Implement `getProfile()`: parse `profile.v1`, return `{}` for missing or invalid JSON
+- ✅ Implement `resetIntro()`: remove both keys, notify subscribers (used only by the dev button)
+- ✅ Test with `jest.mock('@bacons/apple-targets')` (in-memory map): round trip, invalid JSON → `{}`, reset clears both keys, subscribers are notified _(5 Tests, zusätzlich JSON-Array `[1,2]` → `{}`)_
+- ✅ Run `npm test`, `npm run lint`, `npm run typecheck`, `npm run format`; all exit 0
+- ✅ Commit (`feat: add App Group settings storage`)
 
 #### Notes / Constraints
 
