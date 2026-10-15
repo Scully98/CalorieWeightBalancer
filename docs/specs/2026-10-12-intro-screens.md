@@ -172,7 +172,7 @@ Ein Commit pro Milestone, Messages auf Englisch, jede endet mit `Co-Authored-By:
 
 ---
 
-### Milestone 3 — Design-Grundlagen & i18n
+### ✅ Milestone 3 — Design-Grundlagen & i18n
 
 > Farben, Schrift, Abstände und Übersetzungen stehen als kleine, wiederverwendbare Bausteine bereit, bevor Komponenten entstehen.
 
@@ -195,17 +195,17 @@ Ein Commit pro Milestone, Messages auf Englisch, jede endet mit `Co-Authored-By:
 
 #### To-Dos
 
-- 🔲 Add token `muted` to `ColorTokens`, light `#6E6E6E`, dark `#A0A0A0`; update the comment in `colors.ts` (muted = secondary text, dashed lines, disabled)
-- 🔲 Create `src/theme/typography.ts` with iOS text-style sizes at the default content size: `title` 28/34 bold, `body` 17/22, `bodyStrong` 17/22 semibold, `secondary` 15/20, `caption` 12/16, `number` 28/34 bold with `fontVariant: ['tabular-nums']`, `numberLarge` 48/56 bold tabular; system font only, no `fontFamily`
-- 🔲 Create `src/theme/spacing.ts`: `space` 4/8/12/16/24/32, `radius.card` 16, `radius.pill` 999, `border.thick` 2, `border.thin` 1
-- 🔲 Install `npm install --save-exact i18next@26.4.2 react-i18next@17.0.15`
-- 🔲 Create `src/i18n/index.ts`: `i18next.use(initReactI18next).init({ resources: { de, en }, lng: <device language via getLocales()[0].languageCode, 'de' if it starts with de, else 'en'>, fallbackLng: 'en', supportedLngs: ['de', 'en'], interpolation: { escapeValue: false } })`; export `formatLocale()` returning `de-DE` or `en-US` for `Intl`
-- 🔲 Create `src/i18n/locales/de.ts` with keys `common.next`, `common.skip` and the intro namespace skeleton; `en.ts` typed as `typeof de` (no `as const` in `de.ts`, so values stay `string`) so missing keys fail typecheck
-- 🔲 Create `src/i18n/i18next.d.ts` declaring `CustomTypeOptions` with `resources: { translation: typeof de }`
-- 🔲 Import `@/i18n` in `src/app/_layout.tsx`
-- 🔲 Check in the development build whether `Intl.PluralRules` exists on Hermes (log `typeof Intl.PluralRules` and `new Intl.PluralRules('de').select(1)`); if missing, add the `intl-pluralrules` polyfill (a release at least 14 days old) imported first in `src/i18n/index.ts`, and document the result here
-- 🔲 Run `npm run lint`, `npm run typecheck`, `npm run format`; all exit 0
-- 🔲 Commit (`feat: add muted token, typography and i18n setup`)
+- ✅ Add token `muted` to `ColorTokens`, light `#6E6E6E`, dark `#A0A0A0`; update the comment in `colors.ts` (muted = secondary text, dashed lines, disabled)
+- ✅ Create `src/theme/typography.ts` with iOS text-style sizes at the default content size: `title` 28/34 bold, `body` 17/22, `bodyStrong` 17/22 semibold, `secondary` 15/20, `caption` 12/16, `number` 28/34 bold with `fontVariant: ['tabular-nums']`, `numberLarge` 48/56 bold tabular; system font only, no `fontFamily`
+- ✅ Create `src/theme/spacing.ts`: `space` 4/8/12/16/24/32, `radius.card` 16, `radius.pill` 999, `border.thick` 2, `border.thin` 1
+- ✅ Install `npm install --save-exact i18next@26.4.2 react-i18next@17.0.15` _(dazu `intl-pluralrules` 2.0.1, siehe letzter To-do)_
+- ✅ Create `src/i18n/index.ts`: `i18next.use(initReactI18next).init({ resources: { de, en }, lng: <device language via getLocales()[0].languageCode, 'de' if it starts with de, else 'en'>, fallbackLng: 'en', supportedLngs: ['de', 'en'], interpolation: { escapeValue: false } })`; export `formatLocale()` returning `de-DE` or `en-US` for `Intl` _(eigene Instanz über `createInstance()` statt Default-Import, wegen der Lint-Regel `import/no-named-as-default-member`; `initAsync: false`, damit die Texte beim ersten Render da sind; Export `i18n`)_
+- ✅ Create `src/i18n/locales/de.ts` with keys `common.next`, `common.skip` and the intro namespace skeleton; `en.ts` typed as `typeof de` (no `as const` in `de.ts`, so values stay `string`) so missing keys fail typecheck _(dazu `common.stepOf` für die Seitenanzeige)_
+- ✅ Create `src/i18n/i18next.d.ts` declaring `CustomTypeOptions` with `resources: { translation: typeof de }`
+- ✅ Import `@/i18n` in `src/app/_layout.tsx`
+- ✅ Check in the development build whether `Intl.PluralRules` exists on Hermes (log `typeof Intl.PluralRules` and `new Intl.PluralRules('de').select(1)`); if missing, add the `intl-pluralrules` polyfill (a release at least 14 days old) imported first in `src/i18n/index.ts`, and document the result here _(Ergebnis: fehlt in Hermes; `intl-pluralrules` 2.0.1 eingebunden (Concerns-Log Nr. 20). `Intl.NumberFormat` und `Intl.DateTimeFormat` sind vorhanden: „1.800“, „3. März“)_
+- ✅ Run `npm run lint`, `npm run typecheck`, `npm run format`; all exit 0
+- ✅ Commit (`feat: add muted token, typography and i18n setup`)
 
 #### Notes / Constraints
 
@@ -1028,7 +1028,7 @@ Keine App-Kürzel (siehe 3a, 3b). Auf 3d gibt es Zahlenfelder; im Simulator kann
 |---|----------|-------|----------------------|
 | 1 | ❓ Wie sehen die echten Rückgabe-Objekte von `getMostRecentQuantitySample`, `queryQuantitySamples`, `queryStatisticsCollectionForQuantity` und der Characteristics aus (Felder, Einheiten, `productType`)? Wird per To-do in M8 im Simulator erhoben (Key Decision 10); danach 🔗-Block | Claude (M8) | Detailtexte in 3d könnten auf falschen Feldannahmen beruhen |
 | 2 | ❓ Bettet ein EAS-Simulator-Build (`ios.simulator: true`, ohne Apple-Credentials) die Entitlements HealthKit und App Group ein? Geprüft wurde nur der lokale Build | Claude (M10) | Ohne Entitlements kein Health-Dialog und kein gemeinsamer Container im EAS-Build; lokaler Build bleibt Abnahmeweg |
-| 3 | ❓ Hat Hermes in RN 0.86 `Intl.PluralRules`? | Claude (M3) | Ohne Polyfill falsche Pluralformen („14 Messung“) |
+| 3 | ❓ Hat Hermes in RN 0.86 `Intl.PluralRules`? **Beantwortet 2026-10-15: nein, Polyfill `intl-pluralrules` (Concerns-Log Nr. 20)** | Claude (M3) | Ohne Polyfill falsche Pluralformen („14 Messung“) |
 | 4 | ❓ Zeigt iOS unter Einstellungen → Apps → Kcalwaage einen Eintrag „Health“, sodass `Linking.openSettings()` für „Berechtigungen prüfen“ reicht? | Claude (M9) | Sonst Fallback `x-apple-health://` |
 | 5 | ❓ Passen die englischen Texte (Tabellen in M2, M7, M8, M9) und die vorgeschlagenen DE-Texte für 3a (Key Decision 4)? | Julius | Texte werden vor dem Merge noch einmal angefasst |
 | 6 | ❓ Wo lassen sich Größe, Geschlecht usw. später ändern, und was passiert, wenn Ruheenergie nur für einen Teil der Tage existiert (Uhr erst seit Kurzem) und Größe nie abgefragt wurde? | Julius (Spec Schritt 6) | Rechenkern kann ältere Tage ohne Ruheenergie nicht schätzen |
@@ -1055,3 +1055,6 @@ Keine App-Kürzel (siehe 3a, 3b). Auf 3d gibt es Zahlenfelder; im Simulator kann
 | 15 | 💡 Alternative | Feature-Spec rechnet Ruheenergie pro Tag mit Gewicht und Alter dieses Tages; das Intro zeigt nur eine aktuelle Schätzung | Intro speichert nur Eingaben, die Tageswerte rechnet der Rechenkern (Schritt 5) — Claude 2026-10-12 |
 | 16 | ⚠️ Concern | Der iOS-Health-Dialog sagt „zugreifen und sie aktualisieren“, obwohl nur gelesen wird (im Spike beobachtet) | iOS-Standardtext, nicht gestaltbar; `NSHealthUpdateUsageDescription` bleibt weg — Claude 2026-10-12 |
 | 17 | ⚠️ Concern | Die `create-spec`-Anleitung verweist auf `docs/references/patterns/docs/specs.md` bzw. `docs/reference/patterns/docs/spec.md`; die Dateien liegen unter `.claude/docs/reference/patterns/docs/specs.md` und `doc-building-blocks.md`. `implement-spec` erwartet Dateinamen `SPEC-<n>-DRAFT-…`, `specs.md` dagegen `YYYY-MM-DD-…` | Gelesen aus `.claude/docs/…`; Dateiname nach `specs.md` wie die Expo-Spec — Open, Julius gleicht die Skills an |
+| 18 | ⚠️ Concern | `@bacons/apple-targets` warnt bei jedem `expo install`/`expo start`: „Expo config is missing required ios.appleTeamId property … iOS builds may fail“. Ohne bezahlten Account gibt es keine Team-ID | Für Simulator-Builds ohne Targets folgenlos (Build in M2 fehlerfrei); `ios.appleTeamId` mit dem Developer Account setzen, spätestens in Schritt 9 (Widget) — Claude 2026-10-15 |
+| 19 | ⚠️ Concern | `xcrun simctl openurl` auf den Dev-Client-Link zeigt im Simulator den iOS-Dialog „In ‚Kcalwaage‘ öffnen?“; ohne Bedienungshilfen-Recht für `osascript` kann Claude ihn nicht bestätigen, Screenshots bleiben verdeckt | Sichtprüfungen per Release-Build (`npx expo run:ios --configuration Release`, JS eingebettet, kein Metro, kein Deep Link); Simulator-Neustart räumt den Dialog weg — Claude 2026-10-15 |
+| 20 | ⚠️ Concern | Hermes in RN 0.86 hat kein `Intl.PluralRules` (Prüfung im Dev-Build: `typeof Intl.PluralRules` = `undefined`); i18next bräuchte es für `_one`/`_other` | Polyfill `intl-pluralrules` 2.0.1 (2023-07-06, ISC, keine Abhängigkeiten) exakt gepinnt, als erster Import in `src/i18n/index.ts`; Open Question 3 damit beantwortet — Claude 2026-10-15 |
