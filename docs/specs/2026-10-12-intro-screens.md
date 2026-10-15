@@ -105,7 +105,7 @@ Ein Commit pro Milestone, Messages auf Englisch, jede endet mit `Co-Authored-By:
 
 ---
 
-### Milestone 1 — Vorbereitung
+### ✅ Milestone 1 — Vorbereitung
 
 > Der Feature-Branch steht auf `origin/setup`, und die Spec liegt darin.
 
@@ -120,7 +120,7 @@ Ein Commit pro Milestone, Messages auf Englisch, jede endet mit `Co-Authored-By:
 #### To-Dos
 
 - ✅ Create branch `feature/intro-screens` from `origin/setup` without upstream tracking (`git switch --no-track -c feature/intro-screens origin/setup`) _(2026-10-12 bei der Spec-Erstellung, Basis `d3a479f`)_
-- 🔲 Commit this spec (`docs: add implementation spec for intro screens`)
+- ✅ Commit this spec (`docs: add implementation spec for intro screens`) _(von Julius committet als `488ad97` „intro screen spec“; danach `origin/main` in den Branch gemergt (`3ce23bf`), weil `setup` per PR #1 in `main` ist)_
 
 #### Notes / Constraints
 
@@ -128,7 +128,7 @@ Ein Commit pro Milestone, Messages auf Englisch, jede endet mit `Co-Authored-By:
 
 ---
 
-### Milestone 2 — Native Abhängigkeiten & App-Konfiguration
+### ✅ Milestone 2 — Native Abhängigkeiten & App-Konfiguration
 
 > Alle nativen Teile, die das Intro braucht, sind installiert und konfiguriert, damit der Development Build nur einmal neu gebaut werden muss.
 
@@ -146,18 +146,18 @@ Ein Commit pro Milestone, Messages auf Englisch, jede endet mit `Co-Authored-By:
 
 #### To-Dos
 
-- 🔲 Install HealthKit with exact versions: `npx expo install @kingstinct/react-native-healthkit@16.0.0 react-native-nitro-modules@0.37.1`, then make both exact (no `^`) in `package.json`
-- 🔲 Install `npx expo install @bacons/apple-targets@5.0.0 expo-localization` (`expo-localization` resolves to ~57.0.2); make `@bacons/apple-targets` exact
-- 🔲 Add the HealthKit plugin to `app.json`: `["@kingstinct/react-native-healthkit", { "NSHealthShareUsageDescription": "<English text from the table below>", "NSHealthUpdateUsageDescription": false, "background": false }]`
-- 🔲 Add `"@bacons/apple-targets"` to `plugins` (no `targets/` folder yet; the plugin does nothing without targets)
-- 🔲 Add `"ios.entitlements": { "com.apple.security.application-groups": ["group.com.scully98.calorieweightbalancer"] }`
-- 🔲 Add `expo-localization` to `plugins` with supported locales `de` and `en` for iOS (per-app language in iOS Settings), following the SDK 57 docs for the exact option name
-- 🔲 Create `src/i18n/native/de.json` and `en.json` and reference them in `"locales"` in `app.json` (SDK 57 format per Expo localization guide)
-- 🔲 Run `npx expo prebuild --clean --platform ios`, then check `ios/Kcalwaage/Kcalwaage.entitlements` contains `com.apple.developer.healthkit` and `com.apple.security.application-groups`, and `Info.plist` contains `NSHealthShareUsageDescription` but no `NSHealthUpdateUsageDescription`
-- 🔲 Build and launch locally with `npx expo run:ios`; Hello page still appears
-- 🔲 Run `npx expo-doctor` and note warnings (esp. `@bacons/apple-targets` pulling `@expo/prebuild-config` ~55, Concerns-Log Nr. 12)
-- 🔲 Run `npm run lint`, `npm run typecheck`, `npm run format`; all exit 0
-- 🔲 Commit (`chore: add HealthKit, App Group and localization native setup`)
+- ✅ Install HealthKit with exact versions: `npx expo install @kingstinct/react-native-healthkit@16.0.0 react-native-nitro-modules@0.37.1`, then make both exact (no `^`) in `package.json` _(`expo install` hat beide schon exakt eingetragen)_
+- ✅ Install `npx expo install @bacons/apple-targets@5.0.0 expo-localization` (`expo-localization` resolves to ~57.0.2); make `@bacons/apple-targets` exact _(`expo-localization` 57.0.2; `expo install` warnt „Expo config is missing required ios.appleTeamId“, siehe Concerns-Log Nr. 18)_
+- ✅ Add the HealthKit plugin to `app.json`: `["@kingstinct/react-native-healthkit", { "NSHealthShareUsageDescription": "<English text from the table below>", "NSHealthUpdateUsageDescription": false, "background": false }]`
+- ✅ Add `"@bacons/apple-targets"` to `plugins` (no `targets/` folder yet; the plugin does nothing without targets)
+- ✅ Add `"ios.entitlements": { "com.apple.security.application-groups": ["group.com.scully98.calorieweightbalancer"] }`
+- ✅ Add `expo-localization` to `plugins` with supported locales `de` and `en` for iOS (per-app language in iOS Settings), following the SDK 57 docs for the exact option name _(Option `supportedLocales: { ios: ['de', 'en'] }` setzt `CFBundleLocalizations`)_
+- ✅ Create `src/i18n/native/de.json` and `en.json` and reference them in `"locales"` in `app.json` (SDK 57 format per Expo localization guide) _(Format `{ "ios": { … } }` laut `ExpoConfig.locales`; erzeugt `de.lproj`/`en.lproj/InfoPlist.strings`)_
+- ✅ Run `npx expo prebuild --clean --platform ios`, then check `ios/Kcalwaage/Kcalwaage.entitlements` contains `com.apple.developer.healthkit` and `com.apple.security.application-groups`, and `Info.plist` contains `NSHealthShareUsageDescription` but no `NSHealthUpdateUsageDescription` _(alles vorhanden, `NSHealthUpdateUsageDescription` fehlt wie gewollt)_
+- ✅ Build and launch locally with `npx expo run:ios`; Hello page still appears _(Debug-Build 0 Fehler, installiert; das JS lief im Dev-Client (Metro-Log), die Sichtprüfung verdeckte ein iOS-Dialog, siehe Concerns-Log Nr. 19; Sichtprüfungen ab M7 mit Release-Builds)_
+- ✅ Run `npx expo-doctor` and note warnings (esp. `@bacons/apple-targets` pulling `@expo/prebuild-config` ~55, Concerns-Log Nr. 12) _(20/21: nur neuere Expo-Patch-Versionen (`expo` 57.0.29, `expo-router` 57.0.27 u. a.), nicht Teil dieses Pakets; keine Warnung zu `@bacons/apple-targets`)_
+- ✅ Run `npm run lint`, `npm run typecheck`, `npm run format`; all exit 0
+- ✅ Commit (`chore: add HealthKit, App Group and localization native setup`)
 
 #### Notes / Constraints
 
