@@ -17,11 +17,7 @@ export function PageIndicator({
   const colors = useColors();
 
   return (
-    <View
-      accessible
-      accessibilityLabel={accessibilityLabel}
-      style={styles.row}
-    >
+    <View accessible accessibilityLabel={accessibilityLabel} style={styles.row}>
       {Array.from({ length: count }, (_, i) => (
         <View
           key={i}

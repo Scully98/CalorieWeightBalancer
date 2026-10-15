@@ -10,9 +10,9 @@ describe('estimateRestingEnergy', () => {
   });
 
   it('uses -161 for female', () => {
-    expect(
-      estimateRestingEnergy({ ...wireframe, sex: 'female' }),
-    ).toBeCloseTo(1630.5);
+    expect(estimateRestingEnergy({ ...wireframe, sex: 'female' })).toBeCloseTo(
+      1630.5,
+    );
   });
 
   it('uses the mean -78 when no sex is given', () => {

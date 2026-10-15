@@ -53,11 +53,7 @@ export function StatusRow({
   accessibilityLabel,
 }: StatusRowProps) {
   return (
-    <View
-      accessible
-      accessibilityLabel={accessibilityLabel}
-      style={styles.row}
-    >
+    <View accessible accessibilityLabel={accessibilityLabel} style={styles.row}>
       <StatusIcon status={status} />
       <AppText style={styles.label}>{label}</AppText>
       <AppText variant="secondary" tone="muted" style={styles.detail}>

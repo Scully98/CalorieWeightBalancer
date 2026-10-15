@@ -1,8 +1,4 @@
-import {
-  formatApproxKcal,
-  formatSigned,
-  parseLocaleNumber,
-} from '../format';
+import { formatApproxKcal, formatSigned, parseLocaleNumber } from '../format';
 
 describe('formatApproxKcal', () => {
   it('rounds to 10 kcal with German grouping', () => {
