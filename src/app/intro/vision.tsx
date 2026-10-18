@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { AppText } from '@/components/app-text';
 import { Button } from '@/components/button';
+import { Headline } from '@/components/headline';
 import { BalanceBarsIllustration } from '@/features/intro/components/balance-bars-illustration';
 import { IntroLayout } from '@/features/intro/components/intro-layout';
 
@@ -21,10 +22,10 @@ export default function IntroVisionScreen() {
         />
       }
     >
-      <AppText variant="title" accessibilityRole="header">
-        {t('intro.vision.title')}
-      </AppText>
-      <AppText>{t('intro.vision.body')}</AppText>
+      <Headline
+        title={t('intro.vision.title')}
+        subline={t('intro.vision.body')}
+      />
       <BalanceBarsIllustration />
       <AppText variant="secondary" tone="muted">
         {t('intro.vision.footer')}

@@ -7,6 +7,7 @@ import { AppText } from '@/components/app-text';
 import { Button } from '@/components/button';
 import { Card } from '@/components/card';
 import { Divider } from '@/components/divider';
+import { Headline } from '@/components/headline';
 import { InfoRow } from '@/components/info-row';
 import { IntroLayout } from '@/features/intro/components/intro-layout';
 import { requestReadAccess } from '@/health/authorization';
@@ -44,10 +45,10 @@ export default function IntroHealthScreen() {
         </>
       }
     >
-      <AppText variant="title" accessibilityRole="header">
-        {t('intro.health.title')}
-      </AppText>
-      <AppText>{t('intro.health.body')}</AppText>
+      <Headline
+        title={t('intro.health.title')}
+        subline={t('intro.health.body')}
+      />
       <View>
         <Divider />
         {ROWS.map((row, index) => (

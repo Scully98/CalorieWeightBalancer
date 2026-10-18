@@ -7,6 +7,7 @@ import { useColors } from '@/theme/use-colors';
 // scales all text alike, so large styles are capped to keep words intact.
 const MAX_FONT_SCALE: Partial<Record<TextVariant, number>> = {
   title: 2,
+  title2: 2,
   number: 2,
   numberLarge: 1.5,
 };

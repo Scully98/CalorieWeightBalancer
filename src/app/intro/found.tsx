@@ -4,6 +4,7 @@ import { Linking, StyleSheet, useWindowDimensions, View } from 'react-native';
 
 import { AppText } from '@/components/app-text';
 import { Button } from '@/components/button';
+import { Headline } from '@/components/headline';
 import {
   resolveBmrInputs,
   toStoredProfile,
@@ -67,10 +68,10 @@ export default function IntroFoundScreen() {
         </View>
       }
     >
-      <AppText variant="title" accessibilityRole="header">
-        {t('intro.found.title')}
-      </AppText>
-      <AppText variant="secondary">{t('intro.found.body')}</AppText>
+      <Headline
+        title={t('intro.found.title')}
+        subline={t('intro.found.body')}
+      />
       {scan ? (
         <FoundList rows={buildFoundRows(scan, now, t, locale)} />
       ) : (

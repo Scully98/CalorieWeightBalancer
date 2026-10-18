@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { AppText } from '@/components/app-text';
 import { Button } from '@/components/button';
 import { Card } from '@/components/card';
+import { Headline } from '@/components/headline';
 import { formatSigned } from '@/core/format';
 import { IntroLayout } from '@/features/intro/components/intro-layout';
 import { MonthGridIllustration } from '@/features/intro/components/month-grid-illustration';
@@ -25,10 +26,10 @@ export default function IntroBigPictureScreen() {
         />
       }
     >
-      <AppText variant="title" accessibilityRole="header">
-        {t('intro.bigPicture.title')}
-      </AppText>
-      <AppText>{t('intro.bigPicture.body')}</AppText>
+      <Headline
+        title={t('intro.bigPicture.title')}
+        subline={t('intro.bigPicture.body')}
+      />
       <MonthGridIllustration />
       <Card>
         <AppText variant="secondary">{t('intro.bigPicture.total')}</AppText>
