@@ -9,6 +9,7 @@ import {
 } from '@kingstinct/react-native-healthkit';
 
 import { QUANTITY } from './read-types';
+import { safe } from './safe';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -25,22 +26,31 @@ export type HealthScan = {
   resting: RowScan & { daysWithData: number };
   weight: RowScan & { count: number };
   bodyFat: RowScan & { count: number };
-  profile: {
-    weightKg?: number;
-    heightCm?: number;
-    dateOfBirth?: Date;
-    biologicalSex: BiologicalSex;
-  };
+  profile: HealthProfile;
 };
 
-// Denied read access looks like missing data, so every query falls back
-// instead of failing the whole scan.
-async function safe<T>(query: () => Promise<T>, fallback: T): Promise<T> {
-  try {
-    return await query();
-  } catch {
-    return fallback;
-  }
+export type HealthProfile = {
+  weightKg?: number;
+  heightCm?: number;
+  dateOfBirth?: Date;
+  biologicalSex: BiologicalSex;
+};
+
+// Inputs for the resting energy estimate. Must only run after
+// requestReadAccess().
+export async function readHealthProfile(): Promise<HealthProfile> {
+  const [weightKg, height, dateOfBirth, biologicalSex] = await Promise.all([
+    safe(() => getMostRecentQuantitySample(QUANTITY.weight, 'kg'), undefined),
+    safe(() => getMostRecentQuantitySample(QUANTITY.height, 'cm'), undefined),
+    safe(() => getDateOfBirthAsync(), undefined),
+    safe(() => getBiologicalSexAsync(), BiologicalSex.notSet),
+  ]);
+  return {
+    weightKg: weightKg?.quantity,
+    heightCm: height?.quantity,
+    dateOfBirth,
+    biologicalSex,
+  };
 }
 
 function startOfDay(date: Date): Date {
@@ -119,10 +129,7 @@ export async function scanHealthData(now: Date): Promise<HealthScan> {
     bodyFatCount,
     leanMass,
     leanMassCount,
-    weightKg,
-    height,
-    dateOfBirth,
-    biologicalSex,
+    profile,
   ] = await Promise.all([
     latest(QUANTITY.food),
     safe(
@@ -144,10 +151,7 @@ export async function scanHealthData(now: Date): Promise<HealthScan> {
     sampleCount(QUANTITY.bodyFat),
     latest(QUANTITY.leanMass),
     sampleCount(QUANTITY.leanMass),
-    safe(() => getMostRecentQuantitySample(QUANTITY.weight, 'kg'), undefined),
-    safe(() => getMostRecentQuantitySample(QUANTITY.height, 'cm'), undefined),
-    safe(() => getDateOfBirthAsync(), undefined),
-    safe(() => getBiologicalSexAsync(), BiologicalSex.notSet),
+    readHealthProfile(),
   ]);
 
   // Body fat row also counts lean body mass measurements.
@@ -161,11 +165,6 @@ export async function scanHealthData(now: Date): Promise<HealthScan> {
     resting: { ...resting, daysWithData: restingDays },
     weight: { ...weight, count: weightCount },
     bodyFat: composition,
-    profile: {
-      weightKg: weightKg?.quantity,
-      heightCm: height?.quantity,
-      dateOfBirth,
-      biologicalSex,
-    },
+    profile,
   };
 }

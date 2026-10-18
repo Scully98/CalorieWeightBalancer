@@ -57,7 +57,10 @@ function numberState(
   };
 }
 
-function sexState(healthSex: BiologicalSex, input: Sex | undefined): SexState {
+export function sexState(
+  healthSex: BiologicalSex,
+  input: Sex | undefined,
+): SexState {
   switch (healthSex) {
     case BiologicalSex.male:
       return { source: 'health', value: 'male', fromHealth: 'male' };

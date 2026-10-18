@@ -6,6 +6,19 @@ export const en: typeof de = {
     skip: 'Skip',
     stepOf: 'Step {{current}} of {{count}}',
   },
+  home: {
+    period: 'Last 30 days, excluding today',
+    loading: 'Calculating …',
+    kcal: '{{value}} kcal',
+    sign: 'Plus = ate more than you burned',
+    fat: '{{value}} kg fat',
+    fatLabel: 'estimated, theoretical (7,700 kcal per kg)',
+    daysWithoutFood_one: '{{count}} day without an entry counted as neutral',
+    daysWithoutFood_other: '{{count}} days without an entry counted as neutral',
+    empty:
+      'No food data in the last 30 days. Does your tracker sync with Apple Health?',
+    checkPermissions: 'Check permissions',
+  },
   intro: {
     vision: {
       title: 'You count. You track. And nothing happens?',

@@ -4,6 +4,19 @@ export const de = {
     skip: 'Überspringen',
     stepOf: 'Schritt {{current}} von {{count}}',
   },
+  home: {
+    period: 'Letzte 30 Tage, ohne heute',
+    loading: 'Rechne …',
+    kcal: '{{value}} kcal',
+    sign: 'Plus = mehr gegessen als verbraucht',
+    fat: '{{value}} kg Fett',
+    fatLabel: 'geschätzt, theoretisch (7.700 kcal pro kg)',
+    daysWithoutFood_one: '{{count}} Tag ohne Eintrag als neutral gezählt',
+    daysWithoutFood_other: '{{count}} Tage ohne Eintrag als neutral gezählt',
+    empty:
+      'Keine Nahrungsdaten in den letzten 30 Tagen. Synchronisiert dein Tracker mit Apple Health?',
+    checkPermissions: 'Berechtigungen prüfen',
+  },
   intro: {
     vision: {
       title: 'Du zählst. Du trackst. Und nichts passiert?',

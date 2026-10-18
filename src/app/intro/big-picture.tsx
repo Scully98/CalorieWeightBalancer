@@ -40,13 +40,11 @@ export default function IntroBigPictureScreen() {
         <AppText variant="numberLarge">
           {formatSigned(-6200, locale)} kcal
         </AppText>
-        
+
         <AppText variant="secondary" tone="muted">
           {t('intro.bigPicture.fat')}
-          <AppText>
-          ≈ {formatNumber(0.8, locale, 1)} kg
-          </AppText>
-           {t('intro.bigPicture.theoretical')}
+          <AppText>≈ {formatNumber(0.8, locale, 1)} kg</AppText>
+          {t('intro.bigPicture.theoretical')}
         </AppText>
       </View>
     </IntroLayout>
