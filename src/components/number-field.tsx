@@ -1,7 +1,7 @@
 import { StyleSheet, TextInput, View } from 'react-native';
 
 import { AppText } from './app-text';
-import { border, space } from '@/theme/spacing';
+import { border, space, touchTarget } from '@/theme/spacing';
 import { typography } from '@/theme/typography';
 import { useColors } from '@/theme/use-colors';
 
@@ -11,7 +11,7 @@ type NumberFieldProps = {
   unit: string;
   keyboardType: 'number-pad' | 'decimal-pad';
   accessibilityLabel: string;
-  // Shown in muted below the field while the value is invalid.
+  // Read by VoiceOver as a hint; shown in muted below the field while invalid.
   hint?: string;
   invalid?: boolean;
 };
@@ -34,8 +34,9 @@ export function NumberField({
           value={value}
           onChangeText={onChangeText}
           keyboardType={keyboardType}
-          accessibilityLabel={accessibilityLabel}
-          accessibilityHint={invalid ? hint : undefined}
+          // VoiceOver reads the unit with the label, e.g. "Weight, kg".
+          accessibilityLabel={`${accessibilityLabel}, ${unit}`}
+          accessibilityHint={hint}
           placeholderTextColor={colors.muted}
           selectionColor={colors.foreground}
           style={[
@@ -44,7 +45,7 @@ export function NumberField({
             { color: colors.foreground, borderColor: colors.foreground },
           ]}
         />
-        <AppText>{unit}</AppText>
+        <AppText accessibilityElementsHidden>{unit}</AppText>
       </View>
       {invalid && hint ? (
         <AppText variant="caption" tone="muted">
@@ -67,7 +68,7 @@ const styles = StyleSheet.create({
   },
   input: {
     minWidth: 72,
-    minHeight: 44,
+    minHeight: touchTarget,
     borderBottomWidth: border.thick,
     textAlign: 'right',
     paddingVertical: space.xs,

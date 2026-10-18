@@ -45,7 +45,7 @@ export default function IntroBigPictureScreen() {
           {t('intro.bigPicture.fat')}
           <AppText>
           ≈ {formatNumber(0.8, locale, 1)} kg
-        </AppText>
+          </AppText>
            {t('intro.bigPicture.theoretical')}
         </AppText>
       </View>
@@ -56,7 +56,7 @@ export default function IntroBigPictureScreen() {
 const styles = StyleSheet.create({
   indicator: {
     alignItems: 'center',
-    marginTop: space.l,
+    marginTop: space.xxl,
   },
   fat: {
     marginTop: space.s,

@@ -13,6 +13,9 @@ export const radius = {
   pill: 999,
 } as const;
 
+// Minimum height of tappable controls (Apple HIG).
+export const touchTarget = 44;
+
 export const border = {
   thin: 1,
   thick: 2,

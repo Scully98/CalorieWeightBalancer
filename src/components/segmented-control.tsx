@@ -1,12 +1,14 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { AppText } from './app-text';
-import { border, radius, space } from '@/theme/spacing';
+import { border, radius, space, touchTarget } from '@/theme/spacing';
 import { useColors } from '@/theme/use-colors';
 
 export type SegmentOption<T extends string> = {
   value: T;
   label: string;
+  // Spoken instead of the label, e.g. for abbreviations like "m".
+  accessibilityLabel?: string;
 };
 
 type SegmentedControlProps<T extends string> = {
@@ -37,6 +39,8 @@ export function SegmentedControl<T extends string>({
           <Pressable
             key={option.value}
             accessibilityRole="radio"
+            // iOS does not announce the group label, so each option carries it.
+            accessibilityLabel={`${accessibilityLabel}: ${option.accessibilityLabel ?? option.label}`}
             accessibilityState={{ checked: selected }}
             onPress={() => onChange(option.value)}
             style={[
@@ -66,7 +70,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   segment: {
-    minHeight: 44,
+    // With the group border the control is exactly touchTarget high.
+    minHeight: touchTarget - 2 * border.thick,
     paddingHorizontal: space.m,
     alignItems: 'center',
     justifyContent: 'center',

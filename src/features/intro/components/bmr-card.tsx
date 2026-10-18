@@ -2,9 +2,9 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { AppText } from '@/components/app-text';
-import { Badge } from '@/components/badge';
 import { Card } from '@/components/card';
 import { Divider } from '@/components/divider';
+import { Headline } from '@/components/headline';
 import { InfoRow } from '@/components/info-row';
 import { NumberField } from '@/components/number-field';
 import { SegmentedControl } from '@/components/segmented-control';
@@ -16,7 +16,7 @@ import {
   type NumberKey,
   type UserInput,
 } from '@/features/intro/bmr-inputs';
-import { space } from '@/theme/spacing';
+import { touchTarget } from '@/theme/spacing';
 
 type BmrCardProps = {
   inputs: BmrInputs;
@@ -80,10 +80,11 @@ export function BmrCard({ inputs, userInput, onChange, locale }: BmrCardProps) {
 
   return (
     <Card>
-      <AppText variant="bodyStrong">{t('intro.found.bmr.title')}</AppText>
-      <AppText variant="secondary" tone="muted">
-        {t('intro.found.bmr.body')}
-      </AppText>
+      <Headline
+        level="h3"
+        title={t('intro.found.bmr.title')}
+        subline={t('intro.found.bmr.body')}
+      />
       <View>
         {numberRow('weight')}
         {numberRow('age')}
@@ -99,8 +100,16 @@ export function BmrCard({ inputs, userInput, onChange, locale }: BmrCardProps) {
           <InfoRow label={sexLabel}>
             <SegmentedControl<Sex>
               options={[
-                { value: 'male', label: sexLabels.male },
-                { value: 'female', label: sexLabels.female },
+                {
+                  value: 'male',
+                  label: sexLabels.male,
+                  accessibilityLabel: t('intro.found.bmr.sexMaleLong'),
+                },
+                {
+                  value: 'female',
+                  label: sexLabels.female,
+                  accessibilityLabel: t('intro.found.bmr.sexFemaleLong'),
+                },
                 { value: 'unspecified', label: sexLabels.unspecified },
               ]}
               value={inputs.sex.value}
@@ -113,13 +122,17 @@ export function BmrCard({ inputs, userInput, onChange, locale }: BmrCardProps) {
       <Divider />
       <InfoRow label={t('intro.found.bmr.result')}>
         <View style={styles.result}>
-          <AppText variant="number">
-            {inputs.estimate === undefined
-              ? '–'
-              : formatApproxKcal(inputs.estimate, locale)}
-          </AppText>
+          <View style={styles.resultValue}>
+            <AppText variant="number">
+              {inputs.estimate === undefined
+                ? '–'
+                : formatApproxKcal(inputs.estimate, locale)}
+            </AppText>
+          </View>
           {inputs.estimate === undefined ? null : (
-            <Badge label={t('intro.found.bmr.estimated')} />
+            <AppText variant="caption" tone="muted">
+              {t('intro.found.bmr.estimated')}
+            </AppText>
           )}
         </View>
       </InfoRow>
@@ -130,6 +143,10 @@ export function BmrCard({ inputs, userInput, onChange, locale }: BmrCardProps) {
 const styles = StyleSheet.create({
   result: {
     alignItems: 'flex-end',
-    gap: space.xs,
+  },
+  // Same height as the inputs, so the label lines up with the number.
+  resultValue: {
+    minHeight: touchTarget,
+    justifyContent: 'center',
   },
 });

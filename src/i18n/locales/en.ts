@@ -36,7 +36,7 @@ export const en: typeof de = {
     },
     health: {
       title: 'Nothing works without your Health data',
-      body: "Kcalwaage doesn't measure anything itself. It adds up your Apple Health values and lays them out clearly – locally, read-only, nothing leaves your iPhone.",
+      body: "Kcalwaage doesn't measure anything itself. It adds up your Apple Health values and lays them out clearly, locally, read-only, nothing leaves your iPhone.",
       rows: {
         food: { label: 'Dietary energy', detail: 'what goes in' },
         burn: { label: 'Resting & active energy', detail: 'what goes out' },
@@ -52,19 +52,21 @@ export const en: typeof de = {
       },
       noteTitle: 'Good to know',
       note1:
-        'Yazio, MyFitnessPal & co. need to sync with Apple Health in their settings.',
-      note2: 'So does your scale app.',
-      note3: 'Apple Watch measures energy burned most accurately.',
+        'Log your meals with whichever tracker you like. Just make sure Yazio, MyFitnessPal & co. sync with Apple Health.',
+      note2:
+        'A smart scale needs to sync with Apple Health too. No smart scale? Enter your weight directly in the Health app.',
+      note3:
+        'With an Apple Watch, energy burned is measured most accurately, and measurement errors even out over time.',
       allow: 'Allow Health access',
       caption: 'Opens the iOS dialog · Not medical advice',
     },
     found: {
       title: "Here's what we found",
-      body: "iOS doesn't tell us what you declined – we show what actually arrives.",
+      body: "iOS doesn't tell us what you declined, we show what actually arrives.",
       loading: 'Looking for data …',
       bmr: {
         title: 'We need a little more for your resting energy',
-        body: 'We estimate it once using Mifflin-St Jeor. No daily entries.',
+        body: "We couldn't find resting energy in Health, probably because no Apple Watch syncs with Health. So we calculate it once from your details. If that's not right, please check your permissions.",
         weight: 'Weight',
         age: 'Age',
         height: 'Height',
@@ -73,10 +75,12 @@ export const en: typeof de = {
         fromHealth: '{{value}} · Health',
         sexMale: 'm',
         sexFemale: 'f',
+        sexMaleLong: 'male',
+        sexFemaleLong: 'female',
         sexUnspecified: 'not specified',
         sexOther: 'other',
         result: 'Resting energy',
-        estimated: 'ESTIMATED',
+        estimated: '(estimated)',
         range: '{{min}}–{{max}} {{unit}}',
       },
       checkPermissions: 'Check permissions',

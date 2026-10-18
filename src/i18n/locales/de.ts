@@ -34,7 +34,7 @@ export const de = {
     },
     health: {
       title: 'Ohne deine Health-Daten geht nichts',
-      body: 'Kcalwaage misst selbst nichts. Sie rechnet deine Apple-Health-Werte auf und bereitet sie übersichtlich auf – lokal, nur lesend, nichts verlässt dein iPhone.',
+      body: 'Kcalwaage misst selbst nichts. Sie rechnet deine Apple-Health-Werte auf und bereitet sie übersichtlich auf, lokal, nur lesend, nichts verlässt dein iPhone.',
       rows: {
         food: { label: 'Nahrungsenergie', detail: 'was rein geht' },
         burn: { label: 'Ruhe- & Aktivenergie', detail: 'was raus geht' },
@@ -50,19 +50,21 @@ export const de = {
       },
       noteTitle: 'Wichtig vorab',
       note1:
-        'Yazio, MyFitnessPal & Co. müssen in ihren Einstellungen mit Apple Health synchronisieren.',
-      note2: 'Deine Waage-App ebenso.',
-      note3: 'Apple Watch liefert den Verbrauch am genauesten.',
+        'Tracke deine Mahlzeiten mit deinem Lieblings-Tracker. Wichtig ist nur, dass Yazio, MyFitnessPal & Co. mit Apple Health synchronisieren.',
+      note2:
+        'Eine digitale Waage muss ebenfalls mit Apple Health synchronisieren. Ohne Waage kannst du dein Gewicht direkt in der Health-App eintragen.',
+      note3:
+        'Mit einer Apple Watch wird dein Verbrauch am genauesten erfasst, und Messabweichungen gleichen sich über die Zeit aus.',
       allow: 'Health-Zugriff erlauben',
       caption: 'Öffnet den iOS-Dialog · Keine medizinische Beratung',
     },
     found: {
       title: 'Das haben wir gefunden',
-      body: 'iOS verrät nicht, was du abgelehnt hast – wir zeigen, was tatsächlich ankommt.',
+      body: 'iOS verrät nicht, was du abgelehnt hast, wir zeigen, was tatsächlich ankommt.',
       loading: 'Suche Daten …',
       bmr: {
         title: 'Für deinen Grundumsatz brauchen wir noch etwas',
-        body: 'Wir schätzen ihn einmalig nach Mifflin-St Jeor. Kein tägliches Eintragen.',
+        body: 'In Health haben wir keinen Grundumsatz gefunden, vermutlich synchronisiert keine Apple Watch mit Health. Deshalb berechnen wir ihn einmalig aus deinen Angaben. Stimmt das nicht, prüfe bitte deine Berechtigungen.',
         weight: 'Gewicht',
         age: 'Alter',
         height: 'Größe',
@@ -71,10 +73,12 @@ export const de = {
         fromHealth: '{{value}} · Health',
         sexMale: 'm',
         sexFemale: 'w',
+        sexMaleLong: 'männlich',
+        sexFemaleLong: 'weiblich',
         sexUnspecified: 'keine Angabe',
         sexOther: 'andere',
         result: 'Grundumsatz',
-        estimated: 'GESCHÄTZT',
+        estimated: '(geschätzt)',
         range: '{{min}}–{{max}} {{unit}}',
       },
       checkPermissions: 'Berechtigungen prüfen',
