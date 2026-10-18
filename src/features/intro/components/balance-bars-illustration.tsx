@@ -59,8 +59,9 @@ export function BalanceBarsIllustration() {
       <BarRow label={t('intro.vision.calories')} variant="filled" />
       <BarRow label={t('intro.vision.burned')} variant="outlined" />
       <BarRow label={t('intro.vision.weight')} variant="dashed" />
-      <Divider />
+      
       <AppText variant="secondary">{t('intro.vision.relation')}</AppText>
+      <Divider />
       <View>
         <AppText variant="secondary">{t('intro.vision.resultLabel')}</AppText>
         <AppText variant="number">{value}</AppText>
