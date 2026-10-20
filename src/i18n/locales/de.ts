@@ -81,6 +81,8 @@ export const de = {
       title: 'Das haben wir gefunden',
       body: 'iOS verrät nicht, was du abgelehnt hast, wir zeigen, was tatsächlich ankommt.',
       loading: 'Suche Daten …',
+      error:
+        'Wir konnten deine Health-Daten gerade nicht lesen. Prüfe bitte deine Berechtigungen. Du kannst auch mit einer Schätzung aus deinen Angaben starten.',
       bmr: {
         title: 'Für deinen Grundumsatz brauchen wir noch etwas',
         body: 'In Health haben wir keinen Grundumsatz gefunden, vermutlich synchronisiert keine Apple Watch mit Health. Deshalb berechnen wir ihn einmalig aus deinen Angaben. Stimmt das nicht, prüfe bitte deine Berechtigungen.',

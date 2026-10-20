@@ -82,6 +82,8 @@ export const en: typeof de = {
       title: "Here's what we found",
       body: "iOS doesn't tell us what you declined, we show what actually arrives.",
       loading: 'Looking for data …',
+      error:
+        "We couldn't read your Health data just now. Please check your permissions. You can also start with an estimate from your details.",
       bmr: {
         title: 'We need a little more for your resting energy',
         body: "We couldn't find resting energy in Health, probably because no Apple Watch syncs with Health. So we calculate it once from your details. If that's not right, please check your permissions.",

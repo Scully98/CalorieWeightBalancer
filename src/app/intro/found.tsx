@@ -1,3 +1,4 @@
+import { BiologicalSex } from '@kingstinct/react-native-healthkit';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Linking, StyleSheet, useWindowDimensions, View } from 'react-native';
@@ -15,9 +16,13 @@ import { FoundList } from '@/features/intro/components/found-list';
 import { IntroLayout } from '@/features/intro/components/intro-layout';
 import { buildFoundRows } from '@/features/intro/found-rows';
 import { useHealthScan } from '@/features/intro/use-health-scan';
+import type { HealthProfile } from '@/health/scan';
 import { formatLocale } from '@/i18n';
 import { completeIntro } from '@/storage/settings';
 import { space } from '@/theme/spacing';
+
+// Used when the scan failed: every value is then asked for.
+const EMPTY_PROFILE: HealthProfile = { biologicalSex: BiologicalSex.notSet };
 
 // Intro step 3d: what arrives from Health, plus a one-off resting energy
 // estimate when Health has none.
@@ -34,15 +39,18 @@ export default function IntroFoundScreen() {
   });
 
   const scan = scanState.status === 'done' ? scanState.value : undefined;
+  const failed = scanState.status === 'error';
   // Also when a watch is worn only now and then: days without resting energy
   // then use the estimate.
   const needsEstimate =
-    scan !== undefined && scan.resting.typical === undefined;
-  const inputs = scan
-    ? resolveBmrInputs(scan.profile, userInput, now)
+    failed || (scan !== undefined && scan.resting.typical === undefined);
+  const profile = failed ? EMPTY_PROFILE : scan?.profile;
+  const inputs = profile
+    ? resolveBmrInputs(profile, userInput, now)
     : undefined;
   const canStart =
-    scan !== undefined && (!needsEstimate || inputs?.estimate !== undefined);
+    (scan !== undefined || failed) &&
+    (!needsEstimate || inputs?.estimate !== undefined);
 
   const stacked = fontScale > 1.3;
   const buttonStyle = stacked ? undefined : styles.button;
@@ -77,6 +85,8 @@ export default function IntroFoundScreen() {
       />
       {scan ? (
         <FoundList rows={buildFoundRows(scan, now, t, locale)} />
+      ) : failed ? (
+        <AppText>{t('intro.found.error')}</AppText>
       ) : (
         <AppText variant="secondary" tone="muted">
           {t('intro.found.loading')}

@@ -14,6 +14,10 @@ export const KCAL_PER_KG_FAT = 7700;
 // 20 of 24 hours: short charging breaks still count as a full day.
 export const FULL_DAY_COVERAGE = 20 / 24;
 
+// Below 6 of 24 hours a day is not scaled up: a sync app writing the daily
+// total as one short sample would otherwise multiply it by up to 24.
+export const MIN_SCALED_COVERAGE = 6 / 24;
+
 // Full days needed before their median replaces the estimate.
 export const MIN_TYPICAL_DAYS = 7;
 
@@ -32,12 +36,16 @@ function isFullDay(day: DayEnergy): boolean {
 }
 
 // Measured resting energy for a whole day: full days as measured, partial
-// days scaled up to 24 hours, days without data from the fallback.
+// days scaled up to 24 hours, days with too little data from the fallback.
 export function dayResting(
   day: DayEnergy,
   fallback: number | undefined,
 ): number | undefined {
-  if (day.resting === undefined || day.restingCoverage === 0) return fallback;
+  if (
+    day.resting === undefined ||
+    (day.restingCoverage ?? 1) < MIN_SCALED_COVERAGE
+  )
+    return fallback;
   if (isFullDay(day)) return day.resting;
   return day.resting / (day.restingCoverage ?? 1);
 }

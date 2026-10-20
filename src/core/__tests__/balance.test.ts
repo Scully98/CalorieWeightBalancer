@@ -76,6 +76,18 @@ describe('dayResting', () => {
     expect(dayResting({ resting: 0, restingCoverage: 0 }, 1700)).toBe(1700);
     expect(dayResting({}, undefined)).toBeUndefined();
   });
+
+  it('uses the fallback below six hours instead of scaling up', () => {
+    expect(dayResting({ resting: 1700, restingCoverage: 1 / 24 }, 1800)).toBe(
+      1800,
+    );
+    expect(dayResting({ resting: 450, restingCoverage: 6 / 24 }, 1700)).toBe(
+      1800,
+    );
+    expect(
+      dayResting({ resting: 1700, restingCoverage: 1 / 24 }, undefined),
+    ).toBeUndefined();
+  });
 });
 
 describe('typicalResting', () => {
