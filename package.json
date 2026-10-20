@@ -47,6 +47,13 @@
     "preset": "jest-expo",
     "moduleNameMapper": {
       "^@/(.*)$": "<rootDir>/src/$1"
-    }
+    },
+    "globalSetup": "<rootDir>/jest.global-setup.js",
+    "collectCoverageFrom": [
+      "src/**/*.{ts,tsx}",
+      "!src/**/*.d.ts",
+      "!src/i18n/locales/**",
+      "!src/**/__fixtures__/**"
+    ]
   }
 }

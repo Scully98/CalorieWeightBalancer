@@ -48,6 +48,24 @@ describe('settings', () => {
     expect(getProfile()).toEqual({});
   });
 
+  it('drops fields with a wrong type or out of range', () => {
+    appGroupStorage.set(
+      'profile.v1',
+      JSON.stringify({
+        heightCm: '182',
+        sex: 'divers',
+        weightKg: 82.4,
+        weightRecordedOn: '15.10.2026',
+        ageYears: 7,
+        ageRecordedOn: '2026-10-15',
+      }),
+    );
+    expect(getProfile()).toEqual({
+      weightKg: 82.4,
+      ageRecordedOn: '2026-10-15',
+    });
+  });
+
   it('clears both keys on reset', () => {
     completeIntro({ heightCm: 170 });
     resetIntro();

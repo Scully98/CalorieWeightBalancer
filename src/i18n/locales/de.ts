@@ -13,9 +13,16 @@ export const de = {
     fatLabel: 'geschätzt, theoretisch (7.700 kcal pro kg)',
     daysWithoutFood_one: '{{count}} Tag ohne Eintrag als neutral gezählt',
     daysWithoutFood_other: '{{count}} Tage ohne Eintrag als neutral gezählt',
+    daysWithoutResting_one: '{{count}} Tag ohne Grundumsatz nicht mitgerechnet',
+    daysWithoutResting_other:
+      '{{count}} Tage ohne Grundumsatz nicht mitgerechnet',
     empty:
       'Keine Nahrungsdaten in den letzten 30 Tagen. Synchronisiert dein Tracker mit Apple Health?',
     checkPermissions: 'Berechtigungen prüfen',
+  },
+  error: {
+    title: 'Da ist etwas schiefgelaufen.',
+    retry: 'Erneut versuchen',
   },
   intro: {
     vision: {
@@ -39,8 +46,7 @@ export const de = {
       legendPizza: 'Pizza-Abend',
       legendEmpty: 'kein Eintrag',
       total: 'In den letzten 30 Tagen',
-      fat: 'Fett eingespart ',
-      theoretical: ' (theoretisch)',
+      fat: 'Fett eingespart <strong>≈ {{value}} kg</strong> (theoretisch)',
       footer:
         'Der Pizza-Abend? Nach 3 Tagen ausgeglichen. Tage ohne Eintrag zählen wir als neutral.',
       a11y: '30 Tage: 27 Minus-Tage, ein Pizza-Abend, 2 Tage ohne Eintrag',
@@ -78,6 +84,8 @@ export const de = {
       bmr: {
         title: 'Für deinen Grundumsatz brauchen wir noch etwas',
         body: 'In Health haben wir keinen Grundumsatz gefunden, vermutlich synchronisiert keine Apple Watch mit Health. Deshalb berechnen wir ihn einmalig aus deinen Angaben. Stimmt das nicht, prüfe bitte deine Berechtigungen.',
+        bodyPartial:
+          'Deine Watch liefert den Grundumsatz nur an wenigen ganzen Tagen. Für Tage ohne Messung rechnen wir mit einer Schätzung aus deinen Angaben.',
         weight: 'Gewicht',
         age: 'Alter',
         height: 'Größe',
@@ -110,6 +118,7 @@ export const de = {
         lastOn: '{{source}} · zuletzt am {{date}}',
         measurements_one: '{{source}} · {{count}} Messung',
         measurements_other: '{{source}} · {{count}} Messungen',
+        measurementsMany: '{{source}} · {{count}}+ Messungen',
         missing: 'fehlt',
         missingEstimate: 'fehlt → schätzen',
         optional: 'optional',

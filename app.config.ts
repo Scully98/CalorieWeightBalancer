@@ -8,6 +8,13 @@ export default ({ config }: ConfigContext): ExpoConfig => {
   const expoConfig = config as ExpoConfig;
   if (!personalTeamId) return expoConfig;
 
+  const bundleIdentifier = expoConfig.ios?.bundleIdentifier;
+  if (!bundleIdentifier) {
+    throw new Error(
+      'app.json needs ios.bundleIdentifier for Personal Team builds.',
+    );
+  }
+
   const entitlements = { ...expoConfig.ios?.entitlements };
   delete entitlements['com.apple.security.application-groups'];
 
@@ -16,7 +23,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     ios: {
       ...expoConfig.ios,
       appleTeamId: personalTeamId,
-      bundleIdentifier: `${expoConfig.ios?.bundleIdentifier}.dev`,
+      bundleIdentifier: `${bundleIdentifier}.dev`,
       entitlements,
     },
   };

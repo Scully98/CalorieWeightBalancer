@@ -23,11 +23,19 @@ type BmrCardProps = {
   userInput: UserInput;
   onChange: (input: UserInput) => void;
   locale: string;
+  // Health has resting energy, but on too few full days.
+  partial: boolean;
 };
 
-// Shown on intro step 3d when Health has no resting energy. Only the values
-// Health lacks are editable.
-export function BmrCard({ inputs, userInput, onChange, locale }: BmrCardProps) {
+// Shown on intro step 3d when Health has too little resting energy. Only the
+// values Health lacks are editable.
+export function BmrCard({
+  inputs,
+  userInput,
+  onChange,
+  locale,
+  partial,
+}: BmrCardProps) {
   const { t } = useTranslation();
 
   const units: Record<NumberKey, string> = {
@@ -83,7 +91,9 @@ export function BmrCard({ inputs, userInput, onChange, locale }: BmrCardProps) {
       <Headline
         level="h3"
         title={t('intro.found.bmr.title')}
-        subline={t('intro.found.bmr.body')}
+        subline={t(
+          partial ? 'intro.found.bmr.bodyPartial' : 'intro.found.bmr.body',
+        )}
       />
       <View>
         {numberRow('weight')}

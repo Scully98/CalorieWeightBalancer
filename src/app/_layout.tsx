@@ -1,10 +1,35 @@
-import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
+import {
+  DarkTheme,
+  DefaultTheme,
+  Stack,
+  ThemeProvider,
+  type ErrorBoundaryProps,
+} from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useColorScheme } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { StyleSheet, useColorScheme, View } from 'react-native';
 
+import { AppText } from '@/components/app-text';
+import { Button } from '@/components/button';
 import '@/i18n';
 import { useIntroCompleted } from '@/storage/settings';
+import { space } from '@/theme/spacing';
 import { useColors } from '@/theme/use-colors';
+
+// Shown instead of a blank screen when rendering throws.
+export function ErrorBoundary({ retry }: ErrorBoundaryProps) {
+  const colors = useColors();
+  const { t } = useTranslation();
+
+  return (
+    <View style={[styles.error, { backgroundColor: colors.background }]}>
+      <AppText variant="bodyStrong" style={styles.center}>
+        {t('error.title')}
+      </AppText>
+      <Button label={t('error.retry')} onPress={retry} />
+    </View>
+  );
+}
 
 export default function RootLayout() {
   const colors = useColors();
@@ -29,3 +54,15 @@ export default function RootLayout() {
     </ThemeProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  error: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: space.xl,
+    gap: space.xl,
+  },
+  center: {
+    textAlign: 'center',
+  },
+});

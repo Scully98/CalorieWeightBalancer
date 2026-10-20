@@ -26,6 +26,17 @@ describe('restingFallback', () => {
     ).toBeCloseTo(1796.5);
   });
 
+  it('advances a stored age by the years since it was entered', () => {
+    const stored = {
+      weightKg: 82.4,
+      heightCm: 182,
+      ageYears: 33,
+      ageRecordedOn: '2025-10-01',
+      sex: 'male' as const,
+    };
+    expect(restingFallback(noHealth, stored, now)).toBeCloseTo(1796.5);
+  });
+
   it('returns undefined when a value is missing', () => {
     expect(restingFallback(noHealth, { weightKg: 82.4 }, now)).toBeUndefined();
   });

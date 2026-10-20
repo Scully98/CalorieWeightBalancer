@@ -1,4 +1,4 @@
-import { ageInYears } from '@/core/age';
+import { ageInYears, currentAge } from '@/core/age';
 import { estimateRestingEnergy } from '@/core/bmr';
 import { sexState } from '@/features/intro/bmr-inputs';
 import type { HealthProfile } from '@/health/scan';
@@ -15,7 +15,9 @@ export function restingFallback(
   const heightCm = health.heightCm ?? stored.heightCm;
   const ageYears = health.dateOfBirth
     ? ageInYears(health.dateOfBirth, now)
-    : stored.ageYears;
+    : stored.ageYears === undefined
+      ? undefined
+      : currentAge(stored.ageYears, stored.ageRecordedOn, now);
   const sex = sexState(health.biologicalSex, stored.sex).value;
 
   if (

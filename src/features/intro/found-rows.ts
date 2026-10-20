@@ -2,7 +2,7 @@ import type { SourceRevision } from '@kingstinct/react-native-healthkit';
 import type { TFunction } from 'i18next';
 
 import type { Status } from '@/components/status-row';
-import type { HealthScan } from '@/health/scan';
+import { MAX_COUNTED_SAMPLES, type HealthScan } from '@/health/scan';
 
 export type FoundRowKey = 'food' | 'active' | 'weight' | 'resting' | 'bodyFat';
 
@@ -53,10 +53,14 @@ export function buildFoundRows(
   }
 
   function measurementDetail(row: HealthScan['weight']): string {
-    return t('intro.found.detail.measurements', {
-      source: sourceLabel(row.source),
-      count: row.count,
-    });
+    const source = sourceLabel(row.source);
+    if (row.count >= MAX_COUNTED_SAMPLES) {
+      return t('intro.found.detail.measurementsMany', {
+        source,
+        count: MAX_COUNTED_SAMPLES,
+      });
+    }
+    return t('intro.found.detail.measurements', { source, count: row.count });
   }
 
   const rows: {

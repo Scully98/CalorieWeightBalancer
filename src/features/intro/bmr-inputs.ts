@@ -1,21 +1,17 @@
 import { BiologicalSex } from '@kingstinct/react-native-healthkit';
 
 import { ageInYears } from '@/core/age';
-import { estimateRestingEnergy, type Sex } from '@/core/bmr';
+import {
+  estimateRestingEnergy,
+  LIMITS,
+  type NumberKey,
+  type Sex,
+} from '@/core/bmr';
 import { parseLocaleNumber } from '@/core/format';
 import type { HealthScan } from '@/health/scan';
 import type { StoredProfile } from '@/storage/settings';
 
-export type NumberKey = 'weight' | 'age' | 'height';
-
-export const LIMITS: Record<
-  NumberKey,
-  { min: number; max: number; decimals: 0 | 1 }
-> = {
-  weight: { min: 30, max: 300, decimals: 1 },
-  age: { min: 15, max: 100, decimals: 0 },
-  height: { min: 100, max: 250, decimals: 0 },
-};
+export { LIMITS, type NumberKey } from '@/core/bmr';
 
 // Raw text from the fields; sex stays undefined until a segment is chosen.
 export type UserInput = Record<NumberKey, string> & { sex?: Sex };

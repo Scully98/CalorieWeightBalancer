@@ -8,10 +8,16 @@ import {
   type SourceRevision,
 } from '@kingstinct/react-native-healthkit';
 
+import { queryDailyEnergy } from './daily-energy';
 import { QUANTITY } from './read-types';
 import { safe } from './safe';
+import { typicalResting } from '@/core/balance';
 
-const DAY_MS = 24 * 60 * 60 * 1000;
+// Measurements are counted up to this number; more shows as "100+".
+export const MAX_COUNTED_SAMPLES = 100;
+
+// Days checked for a typical resting energy before asking for an estimate.
+const TYPICAL_RESTING_DAYS = 30;
 
 export type RowScan = {
   hasData: boolean;
@@ -23,7 +29,8 @@ export type RowScan = {
 export type HealthScan = {
   food: RowScan & { firstDate?: Date };
   active: RowScan & { daysWithData: number };
-  resting: RowScan & { daysWithData: number };
+  // Median of fully covered days, see typicalResting.
+  resting: RowScan & { daysWithData: number; typical?: number };
   weight: RowScan & { count: number };
   bodyFat: RowScan & { count: number };
   profile: HealthProfile;
@@ -78,7 +85,12 @@ async function daysWithEnergy(
   identifier: typeof QUANTITY.active | typeof QUANTITY.resting,
   today: Date,
 ): Promise<number> {
-  const start = new Date(today.getTime() - 7 * DAY_MS);
+  // Calendar days, not 7 × 24 h: that would miss a day after a DST change.
+  const start = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate() - 7,
+  );
   const buckets = await safe(
     () =>
       queryStatisticsCollectionForQuantity(
@@ -107,7 +119,7 @@ async function sampleCount(
     typeof QUANTITY.weight | typeof QUANTITY.bodyFat | typeof QUANTITY.leanMass,
 ): Promise<number> {
   const samples = await safe(
-    () => queryQuantitySamples(identifier, { limit: 0 }),
+    () => queryQuantitySamples(identifier, { limit: MAX_COUNTED_SAMPLES }),
     [],
   );
   return samples.length;
@@ -130,6 +142,7 @@ export async function scanHealthData(now: Date): Promise<HealthScan> {
     leanMass,
     leanMassCount,
     profile,
+    recentDays,
   ] = await Promise.all([
     latest(QUANTITY.food),
     safe(
@@ -152,6 +165,14 @@ export async function scanHealthData(now: Date): Promise<HealthScan> {
     latest(QUANTITY.leanMass),
     sampleCount(QUANTITY.leanMass),
     readHealthProfile(),
+    queryDailyEnergy(
+      new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate() - TYPICAL_RESTING_DAYS,
+      ),
+      TYPICAL_RESTING_DAYS,
+    ),
   ]);
 
   // Body fat row also counts lean body mass measurements.
@@ -162,7 +183,11 @@ export async function scanHealthData(now: Date): Promise<HealthScan> {
   return {
     food: { ...food, firstDate: firstFood[0]?.startDate },
     active: { ...active, daysWithData: activeDays },
-    resting: { ...resting, daysWithData: restingDays },
+    resting: {
+      ...resting,
+      daysWithData: restingDays,
+      typical: typicalResting(recentDays),
+    },
     weight: { ...weight, count: weightCount },
     bodyFat: composition,
     profile,

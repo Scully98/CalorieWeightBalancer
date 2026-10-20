@@ -13,12 +13,13 @@ import { resetIntro } from '@/storage/settings';
 import { space } from '@/theme/spacing';
 import { useColors } from '@/theme/use-colors';
 
-function BalanceSummary({ balance }: { balance: PeriodBalance }) {
+// Without a balance (failed load) the empty state is shown.
+function BalanceSummary({ balance }: { balance?: PeriodBalance }) {
   const { t } = useTranslation();
   const locale = formatLocale();
 
   // iOS can't tell us about denied access, so no data at all means "check".
-  if (balance.daysWithoutFood === balance.days) {
+  if (!balance || balance.daysWithoutFood === balance.days) {
     return (
       <>
         <AppText style={styles.center}>{t('home.empty')}</AppText>
@@ -59,6 +60,11 @@ function BalanceSummary({ balance }: { balance: PeriodBalance }) {
           {t('home.daysWithoutFood', { count: balance.daysWithoutFood })}
         </AppText>
       ) : null}
+      {balance.daysWithoutResting > 0 ? (
+        <AppText variant="caption" tone="muted" style={styles.center}>
+          {t('home.daysWithoutResting', { count: balance.daysWithoutResting })}
+        </AppText>
+      ) : null}
     </>
   );
 }
@@ -78,7 +84,9 @@ export default function HomeScreen() {
           {t('home.period')}
         </AppText>
         {state.status === 'done' ? (
-          <BalanceSummary balance={state.balance} />
+          <BalanceSummary balance={state.value} />
+        ) : state.status === 'error' ? (
+          <BalanceSummary />
         ) : (
           <AppText variant="secondary" tone="muted" style={styles.center}>
             {t('home.loading')}

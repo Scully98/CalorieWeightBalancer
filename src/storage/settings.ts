@@ -1,7 +1,7 @@
 import { useSyncExternalStore } from 'react';
 
 import { appGroupStorage } from './app-group';
-import type { Sex } from '@/core/bmr';
+import { LIMITS, type NumberKey, type Sex } from '@/core/bmr';
 
 const INTRO_COMPLETED = 'introCompleted';
 const PROFILE = 'profile.v1';
@@ -47,13 +47,48 @@ export function completeIntro(profile: StoredProfile) {
   notify();
 }
 
+function numberWithin(value: unknown, key: NumberKey): number | undefined {
+  const { min, max } = LIMITS[key];
+  return typeof value === 'number' && value >= min && value <= max
+    ? value
+    : undefined;
+}
+
+function isoDate(value: unknown): string | undefined {
+  return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)
+    ? value
+    : undefined;
+}
+
+function sex(value: unknown): Sex | undefined {
+  return value === 'male' || value === 'female' || value === 'unspecified'
+    ? value
+    : undefined;
+}
+
+// Keeps only valid fields, so an older or damaged entry can't break the
+// estimate.
+function parseProfile(parsed: Record<string, unknown>): StoredProfile {
+  const profile: StoredProfile = {
+    heightCm: numberWithin(parsed.heightCm, 'height'),
+    sex: sex(parsed.sex),
+    weightKg: numberWithin(parsed.weightKg, 'weight'),
+    weightRecordedOn: isoDate(parsed.weightRecordedOn),
+    ageYears: numberWithin(parsed.ageYears, 'age'),
+    ageRecordedOn: isoDate(parsed.ageRecordedOn),
+  };
+  return Object.fromEntries(
+    Object.entries(profile).filter(([, value]) => value !== undefined),
+  );
+}
+
 export function getProfile(): StoredProfile {
   const raw = appGroupStorage.get(PROFILE);
   if (!raw) return {};
   try {
     const parsed: unknown = JSON.parse(raw);
     return parsed && typeof parsed === 'object' && !Array.isArray(parsed)
-      ? (parsed as StoredProfile)
+      ? parseProfile(parsed as Record<string, unknown>)
       : {};
   } catch {
     return {};

@@ -124,6 +124,12 @@ describe('buildFoundRows', () => {
       details({ ...empty, bodyFat: { hasData: true, source: scale, count: 1 } })
         .bodyFat,
     ).toBe('Waage · 1 Messung');
+    expect(
+      details({
+        ...empty,
+        weight: { hasData: true, source: scale, count: 100 },
+      }).weight,
+    ).toBe('Waage · 100+ Messungen');
   });
 
   it('builds an accessibility label from label, status and detail', () => {

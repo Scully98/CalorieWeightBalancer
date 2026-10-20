@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { AppText } from '@/components/app-text';
@@ -41,10 +41,12 @@ export default function IntroBigPictureScreen() {
           {formatSigned(-6200, locale)} kcal
         </AppText>
 
-        <AppText variant="secondary" tone="muted">
-          {t('intro.bigPicture.fat')}
-          <AppText>≈ {formatNumber(0.8, locale, 1)} kg</AppText>
-          {t('intro.bigPicture.theoretical')}
+        <AppText variant="secondary" tone="muted" style={styles.fat}>
+          <Trans
+            i18nKey="intro.bigPicture.fat"
+            values={{ value: formatNumber(0.8, locale, 1) }}
+            components={{ strong: <AppText /> }}
+          />
         </AppText>
       </View>
     </IntroLayout>

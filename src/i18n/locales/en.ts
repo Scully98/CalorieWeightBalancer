@@ -15,9 +15,15 @@ export const en: typeof de = {
     fatLabel: 'estimated, theoretical (7,700 kcal per kg)',
     daysWithoutFood_one: '{{count}} day without an entry counted as neutral',
     daysWithoutFood_other: '{{count}} days without an entry counted as neutral',
+    daysWithoutResting_one: '{{count}} day without resting energy left out',
+    daysWithoutResting_other: '{{count}} days without resting energy left out',
     empty:
       'No food data in the last 30 days. Does your tracker sync with Apple Health?',
     checkPermissions: 'Check permissions',
+  },
+  error: {
+    title: 'Something went wrong.',
+    retry: 'Try again',
   },
   intro: {
     vision: {
@@ -41,8 +47,7 @@ export const en: typeof de = {
       legendPizza: 'Pizza night',
       legendEmpty: 'no entry',
       total: 'Last 30 days',
-      fat: 'Fat saved ',
-      theoretical: ' (theoretical)',
+      fat: 'Fat saved <strong>≈ {{value}} kg</strong> (theoretical)',
       footer:
         'The pizza night? Balanced out after 3 days. Days without an entry we count as neutral.',
       a11y: '30 days: 27 deficit days, one pizza night, 2 days without an entry',
@@ -80,6 +85,8 @@ export const en: typeof de = {
       bmr: {
         title: 'We need a little more for your resting energy',
         body: "We couldn't find resting energy in Health, probably because no Apple Watch syncs with Health. So we calculate it once from your details. If that's not right, please check your permissions.",
+        bodyPartial:
+          'Your watch provides resting energy on only a few full days. For days without a measurement we use an estimate from your details.',
         weight: 'Weight',
         age: 'Age',
         height: 'Height',
@@ -112,6 +119,7 @@ export const en: typeof de = {
         lastOn: '{{source}} · last on {{date}}',
         measurements_one: '{{source}} · {{count}} measurement',
         measurements_other: '{{source}} · {{count}} measurements',
+        measurementsMany: '{{source}} · {{count}}+ measurements',
         missing: 'missing',
         missingEstimate: 'missing → estimate',
         optional: 'optional',

@@ -33,8 +33,11 @@ export default function IntroFoundScreen() {
     height: '',
   });
 
-  const scan = scanState.status === 'done' ? scanState.scan : undefined;
-  const needsEstimate = scan !== undefined && !scan.resting.hasData;
+  const scan = scanState.status === 'done' ? scanState.value : undefined;
+  // Also when a watch is worn only now and then: days without resting energy
+  // then use the estimate.
+  const needsEstimate =
+    scan !== undefined && scan.resting.typical === undefined;
   const inputs = scan
     ? resolveBmrInputs(scan.profile, userInput, now)
     : undefined;
@@ -85,6 +88,7 @@ export default function IntroFoundScreen() {
           userInput={userInput}
           onChange={setUserInput}
           locale={locale}
+          partial={scan?.resting.hasData ?? false}
         />
       ) : null}
     </IntroLayout>
