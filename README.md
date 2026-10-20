@@ -39,12 +39,15 @@ Without a paid developer account, Xcode signs with a Personal Team. Profiles exp
 
 1. Add your Apple ID in Xcode → Settings → Accounts.
 2. On the iPhone, turn on Settings → Privacy & Security → Developer Mode, connect it via USB and trust the Mac.
-3. Build with your Personal Team ID. This drops the App Group entitlement and uses the bundle ID `com.scully98.calorieweightbalancer.dev`:
+3. Put your Personal Team ID (the OU field of your "Apple Development" certificate) into `.env.local`, which is git-ignored and read by the Expo CLI. This drops the App Group entitlement and uses the bundle ID `com.scully98.calorieweightbalancer.dev`:
 
    ```sh
-   APPLE_PERSONAL_TEAM_ID=XXXXXXXXXX npx expo prebuild --clean
-   APPLE_PERSONAL_TEAM_ID=XXXXXXXXXX npx expo run:ios --device
+   echo "APPLE_PERSONAL_TEAM_ID=XXXXXXXXXX" > .env.local
+   npx expo prebuild --clean
+   npx expo run:ios --device
    ```
+
+   If the first build fails with `errSecInternalComponent`, build once from Xcode (`ios/Kcalwaage.xcworkspace`, ⌘R) and choose "Always Allow" when macOS asks for keychain access.
 
 4. On the iPhone, trust the developer certificate under Settings → General → VPN & Device Management.
 
