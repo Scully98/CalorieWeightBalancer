@@ -65,6 +65,7 @@ Drei Screens (Bilanz, Analyse-Chart, Einstellungen) plus Widget.
 8. Gewichtslinie auf zweiter Achse plus 7-Tage-Trend.
 9. Fett- und Magermasse-Linien mit Einordnungssatz (nur mit Messungen).
 10. Widget klein/mittel: Zeitraum, Bilanz, Fett-Äquivalent; Spanne, wenn Toleranz aktiv.
+11. Daten-Seite (Wischen vom Bilanz-Screen): was aus Health ankommt, wie sich die Bilanz zusammensetzt, Link zu Health (Spec `docs/specs/2026-10-21-data-page.md`).
 
 Nicht in V1: Farbwahl, Widget-Konfiguration, Zyklus, Zielkalorien, iPad, Schreiben nach HealthKit.
 

@@ -31,23 +31,54 @@ export type PeriodBalance = {
   days: number;
 };
 
+export type PeriodBreakdown = PeriodBalance & {
+  // Sums over the days that count, so kcal = food − resting − active.
+  foodKcal: number;
+  restingKcal: number;
+  activeKcal: number;
+  countedDays: number;
+  // Counted days by origin of their resting energy, see dayRestingKind.
+  restingScaledDays: number;
+  restingFallbackDays: number;
+  // Counted days without active energy; they count it as 0.
+  daysWithoutActive: number;
+};
+
+export type RestingKind = 'measured' | 'scaled' | 'fallback' | 'missing';
+
 function isFullDay(day: DayEnergy): boolean {
   return (day.restingCoverage ?? 1) >= FULL_DAY_COVERAGE;
 }
 
-// Measured resting energy for a whole day: full days as measured, partial
+// Where a day's resting energy comes from: full days as measured, partial
 // days scaled up to 24 hours, days with too little data from the fallback.
-export function dayResting(
+export function dayRestingKind(
   day: DayEnergy,
   fallback: number | undefined,
-): number | undefined {
+): RestingKind {
   if (
     day.resting === undefined ||
     (day.restingCoverage ?? 1) < MIN_SCALED_COVERAGE
   )
-    return fallback;
-  if (isFullDay(day)) return day.resting;
-  return day.resting / (day.restingCoverage ?? 1);
+    return fallback === undefined ? 'missing' : 'fallback';
+  return isFullDay(day) ? 'measured' : 'scaled';
+}
+
+// Resting energy for a whole day, see dayRestingKind.
+export function dayResting(
+  day: DayEnergy,
+  fallback: number | undefined,
+): number | undefined {
+  switch (dayRestingKind(day, fallback)) {
+    case 'measured':
+      return day.resting;
+    case 'scaled':
+      return (day.resting as number) / (day.restingCoverage ?? 1);
+    case 'fallback':
+      return fallback;
+    case 'missing':
+      return undefined;
+  }
 }
 
 // Median resting energy of fully covered days; undefined below
@@ -64,27 +95,57 @@ export function typicalResting(days: readonly DayEnergy[]): number | undefined {
     : (values[middle - 1] + values[middle]) / 2;
 }
 
-// Sums B = A − (R + K) per day. A day without a food entry counts as B = 0
-// instead of a full deficit; see dayResting for missing resting energy.
+// Sums B = A − (R + K) per day, split into its parts. A day without a food
+// entry counts as B = 0 instead of a full deficit; see dayResting for missing
+// resting energy.
+export function periodBreakdown(
+  days: readonly DayEnergy[],
+  restingFallback?: number,
+): PeriodBreakdown {
+  const result = {
+    foodKcal: 0,
+    restingKcal: 0,
+    activeKcal: 0,
+    countedDays: 0,
+    restingScaledDays: 0,
+    restingFallbackDays: 0,
+    daysWithoutActive: 0,
+    daysWithoutFood: 0,
+    daysWithoutResting: 0,
+  };
+  for (const day of days) {
+    if (day.food === undefined) {
+      result.daysWithoutFood += 1;
+      continue;
+    }
+    const kind = dayRestingKind(day, restingFallback);
+    if (kind === 'missing') {
+      result.daysWithoutResting += 1;
+      continue;
+    }
+    if (kind === 'scaled') result.restingScaledDays += 1;
+    if (kind === 'fallback') result.restingFallbackDays += 1;
+    if (day.active === undefined) result.daysWithoutActive += 1;
+    result.countedDays += 1;
+    result.foodKcal += day.food;
+    result.restingKcal += dayResting(day, restingFallback) as number;
+    result.activeKcal += day.active ?? 0;
+  }
+  return {
+    ...result,
+    kcal: result.foodKcal - result.restingKcal - result.activeKcal,
+    days: days.length,
+  };
+}
+
 export function periodBalance(
   days: readonly DayEnergy[],
   restingFallback?: number,
 ): PeriodBalance {
-  let kcal = 0;
-  let daysWithoutFood = 0;
-  let daysWithoutResting = 0;
-  for (const day of days) {
-    if (day.food === undefined) {
-      daysWithoutFood += 1;
-      continue;
-    }
-    const resting = dayResting(day, restingFallback);
-    if (resting === undefined) {
-      daysWithoutResting += 1;
-      continue;
-    }
-    kcal += day.food - (resting + (day.active ?? 0));
-  }
+  const { kcal, daysWithoutFood, daysWithoutResting } = periodBreakdown(
+    days,
+    restingFallback,
+  );
   return { kcal, daysWithoutFood, daysWithoutResting, days: days.length };
 }
 

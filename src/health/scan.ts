@@ -64,7 +64,8 @@ function startOfDay(date: Date): Date {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate());
 }
 
-async function latest(
+// Most recent sample of a type. Must only run after requestReadAccess().
+export async function latest(
   identifier: (typeof QUANTITY)[keyof typeof QUANTITY],
 ): Promise<RowScan & { value?: number }> {
   const sample = await safe(

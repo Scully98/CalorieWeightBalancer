@@ -1,4 +1,4 @@
-import { restingFallback } from '../resting-fallback';
+import { fallbackInputs, restingFallback } from '../resting-fallback';
 import type { HealthProfile } from '@/health/scan';
 
 jest.mock('@kingstinct/react-native-healthkit', () => ({
@@ -39,5 +39,30 @@ describe('restingFallback', () => {
 
   it('returns undefined when a value is missing', () => {
     expect(restingFallback(noHealth, { weightKg: 82.4 }, now)).toBeUndefined();
+  });
+});
+
+describe('fallbackInputs', () => {
+  it('marks which values come from Health', () => {
+    const health: HealthProfile = {
+      weightKg: 82.4,
+      dateOfBirth: new Date(1992, 0, 10),
+      biologicalSex: 3,
+    };
+    const inputs = fallbackInputs(
+      health,
+      { heightCm: 182, sex: 'female' },
+      now,
+    );
+    expect(inputs).toEqual({
+      weightKg: { value: 82.4, fromHealth: true },
+      heightCm: { value: 182, fromHealth: false },
+      ageYears: { value: 34, fromHealth: true },
+      sex: { value: 'unspecified', fromHealth: true, shown: 'other' },
+    });
+  });
+
+  it('is undefined while a value is missing', () => {
+    expect(fallbackInputs(noHealth, { weightKg: 80 }, now)).toBeUndefined();
   });
 });

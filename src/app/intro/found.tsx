@@ -1,7 +1,7 @@
 import { BiologicalSex } from '@kingstinct/react-native-healthkit';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Linking, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { StyleSheet, useWindowDimensions, View } from 'react-native';
 
 import { AppText } from '@/components/app-text';
 import { Button } from '@/components/button';
@@ -16,6 +16,7 @@ import { FoundList } from '@/features/intro/components/found-list';
 import { IntroLayout } from '@/features/intro/components/intro-layout';
 import { buildFoundRows } from '@/features/intro/found-rows';
 import { useHealthScan } from '@/features/intro/use-health-scan';
+import { openHealthApp } from '@/health/open-health-app';
 import type { HealthProfile } from '@/health/scan';
 import { formatLocale } from '@/i18n';
 import { completeIntro } from '@/storage/settings';
@@ -63,19 +64,24 @@ export default function IntroFoundScreen() {
     <IntroLayout
       step={3}
       footer={
-        <View style={stacked ? styles.stacked : styles.row}>
-          <Button
-            variant="secondary"
-            label={t('intro.found.checkPermissions')}
-            onPress={() => Linking.openSettings()}
-            style={buttonStyle}
-          />
-          <Button
-            label={t('intro.found.start')}
-            onPress={start}
-            disabled={!canStart}
-            style={buttonStyle}
-          />
+        <View style={styles.stacked}>
+          <View style={stacked ? styles.stacked : styles.row}>
+            <Button
+              variant="secondary"
+              label={t('intro.found.checkPermissions')}
+              onPress={openHealthApp}
+              style={buttonStyle}
+            />
+            <Button
+              label={t('intro.found.start')}
+              onPress={start}
+              disabled={!canStart}
+              style={buttonStyle}
+            />
+          </View>
+          <AppText variant="caption" tone="muted">
+            {t('common.permissionsPath')}
+          </AppText>
         </View>
       }
     >

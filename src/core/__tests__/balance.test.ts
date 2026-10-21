@@ -1,7 +1,9 @@
 import {
   dayResting,
+  dayRestingKind,
   fatKgFromKcal,
   periodBalance,
+  periodBreakdown,
   typicalResting,
   type DayEnergy,
 } from '../balance';
@@ -52,6 +54,66 @@ describe('periodBalance', () => {
 
   it('treats missing active energy as zero', () => {
     expect(periodBalance([{ food: 2000, resting: 1800 }]).kcal).toBe(200);
+  });
+});
+
+describe('periodBreakdown', () => {
+  const days: DayEnergy[] = [
+    { food: 2500, resting: 1800, active: 400, restingCoverage: 1 },
+    { food: 2000, resting: 900, active: 300, restingCoverage: 0.5 },
+    { food: 1800, active: 200 },
+    { food: 2100, resting: 1700, restingCoverage: 1 },
+    { resting: 1800, active: 500, restingCoverage: 1 },
+  ];
+
+  it('splits the balance into parts that add up to it', () => {
+    const result = periodBreakdown(days, 1750);
+    expect(result).toMatchObject({
+      foodKcal: 8400,
+      restingKcal: 1800 + 1800 + 1750 + 1700,
+      activeKcal: 900,
+      countedDays: 4,
+      daysWithoutFood: 1,
+      days: 5,
+    });
+    expect(result.kcal).toBe(
+      result.foodKcal - result.restingKcal - result.activeKcal,
+    );
+    expect(result.kcal).toBe(periodBalance(days, 1750).kcal);
+  });
+
+  it('counts scaled, fallback and active-less days', () => {
+    expect(periodBreakdown(days, 1750)).toMatchObject({
+      restingScaledDays: 1,
+      restingFallbackDays: 1,
+      daysWithoutActive: 1,
+      daysWithoutResting: 0,
+    });
+  });
+
+  it('leaves days without resting energy out of every sum', () => {
+    expect(periodBreakdown(days)).toMatchObject({
+      foodKcal: 6600,
+      activeKcal: 700,
+      countedDays: 3,
+      restingFallbackDays: 0,
+      daysWithoutResting: 1,
+    });
+  });
+});
+
+describe('dayRestingKind', () => {
+  it('names where the resting energy comes from', () => {
+    expect(dayRestingKind({ resting: 1500, restingCoverage: 1 }, 1800)).toBe(
+      'measured',
+    );
+    expect(dayRestingKind({ resting: 900, restingCoverage: 0.5 }, 1800)).toBe(
+      'scaled',
+    );
+    expect(dayRestingKind({}, 1800)).toBe('fallback');
+    expect(
+      dayRestingKind({ resting: 100, restingCoverage: 1 / 24 }, undefined),
+    ).toBe('missing');
   });
 });
 

@@ -22,9 +22,14 @@ export function formatSigned(
   return `${value < 0 ? MINUS : '+'}${magnitude}`;
 }
 
-// Rounded to 10 kcal to avoid false precision, e.g. "≈ 1.800 kcal".
+// Energy is shown rounded to 10 kcal to avoid false precision.
+export function roundKcal(value: number): number {
+  return Math.round(value / 10) * 10;
+}
+
+// Rounded to 10 kcal, e.g. "≈ 1.800 kcal".
 export function formatApproxKcal(value: number, locale: string): string {
-  return `≈ ${formatNumber(Math.round(value / 10) * 10, locale)} kcal`;
+  return `≈ ${formatNumber(roundKcal(value), locale)} kcal`;
 }
 
 // Accepts "82,4" and "82.4"; returns undefined for anything else.
