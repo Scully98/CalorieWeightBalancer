@@ -554,7 +554,7 @@ sequenceDiagram
 
 ---
 
-### Milestone 8 — DemoSource & Szenarien
+### ✅ Milestone 8 — DemoSource & Szenarien
 
 > Eine `DemoSource` liefert sieben benannte, deterministische Szenarien aus dem portierten Design-Generator.
 
@@ -572,21 +572,21 @@ sequenceDiagram
 
 #### To-Dos
 
-- 🔲 Port the generator 1:1 (120 days, seed 42, same order of random calls), so the base series reproduces the design numbers
-- 🔲 Tie the weekday effect (`+520` Fri/Sat, `−140` otherwise) to the day index with the design's phase (last full day = Friday), not to the real date
-- 🔲 Map design fields to `DayRecord`: `food` = `A` (`undefined` on „ohne Nahrung“ days), `resting` = `R` (`restingEstimated: true` on estimated days, R = 1.750), `active` = `K`; on measurement days `weightKg` = `wM`, `bodyFatFraction` = `fM / wM`, `leanMassKg` = `wM − fM`
-- 🔲 Date records relative to `now`: index 119 = yesterday, index 0 = 120 days ago
-- 🔲 Return today's partial values when the range includes today: food 1.420, resting 1.090, active 290 („Heute bisher“ in the design)
-- 🔲 Apply scenario overlays after generation, without extra random calls, so the base numbers stay unchanged
-- 🔲 Create the 7 scenarios (table below) with stable IDs and German names
-- 🔲 Implement `profile()` (82,4 kg, 182 cm, 34 years, male, like the intro wireframe), `latestSources()` (food „Yazio“, resting/active Apple Watch) and `firstDataDate()` (120 days ago; `undefined` for `empty`)
-- 🔲 Add a marker constant `DEMO_BUNDLE_MARKER = 'kcalwaage-demo-data'` in `demo-source.ts` for the release check in M9
-- 🔲 Test determinism: building any scenario twice gives equal values; values (without dates) are equal for two different `now` dates
-- 🔲 Test design key figures for `normal30`: Σ (resting + active) over the last 30 days = 80.100 kcal; `periodBreakdown` gives +7.000 kcal; 24 of 30 days complete (3 estimated, 2 low, 1 without food)
-- 🔲 Test `short7`: 7 days, 4 weight measurements; `empty`: no values at all
-- 🔲 Add a Jest snapshot of all scenario values (without dates) so any change to the numbers is visible in review
-- 🔲 Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
-- 🔲 Commit (`feat: add demo Health source with fixed scenarios`)
+- ✅ Port the generator 1:1 (120 days, seed 42, same order of random calls), so the base series reproduces the design numbers _(einmalig gegen `gen()` aus der Design-Datei (in Node ausgeführt) verglichen: alle 120 Tage identisch)_
+- ✅ Tie the weekday effect (`+520` Fri/Sat, `−140` otherwise) to the day index with the design's phase (last full day = Friday), not to the real date _(`designWeekday(index)`; der Vergleich mit dem Design bestätigt die Phase)_
+- ✅ Map design fields to `DayRecord`: `food` = `A` (`undefined` on „ohne Nahrung“ days), `resting` = `R` (`restingEstimated: true` on estimated days, R = 1.750), `active` = `K`; on measurement days `weightKg` = `wM`, `bodyFatFraction` = `fM / wM`, `leanMassKg` = `wM − fM`
+- ✅ Date records relative to `now`: index 119 = yesterday, index 0 = 120 days ago
+- ✅ Return today's partial values when the range includes today: food 1.420, resting 1.090, active 290 („Heute bisher“ in the design)
+- ✅ Apply scenario overlays after generation, without extra random calls, so the base numbers stay unchanged
+- ✅ Create the 7 scenarios (table below) with stable IDs and German names
+- ✅ Implement `profile()` (82,4 kg, 182 cm, 34 years, male, like the intro wireframe), `latestSources()` (food „Yazio“, resting/active Apple Watch) and `firstDataDate()` (120 days ago; `undefined` for `empty`)
+- ✅ Add a marker constant `DEMO_BUNDLE_MARKER = 'kcalwaage-demo-data'` in `demo-source.ts` for the release check in M9
+- ✅ Test determinism: building any scenario twice gives equal values; values (without dates) are equal for two different `now` dates _(Test mockt `@kingstinct/react-native-healthkit` wie die übrigen Health-Tests (wegen `BiologicalSex`))_
+- ✅ Test design key figures for `normal30`: Σ (resting + active) over the last 30 days = 80.100 kcal; `periodBreakdown` gives +7.000 kcal; 24 of 30 days complete (3 estimated, 2 low, 1 without food)
+- ✅ Test `short7`: 7 days, 4 weight measurements; `empty`: no values at all
+- ✅ Add a Jest snapshot of all scenario values (without dates) so any change to the numbers is visible in review _(eine Zeile pro Tag, Kommazahlen gerundet (860 Zeilen statt 4.750))_
+- ✅ Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
+- ✅ Commit (`feat: add demo Health source with fixed scenarios`)
 
 **Szenarien**
 
