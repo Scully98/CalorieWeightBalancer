@@ -9,6 +9,14 @@ export const en: typeof de = {
     permissionsPath:
       'In Health: profile picture → Apps → Kcalwaage. There you see every value and can switch it on or off.',
   },
+  tabs: {
+    balance: 'Balance',
+    settings: 'Settings',
+  },
+  settings: {
+    title: 'Settings',
+    placeholder: 'Period, measurement error and zero days will live here.',
+  },
   home: {
     period: 'Last 30 days, excluding today',
     loading: 'Calculating …',

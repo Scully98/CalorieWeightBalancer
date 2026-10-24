@@ -206,7 +206,7 @@ sequenceDiagram
 
 ---
 
-### Milestone 4 — Tab-Bar
+### ✅ Milestone 4 — Tab-Bar
 
 > Native Tab-Bar mit „Bilanz“ (bestehender Pager) und „Einstellungen“ (Platzhalter mit Schriftmuster und Dev-Links).
 
@@ -229,18 +229,19 @@ sequenceDiagram
 
 #### To-Dos
 
-- 🔲 Move `src/app/index.tsx` to `src/app/(tabs)/index.tsx` with `git mv`; keep content, set `SafeAreaView` edges to `['top']` (the tab bar owns the bottom inset)
-- 🔲 Create `src/app/(tabs)/_layout.tsx` with `NativeTabs`: trigger `index` (label `tabs.balance`, SF Symbol `chart.bar` / `chart.bar.fill`) and `settings` (label `tabs.settings`, SF Symbol `gearshape` / `gearshape.fill`); tint, icon and label colors from `useColors()`
-- 🔲 Update `src/app/_layout.tsx`: `Stack.Screen name="(tabs)"` inside `Stack.Protected guard={introCompleted}`
-- 🔲 Create `settings-page.tsx`: `largeTitle` „Einstellungen“, placeholder text, and a `__DEV__` section with „Reset intro (dev)“ and the type specimen
-- 🔲 Remove the dev reset link from `balance-page.tsx`
-- 🔲 Create `type-specimen.tsx`: one line per text variant with realistic texts (e.g. „+7.000 kcal“, „≈ +0,9 kg Körperfett (theoretisch, 7.700 kcal/kg)“, „24 von 30 Tagen vollständig“), wrapping allowed, no `numberOfLines`
-- 🔲 Add i18n keys DE/EN: `tabs.balance` „Bilanz“/„Balance“, `tabs.settings` „Einstellungen“/„Settings“, `settings.title`, `settings.placeholder` („Hier kommen Zeitraum, Messfehler und Null-Tage hin.“ / „Period, measurement error and zero days will live here.“)
-- 🔲 Check in the simulator: Dark Mode toggle (Cmd Shift A) switches tab bar, both tabs and the specimen at once, without restart
-- 🔲 Check at the largest Dynamic Type size (AX5) in light and dark: tab bar labels are not cut off (long press shows the Large Content Viewer), specimen texts wrap and stay complete
-- 🔲 Check that the intro still leads to the Bilanz tab after „Los geht's“ and that „Reset intro (dev)“ in Einstellungen brings the intro back
-- 🔲 Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
-- 🔲 Commit (`feat: add native tab bar with balance and settings tabs`)
+- ✅ Move `src/app/index.tsx` to `src/app/(tabs)/index.tsx` with `git mv`; keep content, set `SafeAreaView` edges to `['top']` (the tab bar owns the bottom inset) _(als Rename erkannt)_
+- ✅ Create `src/app/(tabs)/_layout.tsx` with `NativeTabs`: trigger `index` (label `tabs.balance`, SF Symbol `chart.bar` / `chart.bar.fill`) and `settings` (label `tabs.settings`, SF Symbol `gearshape` / `gearshape.fill`); tint, icon and label colors from `useColors()`
+- ✅ Update `src/app/_layout.tsx`: `Stack.Screen name="(tabs)"` inside `Stack.Protected guard={introCompleted}`
+- ✅ Create `settings-page.tsx`: `largeTitle` „Einstellungen“, placeholder text, and a `__DEV__` section with „Reset intro (dev)“ and the type specimen
+- ✅ Remove the dev reset link from `balance-page.tsx`
+- ✅ Create `type-specimen.tsx`: one line per text variant with realistic texts (e.g. „+7.000 kcal“, „≈ +0,9 kg Körperfett (theoretisch, 7.700 kcal/kg)“, „24 von 30 Tagen vollständig“), wrapping allowed, no `numberOfLines`
+- ✅ Add i18n keys DE/EN: `tabs.balance` „Bilanz“/„Balance“, `tabs.settings` „Einstellungen“/„Settings“, `settings.title`, `settings.placeholder` („Hier kommen Zeitraum, Messfehler und Null-Tage hin.“ / „Period, measurement error and zero days will live here.“)
+- ✅ Check in the simulator: Dark Mode toggle (Cmd Shift A) switches tab bar, both tabs and the specimen at once, without restart _(iPhone 16 Pro, `simctl ui appearance dark`: Tab-Bar, Bilanz und Einstellungen schalten live um)_
+- ✅ Check at the largest Dynamic Type size (AX5) in light and dark: tab bar labels are not cut off (long press shows the Large Content Viewer), specimen texts wrap and stay complete _(AX5 per `simctl ui content_size`: alle Beispieltexte vollständig, Umbruch nur an Wortgrenzen; Tab-Labels bleiben in Systemgröße)_
+- 🔲 Check that the intro still leads to the Bilanz tab after „Los geht's“ and that „Reset intro (dev)“ in Einstellungen brings the intro back _(offen für Julius: ohne Tipp-Werkzeug im Simulator nicht prüfbar; Routing nur von `index` auf `(tabs)` umbenannt)_
+- ✅ 🆕 Lower the caps found too large at AX5: `largeTitle` 2 → 1.6 („Einstellungen“ brach mitten im Wort um, passt bis ≈ 1,7), `hero` 1.5 → 1.2 („+7.000“ bleibt einzeilig)
+- ✅ Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
+- ✅ Commit (`feat: add native tab bar with balance and settings tabs`)
 
 #### Notes / Constraints
 

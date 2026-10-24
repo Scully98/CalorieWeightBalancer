@@ -9,7 +9,6 @@ import { formatSigned, roundKcal } from '@/core/format';
 import type { BalanceState } from '@/features/balance/use-balance';
 import { openHealthApp } from '@/health/open-health-app';
 import { formatLocale } from '@/i18n';
-import { resetIntro } from '@/storage/settings';
 import { space } from '@/theme/spacing';
 
 type BalanceSummaryProps = {
@@ -102,9 +101,6 @@ export function BalancePage({ state, onShowData }: BalancePageProps) {
           {t('home.loading')}
         </AppText>
       )}
-      {__DEV__ ? (
-        <LinkButton label="Reset intro (dev)" onPress={resetIntro} />
-      ) : null}
     </ScrollView>
   );
 }

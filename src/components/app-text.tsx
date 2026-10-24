@@ -6,12 +6,12 @@ import { useColors } from '@/theme/use-colors';
 // iOS grows titles less than body text at accessibility sizes; React Native
 // scales all text alike, so large styles are capped to keep words intact.
 const MAX_FONT_SCALE: Partial<Record<TextVariant, number>> = {
-  largeTitle: 2,
+  largeTitle: 1.6,
   screenTitle: 2,
   sectionTitle: 2,
   number: 2,
   numberLarge: 1.5,
-  hero: 1.5,
+  hero: 1.2,
 };
 
 export type TextTone = 'foreground' | 'muted' | 'inverse';

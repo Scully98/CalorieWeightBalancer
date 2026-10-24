@@ -7,6 +7,14 @@ export const de = {
     permissionsPath:
       'In Health: Profilbild → Apps → Kcalwaage. Dort siehst du alle Werte und kannst sie an- und ausschalten.',
   },
+  tabs: {
+    balance: 'Bilanz',
+    settings: 'Einstellungen',
+  },
+  settings: {
+    title: 'Einstellungen',
+    placeholder: 'Hier kommen Zeitraum, Messfehler und Null-Tage hin.',
+  },
   home: {
     period: 'Letzte 30 Tage, ohne heute',
     loading: 'Rechne …',

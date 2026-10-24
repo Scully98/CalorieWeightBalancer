@@ -34,7 +34,7 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView
-      edges={['top', 'bottom']}
+      edges={['top']}
       style={[styles.flex, { backgroundColor: colors.background }]}
     >
       <View style={styles.header}>
