@@ -59,6 +59,11 @@ function report(overrides: Partial<BalanceReport> = {}): BalanceReport {
       { resting: 1800, active: 300 },
     ]),
     days: [],
+    chart: {
+      buckets: [],
+      lines: { points: [], hasWeight: false, hasFat: false },
+    },
+    analysis: { state: 'insufficient', days: 3, measurements: 0 },
     daysWithData: { food: 2, resting: 3, active: 2 },
     sources: { food: undefined, resting: watch, active: watch },
     ...overrides,

@@ -1,6 +1,6 @@
 # Rechenkern II: Chart-Serien und Abgleich (P3)
 
-Stand 2026-10-24. In Umsetzung auf Branch `feature/home-page-base`. Voraussetzung P2 (`docs/specs/2026-10-24-core-period-day-balance.md`) ist umgesetzt.
+Stand 2026-10-24. Umgesetzt auf Branch `feature/home-page-base` (M1–M6). Offen für Julius: Gewicht aus der Waagen-App am iPhone prüfen (M5). Voraussetzung P2 (`docs/specs/2026-10-24-core-period-day-balance.md`) ist umgesetzt.
 
 ## Overview
 
@@ -386,7 +386,7 @@ export function analyzeBalance(
 
 ---
 
-### Milestone 6 — Verdrahtung
+### ✅ Milestone 6 — Verdrahtung
 
 > `useBalance` lädt den Vorlauf und den heutigen Tag und liefert Buckets, Linien und Abgleich im `BalanceReport`. Die Demo-Szenarien bestätigen die Abnahmekriterien.
 
@@ -397,23 +397,23 @@ export function analyzeBalance(
 | Color | File | Action |
 |-------|------|--------|
 | 🟠 | `src/features/balance/use-balance.ts` | `source.days(start − 34, 34 + count (+1 für heute))`; `chart: { buckets, lines }`, `analysis` im `BalanceReport` |
-| 🟠 | `src/dev/demo/demo-source.ts` | Vorlauf vor dem Serienanfang liefert leere Tage (prüfen, ggf. anpassen) |
+| 🟠 | `src/features/balance/__tests__/data-rows.test.ts` | Test-Helfer um `chart` und `analysis` ergänzt _(statt `demo-source.ts`: Vorlauf vor dem Serienanfang liefert schon leere Tage, keine Änderung nötig)_ |
 | 🟠 | `src/dev/demo/__tests__/scenarios.test.ts` | `short7` → `insufficient` (7 Tage, 4 Messungen); `long90` → 13 oder 14 Wochen; `noBodyFat30` → `weightOnly`; `normal30` → `deviation`, `goodFit30` → `ok` |
 | 🟠 | `docs/specs/2026-10-24-core-period-day-balance.md` | Open Question 4 als erledigt markieren (Gewicht pro Tag kommt mit P3) |
 
 #### To-Dos
 
-- 🔲 Load `records = source.days(addDays(start, −34), 34 + count + (includeToday ? 0 : 1))` in one call; split into lead-in, period and today
-- 🔲 Keep `dayBalances` on the period records only (P2 numbers unchanged); compute today's `DayBalance` separately for the today bucket
-- 🔲 Keep `weightBefore(start)` for the resting estimate (weights older than the lead-in); pass the lead-in's last weight when present
-- 🔲 Add `chart: { buckets: chartBuckets(...), lines: chartLines(...) }` and `analysis: analyzeBalance(...)` to `BalanceReport`
-- 🔲 Test `short7` → `insufficient` with `days: 7`, `measurements: 4`
-- 🔲 Test `long90` for several `now` dates (7 weekdays) → 13 or 14 week buckets, no day bucket
-- 🔲 Test `noBodyFat30` → `weightOnly`; `goodFit30` → `ok`; `normal30` → state and E (≈ 4.300 ± noise, record the value)
-- 🔲 Mark P2 Open Question 4 as resolved
-- 🔲 Check in the simulator that 1a still shows +7.000 kcal / +0,9 kg (no regression)
-- 🔲 Run `npm run lint`, `npm run typecheck`, `npm run test:coverage`, `npm run check:release-bundle`; all exit 0
-- 🔲 Commit (`feat: load chart series and analysis with the balance`)
+- ✅ Load `records = source.days(addDays(start, −34), 34 + count + (includeToday ? 0 : 1))` in one call; split into lead-in, period and today _(der heutige Tag wird nur geladen, wenn der Zeitraum gestern endet (bei „Eigener“ mit früherem Ende kein Heute-Balken, wie im Design))_
+- ✅ Keep `dayBalances` on the period records only (P2 numbers unchanged); compute today's `DayBalance` separately for the today bucket
+- ✅ Keep `weightBefore(start)` for the resting estimate (weights older than the lead-in); pass the lead-in's last weight when present _(`weightBefore` unverändert; der Heute-Tag schätzt mit der letzten Messung im Zeitraum)_
+- ✅ Add `chart: { buckets: chartBuckets(...), lines: chartLines(...) }` and `analysis: analyzeBalance(...)` to `BalanceReport` _(`loadBalance` für die Szenario-Tests exportiert)_
+- ✅ Test `short7` → `insufficient` with `days: 7`, `measurements: 4`
+- ✅ Test `long90` for several `now` dates (7 weekdays) → 13 or 14 week buckets, no day bucket
+- ✅ Test `noBodyFat30` → `weightOnly`; `goodFit30` → `ok`; `normal30` → state and E (≈ 4.300 ± noise, record the value) _(`normal30` → `deviation`/`less`, E gerundet 4.200 (Design-Rauschen um 4.300); dazu Test: 30 Tagesbalken + Heute, Trend an allen 30 Tagen)_
+- ✅ Mark P2 Open Question 4 as resolved
+- ✅ Check in the simulator that 1a still shows +7.000 kcal / +0,9 kg (no regression) _(per Deep Link: 1a weiterhin +7.000 kcal / +0,9 kg)_
+- ✅ Run `npm run lint`, `npm run typecheck`, `npm run test:coverage`, `npm run check:release-bundle`; all exit 0 _(dazu `npm run check:release-bundle`)_
+- ✅ Commit (`feat: load chart series and analysis with the balance`)
 
 #### Notes / Constraints
 

@@ -553,7 +553,7 @@ sequenceDiagram
 | 1 | ❓ Rundung der Spanne in der Anzeige: auf 50 kcal wie im Design (`r50`) oder auf 10 kcal wie die Bilanzzahl heute (`roundKcal`)? Der goldene Testfall stimmt mit beidem | Julius | Betrifft erst die Homepage; der Kern rechnet ungerundet |
 | 2 | ❓ Sollen die Hi-Fi-Zahlen von 1c (+2.650 bis +19.350 bei `normal30`) in der Galerie erhalten bleiben? Nach Key Decision 2 zeigt 1c +2.771 bis +18.986 (gerundet +2.750 bis +19.000). Alternativ den Demo-Generator so anpassen, dass 1c ohne Null-Tag wieder passt | Julius | Screenshot-Vergleich 1c mit dem Hi-Fi |
 | 3 | ❓ Null-Tag mit geschätztem R: zwei Flags (`noFood` + `restingEstimated`) nach Key Decision 8, oder nur `noFood`, weil R an dem Tag nicht in die Bilanz eingeht? | Julius | Gruppen im Sheet „Unvollständige Tage“ (Homepage); die Zählung „X von N“ ist gleich |
-| 4 | ❓ Gewicht pro Tag aus HealthKit (`DayRecord.weightKg`) kommt laut P1 mit Schritt 4/8. Soll es für die Mifflin-Schätzung schon in P2 kommen? Ohne es nimmt die echte App für alle Tage die letzte Messung vor dem Zeitraum | Julius | Genauigkeit der Schätzung bei Gewichtsänderung im Zeitraum |
+| 4 | ✅ ~~Gewicht pro Tag aus HealthKit (`DayRecord.weightKg`) schon in P2?~~ Kommt mit P3 (`docs/specs/2026-10-24-core-chart-analysis.md`, M5): `HealthKitSource.days` liefert Gewicht, KFA und Magermasse pro Tag | Julius | erledigt |
 
 ## Concerns & Decisions Log
 

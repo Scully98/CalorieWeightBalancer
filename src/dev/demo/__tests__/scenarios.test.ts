@@ -1,15 +1,22 @@
 import { createDemoSource } from '../demo-source';
-import { buildScenario, SCENARIO_IDS } from '../scenarios';
+import { buildScenario, SCENARIO_IDS, type ScenarioId } from '../scenarios';
 import { dayBalances } from '@/core/day-balance';
 import type { DayRecord } from '@/core/day-record';
 import { resolvePeriod } from '@/core/period';
 import { periodBalance } from '@/core/period-balance';
+import { DEFAULT_SETTINGS } from '@/core/settings';
+import { loadBalance } from '@/features/balance/use-balance';
 
 jest.mock('@kingstinct/react-native-healthkit', () => ({
   BiologicalSex: { notSet: 0, female: 1, male: 2, other: 3 },
 }));
 
+jest.mock('@/storage/settings', () => ({ getProfile: () => ({}) }));
+
 const NOW = new Date(2026, 9, 24, 14, 32);
+
+// E of the design data, rounded to 100 as on the card.
+const STORED_NORMAL30 = 4200;
 
 async function periodDays(id: (typeof SCENARIO_IDS)[number], now = NOW) {
   const source = createDemoSource(id, now);
@@ -72,5 +79,56 @@ describe('demo scenarios', () => {
     expect(
       await createDemoSource('empty', NOW).weightBefore(NOW),
     ).toBeUndefined();
+  });
+});
+
+describe('demo scenarios through the balance load', () => {
+  const load = (id: ScenarioId, now = NOW) =>
+    loadBalance(
+      createDemoSource(id, now),
+      { ...DEFAULT_SETTINGS, period: buildScenario(id).period },
+      now,
+    );
+
+  it('keep 7 days insufficient, with the measurements so far', async () => {
+    const { analysis } = await load('short7');
+    expect(analysis).toMatchObject({
+      state: 'insufficient',
+      days: 7,
+      measurements: 4,
+    });
+  });
+
+  it('give 13 or 14 week bars for 90 days on any weekday', async () => {
+    for (let shift = 0; shift < 7; shift++) {
+      const now = new Date(2026, 9, 24 + shift, 14);
+      const { buckets } = (await load('long90', now)).chart;
+      expect([13, 14]).toContain(buckets.length);
+      expect(buckets.every((bucket) => bucket.kind === 'week')).toBe(true);
+    }
+  });
+
+  it('show day bars with the running day for 30 days', async () => {
+    const { buckets, lines } = (await load('normal30')).chart;
+    expect(buckets).toHaveLength(31);
+    expect(buckets[30]).toMatchObject({ kind: 'day', today: true });
+    expect(lines.points).toHaveLength(30);
+    expect(lines.points.every((point) => point.weightTrend !== undefined)).toBe(
+      true,
+    );
+  });
+
+  it('compare the weight only without body fat data', async () => {
+    expect((await load('noBodyFat30')).analysis.state).toBe('weightOnly');
+  });
+
+  it('fit for the good-fit scenario and deviate for the design data', async () => {
+    expect((await load('goodFit30')).analysis.state).toBe('ok');
+    const { analysis } = await load('normal30');
+    expect(analysis).toMatchObject({ state: 'deviation', direction: 'less' });
+    if (analysis.state !== 'deviation') throw new Error(analysis.state);
+    expect(Math.round(analysis.values.storedKcal / 100) * 100).toBe(
+      STORED_NORMAL30,
+    );
   });
 });

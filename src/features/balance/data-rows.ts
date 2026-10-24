@@ -62,10 +62,7 @@ export function buildCalcLines(
     balance.daysWithoutActive === summed
       ? [t('data.activeMissing')]
       : [t('data.avg', { value: avg(balance.activeKcal) })];
-  if (
-    balance.daysWithoutActive > 0 &&
-    balance.daysWithoutActive < summed
-  ) {
+  if (balance.daysWithoutActive > 0 && balance.daysWithoutActive < summed) {
     active.push(t('data.activeZero', { count: balance.daysWithoutActive }));
   }
 
@@ -101,10 +98,7 @@ export function buildCalcLines(
   ];
 }
 
-export function buildCalcNotes(
-  balance: PeriodBalance,
-  t: TFunction,
-): string[] {
+export function buildCalcNotes(balance: PeriodBalance, t: TFunction): string[] {
   const notes: string[] = [];
   if (balance.maintenanceDays > 0) {
     notes.push(t('home.daysWithoutFood', { count: balance.maintenanceDays }));
