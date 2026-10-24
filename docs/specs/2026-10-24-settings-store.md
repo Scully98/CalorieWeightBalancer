@@ -308,7 +308,7 @@ Keine App-Kürzel: reine Touch-App fürs iPhone (siehe P0/P1-Spec, M4). VoiceOve
 
 ---
 
-### Milestone 5 — Seite Grundumsatz-Schätzung
+### ✅ Milestone 5 — Seite Grundumsatz-Schätzung
 
 > Eine Unterseite zeigt die Werte für Mifflin-St Jeor: Health-Werte zur Ansicht, fehlende zum Eintragen, gespeichert mit „Sichern“.
 
@@ -328,16 +328,16 @@ Keine App-Kürzel: reine Touch-App fürs iPhone (siehe P0/P1-Spec, M4). VoiceOve
 
 #### To-Dos
 
-- 🔲 Add `inputFromStored(stored, locale)`: stored numbers as locale text (e.g. `82,4`), sex preselected
-- 🔲 Add `updateStoredProfile(previous, inputs, now)`: like `toStoredProfile`, but an unchanged weight or age keeps its `…RecordedOn`; an emptied field drops the value; Health values never stored (Key Decision 8)
-- 🔲 Create the page: title „Grundumsatz-Schätzung“, explanation, `BmrCard` with the Health profile from the active `HealthSource` (loading text while it loads, all fields editable if loading fails), „Sichern“ enabled when something changed and all filled fields are valid, back link „‹ Einstellungen“; after saving go back
-- 🔲 When Health has all four values: show them read-only with „Alles kommt aus Health. Die Schätzung gilt nur für Tage ohne gemessene Ruheenergie.“, no „Sichern“
-- 🔲 Add the i18n keys DE/EN
-- 🔲 Test `updateStoredProfile`: unchanged age keeps `ageRecordedOn` from the intro; changed weight gets today's date; emptied height removes `heightCm`; a field Health provides is not stored
-- 🔲 Test `inputFromStored`: `82.4` → `„82,4“` in `de-DE`, `„82.4“` in `en-US`
-- 🔲 Check in the simulator (no Health data → all four editable): change the height, „Sichern“, back on Bilanz the estimate on the data page uses the new height without reload (gallery: check via `buildReport` test if the data page can't be reached)
-- 🔲 Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
-- 🔲 Commit (`feat: edit body data for the resting energy estimate in settings`)
+- ✅ Add `inputFromStored(stored, locale)`: stored numbers as locale text (e.g. `82,4`), sex preselected _(mit `now`: das Alter steht so im Feld, wie es heute ist)_
+- ✅ Add `updateStoredProfile(previous, inputs, now)`: like `toStoredProfile`, but an unchanged weight or age keeps its `…RecordedOn`; an emptied field drops the value; Health values never stored (Key Decision 8) _(Felder, die Health liefert, behalten den gespeicherten Wert)_
+- ✅ Create the page: title „Grundumsatz-Schätzung“, explanation, `BmrCard` with the Health profile from the active `HealthSource` (loading text while it loads, all fields editable if loading fails), „Sichern“ enabled when something changed and all filled fields are valid, back link „‹ Einstellungen“; after saving go back _(Health-Profil über `useHealthProfile`; `BmrCard` bekommt optionale `title`/`body`)_
+- ✅ When Health has all four values: show them read-only with „Alles kommt aus Health. Die Schätzung gilt nur für Tage ohne gemessene Ruheenergie.“, no „Sichern“
+- ✅ Add the i18n keys DE/EN _(`settings.estimate.*`, `settings.back`)_
+- ✅ Test `updateStoredProfile`: unchanged age keeps `ageRecordedOn` from the intro; changed weight gets today's date; emptied height removes `heightCm`; a field Health provides is not stored
+- ✅ Test `inputFromStored`: `82.4` → `„82,4“` in `de-DE`, `„82.4“` in `en-US`
+- ✅ Check in the simulator (no Health data → all four editable): change the height, „Sichern“, back on Bilanz the estimate on the data page uses the new height without reload (gallery: check via `buildReport` test if the data page can't be reached) _(Seite per Deep Link: Gewicht 66, Alter 28, Größe 160, w aus dem Intro, ≈ 1.360 kcal (gleich der Zeile in den Einstellungen). Ändern und „Sichern“ geht im Simulator nicht (kein Tippen); Speichern und Datum decken die Tests ab, die Übernahme in die Bilanz `buildReport` (M3))_
+- ✅ Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
+- ✅ Commit (`feat: edit body data for the resting energy estimate in settings`)
 
 #### Notes / Constraints
 

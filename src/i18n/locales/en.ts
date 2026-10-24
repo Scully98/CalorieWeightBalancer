@@ -33,6 +33,17 @@ export const en: typeof de = {
     privacy: 'Privacy',
     imprint: 'Imprint',
     footer: 'Not medical advice · v{{version}}',
+    back: '‹ Settings',
+    estimate: {
+      body: 'For days without measured resting energy, the app estimates it with Mifflin-St Jeor. Health values come first; you can only enter what Health lacks.',
+      cardTitle: 'Your values',
+      cardBody:
+        'Stored only on your iPhone. A changed weight or age applies from today.',
+      allFromHealth:
+        'Everything comes from Health. The estimate only applies to days without measured resting energy.',
+      loading: 'Reading Health …',
+      save: 'Save',
+    },
   },
   home: {
     period_one: 'Last day, excluding today',

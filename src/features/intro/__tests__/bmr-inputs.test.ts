@@ -1,6 +1,8 @@
 import {
+  inputFromStored,
   resolveBmrInputs,
   toStoredProfile,
+  updateStoredProfile,
   type UserInput,
 } from '../bmr-inputs';
 import type { HealthScan } from '@/health/scan';
@@ -112,5 +114,79 @@ describe('toStoredProfile', () => {
         (value) => value !== undefined,
       ),
     ).toEqual([]);
+  });
+});
+
+describe('inputFromStored', () => {
+  const stored = {
+    weightKg: 82.4,
+    heightCm: 182,
+    sex: 'male' as const,
+    ageYears: 33,
+    ageRecordedOn: '2025-10-01',
+  };
+
+  it('fills the fields in the locale, with the age as of today', () => {
+    expect(inputFromStored(stored, 'de-DE', now)).toEqual({
+      weight: '82,4',
+      age: '34',
+      height: '182',
+      sex: 'male',
+    });
+    expect(inputFromStored(stored, 'en-US', now).weight).toBe('82.4');
+    expect(inputFromStored({ weightKg: 80 }, 'de-DE', now)).toEqual({
+      weight: '80',
+      age: '',
+      height: '',
+      sex: undefined,
+    });
+  });
+});
+
+describe('updateStoredProfile', () => {
+  const notSet: HealthScan['profile'] = { biologicalSex: 0 };
+  const previous = {
+    heightCm: 180,
+    sex: 'female' as const,
+    weightKg: 66,
+    weightRecordedOn: '2026-10-01',
+    ageYears: 28,
+    ageRecordedOn: '2025-10-01',
+  };
+  const edit = (input: Partial<UserInput>, health = notSet) =>
+    updateStoredProfile(
+      previous,
+      resolveBmrInputs(
+        health,
+        { ...inputFromStored(previous, 'de-DE', now), ...input },
+        now,
+      ),
+      now,
+    );
+
+  it('keeps the dates of unchanged values', () => {
+    expect(edit({})).toEqual(previous);
+  });
+
+  it('dates a changed weight or age today', () => {
+    expect(edit({ weight: '65,5', age: '30' })).toEqual({
+      ...previous,
+      weightKg: 65.5,
+      weightRecordedOn: '2026-10-15',
+      ageYears: 30,
+      ageRecordedOn: '2026-10-15',
+    });
+  });
+
+  it('drops an emptied field', () => {
+    const { heightCm, ...rest } = previous;
+    expect(heightCm).toBe(180);
+    expect(edit({ height: '' })).toEqual(rest);
+  });
+
+  it('never stores a value Health provides', () => {
+    expect(edit({}, { biologicalSex: 1, heightCm: 168, weightKg: 70 })).toEqual(
+      previous,
+    );
   });
 });

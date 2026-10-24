@@ -25,6 +25,9 @@ type BmrCardProps = {
   locale: string;
   // Health has resting energy, but on too few full days.
   partial: boolean;
+  // Instead of the intro texts, e.g. in settings.
+  title?: string;
+  body?: string;
 };
 
 // Shown on intro step 3d when Health has too little resting energy. Only the
@@ -35,6 +38,8 @@ export function BmrCard({
   onChange,
   locale,
   partial,
+  title,
+  body,
 }: BmrCardProps) {
   const { t } = useTranslation();
 
@@ -90,10 +95,11 @@ export function BmrCard({
     <Card>
       <Headline
         level="h3"
-        title={t('intro.found.bmr.title')}
-        subline={t(
-          partial ? 'intro.found.bmr.bodyPartial' : 'intro.found.bmr.body',
-        )}
+        title={title ?? t('intro.found.bmr.title')}
+        subline={
+          body ??
+          t(partial ? 'intro.found.bmr.bodyPartial' : 'intro.found.bmr.body')
+        }
       />
       <View>
         {numberRow('weight')}

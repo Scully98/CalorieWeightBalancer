@@ -1,13 +1,13 @@
 import { BiologicalSex } from '@kingstinct/react-native-healthkit';
 
-import { ageInYears } from '@/core/age';
+import { ageInYears, currentAge } from '@/core/age';
 import {
   estimateRestingEnergy,
   LIMITS,
   type NumberKey,
   type Sex,
 } from '@/core/bmr';
-import { parseLocaleNumber } from '@/core/format';
+import { formatNumber, parseLocaleNumber } from '@/core/format';
 import type { HealthScan } from '@/health/scan';
 import type { StoredProfile } from '@/storage/settings-store';
 
@@ -121,4 +121,73 @@ export function toStoredProfile(inputs: BmrInputs, now: Date): StoredProfile {
     ageYears,
     ageRecordedOn: ageYears === undefined ? undefined : today,
   };
+}
+
+// Fields filled with what the user entered before (settings); the age as it
+// is today.
+export function inputFromStored(
+  stored: StoredProfile,
+  locale: string,
+  now: Date,
+): UserInput {
+  const text = (value: number | undefined, decimals: 0 | 1) =>
+    value === undefined
+      ? ''
+      : formatNumber(value, locale, Number.isInteger(value) ? 0 : decimals);
+  return {
+    weight: text(stored.weightKg, LIMITS.weight.decimals),
+    age: text(
+      stored.ageYears === undefined
+        ? undefined
+        : currentAge(stored.ageYears, stored.ageRecordedOn, now),
+      0,
+    ),
+    height: text(stored.heightCm, LIMITS.height.decimals),
+    sex: stored.sex,
+  };
+}
+
+// Profile to store after editing in settings. An unchanged weight or age
+// keeps its date, so the age keeps growing from the first entry; an emptied
+// field drops the value. Fields Health now provides keep what was stored.
+export function updateStoredProfile(
+  previous: StoredProfile,
+  inputs: BmrInputs,
+  now: Date,
+): StoredProfile {
+  const today = isoDate(now);
+  const next: StoredProfile = {};
+
+  if (inputs.height.source === 'health') next.heightCm = previous.heightCm;
+  else next.heightCm = inputs.height.value;
+
+  if (inputs.sex.source === 'health') next.sex = previous.sex;
+  else next.sex = inputs.sex.value;
+
+  if (inputs.weight.source === 'health') {
+    next.weightKg = previous.weightKg;
+    next.weightRecordedOn = previous.weightRecordedOn;
+  } else if (inputs.weight.value !== undefined) {
+    next.weightKg = inputs.weight.value;
+    next.weightRecordedOn =
+      inputs.weight.value === previous.weightKg
+        ? previous.weightRecordedOn
+        : today;
+  }
+
+  const previousAge =
+    previous.ageYears === undefined
+      ? undefined
+      : currentAge(previous.ageYears, previous.ageRecordedOn, now);
+  if (inputs.age.source === 'health' || inputs.age.value === previousAge) {
+    next.ageYears = previous.ageYears;
+    next.ageRecordedOn = previous.ageRecordedOn;
+  } else if (inputs.age.value !== undefined) {
+    next.ageYears = inputs.age.value;
+    next.ageRecordedOn = today;
+  }
+
+  return Object.fromEntries(
+    Object.entries(next).filter(([, value]) => value !== undefined),
+  );
 }

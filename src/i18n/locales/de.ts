@@ -31,6 +31,17 @@ export const de = {
     privacy: 'Datenschutz',
     imprint: 'Impressum',
     footer: 'Keine medizinische Beratung · v{{version}}',
+    back: '‹ Einstellungen',
+    estimate: {
+      body: 'Für Tage ohne gemessene Ruheenergie schätzt die App den Grundumsatz nach Mifflin-St Jeor. Werte aus Health gehen vor; eintragen kannst du nur, was Health nicht liefert.',
+      cardTitle: 'Deine Werte',
+      cardBody:
+        'Gespeichert nur auf deinem iPhone. Ein geändertes Gewicht oder Alter gilt ab heute.',
+      allFromHealth:
+        'Alles kommt aus Health. Die Schätzung gilt nur für Tage ohne gemessene Ruheenergie.',
+      loading: 'Lese Health …',
+      save: 'Sichern',
+    },
   },
   home: {
     period_one: 'Letzter Tag, ohne heute',
