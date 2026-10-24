@@ -1,3 +1,4 @@
+import { addDays, daysBetween, startOfDay } from './dates';
 import { fromDateKey } from './day-record';
 
 export type PresetDays = 7 | 30 | 60 | 90;
@@ -32,19 +33,6 @@ export type ResolvedPeriod = {
   start: Date;
   days: number;
 };
-
-function startOfDay(date: Date): Date {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
-}
-
-function addDays(date: Date, days: number): Date {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate() + days);
-}
-
-// Whole calendar days from a to b; rounding absorbs daylight saving hours.
-function daysBetween(a: Date, b: Date): number {
-  return Math.round((b.getTime() - a.getTime()) / (24 * 60 * 60 * 1000));
-}
 
 // Calendar days of a period. Every period ends with yesterday, or with today
 // when `includeToday` is on; "30 days" then means the 30 days up to today.

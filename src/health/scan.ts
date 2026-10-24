@@ -12,6 +12,7 @@ import { queryDailyEnergy } from './daily-energy';
 import { QUANTITY } from './read-types';
 import { safe } from './safe';
 import { typicalResting } from '@/core/balance';
+import { startOfDay } from '@/core/dates';
 
 // Measurements are counted up to this number; more shows as "100+".
 export const MAX_COUNTED_SAMPLES = 100;
@@ -58,10 +59,6 @@ export async function readHealthProfile(): Promise<HealthProfile> {
     dateOfBirth,
     biologicalSex,
   };
-}
-
-function startOfDay(date: Date): Date {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
 }
 
 // Most recent sample of a type. Must only run after requestReadAccess().

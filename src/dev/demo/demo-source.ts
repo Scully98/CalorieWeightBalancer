@@ -2,6 +2,7 @@ import { BiologicalSex } from '@kingstinct/react-native-healthkit';
 
 import { SERIES_DAYS } from './generate';
 import { buildScenario, type DemoValues, type ScenarioId } from './scenarios';
+import { addDays, daysBetween, startOfDay } from '@/core/dates';
 import { toDateKey } from '@/core/day-record';
 import type { HealthSource } from '@/health/source';
 
@@ -22,18 +23,6 @@ const watch = {
   operatingSystemVersion: '26.0',
   productType: 'Watch7,1',
 };
-
-function startOfDay(date: Date): Date {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
-}
-
-function addDays(date: Date, days: number): Date {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate() + days);
-}
-
-function daysBetween(a: Date, b: Date): number {
-  return Math.round((b.getTime() - a.getTime()) / (24 * 60 * 60 * 1000));
-}
 
 // Fixed demo data for the development state gallery. The series ends
 // yesterday, so dates follow the calendar while the numbers stay the same.
