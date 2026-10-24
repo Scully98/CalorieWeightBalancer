@@ -53,8 +53,6 @@ export const en: typeof de = {
     avg: 'avg. {{value}} kcal per day',
     restingEstimate_one: 'estimated on {{count}} day',
     restingEstimate_other: 'estimated on {{count}} days',
-    restingTypical_one: 'filled in with your median on {{count}} day',
-    restingTypical_other: 'filled in with your median on {{count}} days',
     restingScaled_one: '{{count}} partial day scaled up',
     restingScaled_other: '{{count}} partial days scaled up',
     activeMissing: 'missing, counted as 0',
@@ -74,7 +72,8 @@ export const en: typeof de = {
     missingEstimate: 'no data → estimated',
     estimateTitle: 'Estimated resting energy',
     estimateBody:
-      'For days without measured resting energy, after Mifflin-St Jeor from these details.',
+      'For days without measured resting energy, after Mifflin-St Jeor. Weight and age apply on each day; shown are the values of the last estimated day.',
+    estimateWeight: 'Weight (last measurement)',
     fromInput: '{{value}} · your entry',
     openHealth: 'Open Health',
   },

@@ -4,7 +4,7 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { AppText } from '@/components/app-text';
 import { Button } from '@/components/button';
 import { LinkButton } from '@/components/link-button';
-import { fatKgFromKcal, type PeriodBalance } from '@/core/balance';
+import type { PeriodBalance } from '@/core/period-balance';
 import { formatSigned, roundKcal } from '@/core/format';
 import type { BalanceState } from '@/features/balance/use-balance';
 import { openHealthApp } from '@/health/open-health-app';
@@ -25,7 +25,7 @@ function BalanceSummary({ balance, days, onShowData }: BalanceSummaryProps) {
   // iOS reports denied read access as empty data, so a period without any
   // food entries shows the empty state with a permissions hint instead of a
   // balance.
-  if (!balance || balance.daysWithoutFood === balance.days) {
+  if (!balance || balance.flagCounts.noFood === balance.days) {
     return (
       <>
         <AppText style={styles.center}>
@@ -60,21 +60,21 @@ function BalanceSummary({ balance, days, onShowData }: BalanceSummaryProps) {
       <View style={styles.group}>
         <AppText variant="number" style={styles.center}>
           {t('home.fat', {
-            value: formatSigned(fatKgFromKcal(balance.kcal), locale, 1),
+            value: formatSigned(balance.fatKg, locale, 1),
           })}
         </AppText>
         <AppText variant="secondary" tone="muted" style={styles.center}>
           {t('home.fatLabel')}
         </AppText>
       </View>
-      {balance.daysWithoutFood > 0 ? (
+      {balance.maintenanceDays > 0 ? (
         <AppText variant="caption" tone="muted" style={styles.center}>
-          {t('home.daysWithoutFood', { count: balance.daysWithoutFood })}
+          {t('home.daysWithoutFood', { count: balance.maintenanceDays })}
         </AppText>
       ) : null}
-      {balance.daysWithoutResting > 0 ? (
+      {balance.excludedDays > 0 ? (
         <AppText variant="caption" tone="muted" style={styles.center}>
-          {t('home.daysWithoutResting', { count: balance.daysWithoutResting })}
+          {t('home.daysWithoutResting', { count: balance.excludedDays })}
         </AppText>
       ) : null}
       <LinkButton label={t('data.showData')} onPress={onShowData} />

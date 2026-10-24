@@ -26,3 +26,22 @@ describe('healthKitSource.firstDataDate', () => {
     expect(await healthKitSource.firstDataDate()).toBeUndefined();
   });
 });
+
+describe('healthKitSource.weightBefore', () => {
+  it('returns the newest weight before the date', async () => {
+    samples.mockResolvedValueOnce([{ quantity: 81.2 }] as unknown as Awaited<
+      ReturnType<typeof queryQuantitySamples>
+    >);
+
+    expect(await healthKitSource.weightBefore(new Date(2026, 8, 24))).toBe(
+      81.2,
+    );
+  });
+
+  it('returns undefined when the query fails or finds nothing', async () => {
+    samples.mockRejectedValueOnce(new Error('denied'));
+    expect(await healthKitSource.weightBefore(new Date())).toBeUndefined();
+    samples.mockResolvedValueOnce([]);
+    expect(await healthKitSource.weightBefore(new Date())).toBeUndefined();
+  });
+});

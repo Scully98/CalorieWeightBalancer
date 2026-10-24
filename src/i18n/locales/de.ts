@@ -53,8 +53,6 @@ export const de = {
     avg: 'Ø {{value}} kcal pro Tag',
     restingEstimate_one: 'an {{count}} Tag geschätzt',
     restingEstimate_other: 'an {{count}} Tagen geschätzt',
-    restingTypical_one: 'an {{count}} Tag mit deinem Median ergänzt',
-    restingTypical_other: 'an {{count}} Tagen mit deinem Median ergänzt',
     restingScaled_one: '{{count}} Teiltag hochgerechnet',
     restingScaled_other: '{{count}} Teiltage hochgerechnet',
     activeMissing: 'fehlt, mit 0 gerechnet',
@@ -74,7 +72,8 @@ export const de = {
     missingEstimate: 'keine Daten → geschätzt',
     estimateTitle: 'Geschätzte Ruheenergie',
     estimateBody:
-      'Für Tage ohne gemessene Ruheenergie, nach Mifflin-St Jeor aus diesen Angaben.',
+      'Für Tage ohne gemessene Ruheenergie, nach Mifflin-St Jeor. Gewicht und Alter gelten am jeweiligen Tag, hier die Werte des letzten geschätzten Tags.',
+    estimateWeight: 'Gewicht (letzte Messung)',
     fromInput: '{{value}} · deine Angabe',
     openHealth: 'Health öffnen',
   },

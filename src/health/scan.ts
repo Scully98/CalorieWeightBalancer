@@ -11,14 +11,38 @@ import {
 import { queryDailyEnergy } from './daily-energy';
 import { QUANTITY } from './read-types';
 import { safe } from './safe';
-import { typicalResting } from '@/core/balance';
 import { startOfDay } from '@/core/dates';
+import type { DayEnergy } from '@/core/day-record';
+import { FULL_DAY_COVERAGE } from '@/core/resting';
 
 // Measurements are counted up to this number; more shows as "100+".
 export const MAX_COUNTED_SAMPLES = 100;
 
 // Days checked for a typical resting energy before asking for an estimate.
 const TYPICAL_RESTING_DAYS = 30;
+
+// Full days needed before the intro treats resting energy as measured.
+export const MIN_TYPICAL_DAYS = 7;
+
+// Median resting energy of fully covered days; undefined below
+// MIN_TYPICAL_DAYS days. Tells the intro whether a watch measures resting
+// energy, so it can skip asking for the estimate inputs.
+export function typicalResting(days: readonly DayEnergy[]): number | undefined {
+  const values = days
+    .filter(
+      (day) =>
+        day.resting !== undefined &&
+        !day.restingEstimated &&
+        (day.restingCoverage ?? 1) >= FULL_DAY_COVERAGE,
+    )
+    .map((day) => day.resting as number)
+    .sort((a, b) => a - b);
+  if (values.length < MIN_TYPICAL_DAYS) return undefined;
+  const middle = Math.floor(values.length / 2);
+  return values.length % 2
+    ? values[middle]
+    : (values[middle - 1] + values[middle]) / 2;
+}
 
 export type RowScan = {
   hasData: boolean;

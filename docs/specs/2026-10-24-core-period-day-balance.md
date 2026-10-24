@@ -88,7 +88,7 @@ Nachgerechnet: 87.000 × 0,95 − 80.000 = 2.650; 87.000 × 1,05 − 80.000 × 0
 | M2 — Ruheenergie pro Tag | Gemessen / hochgerechnet / Quelle / Mifflin pro Tag mit Gewicht an/vor dem Tag und Alter am Tag | 2 | 0 | 0 | — |
 | M3 — Tagesbilanz & Flags | `DayBalance` je Tag, Null-Tage-Schalter, vier Flags | 2 | 0 | 0 | M2 |
 | M4 — Periodenbilanz & Spanne | Summe, Ø, Fett, Spanne, Zählung „X von N vollständig“, goldener Testfall, `CLAUDE.md` | 4 | 1 | 0 | M3 |
-| M5 — Umstieg | `weightBefore` in beiden Quellen, `useBalance` mit Settings, Seiten und Texte auf den neuen Kern, alter Kern weg | 0 | 16 | 2 | M1, M4 |
+| M5 — Umstieg | `weightBefore` in beiden Quellen, `useBalance` mit Settings, Seiten und Texte auf den neuen Kern, alter Kern weg | 0 | 17 | 2 | M1, M4 |
 | M6 — Abdeckungs-Schwelle | `coverageThreshold` ≥ 90 % für `src/core/`, CI-Schritt | 0 | 2 | 0 | M5 |
 
 ```
@@ -364,7 +364,7 @@ export function periodBalance(
 
 ---
 
-### Milestone 5 — Umstieg
+### ✅ Milestone 5 — Umstieg
 
 > Die App rechnet mit dem neuen Kern. Die Quellen liefern das Gewicht vor dem Zeitraum, `useBalance` reicht die Settings durch, Bilanz- und Daten-Seite zeigen dieselben Zahlen aus `PeriodBalance`, und der alte Kern verschwindet.
 
@@ -390,28 +390,29 @@ export function periodBalance(
 | 🟠 | `src/i18n/locales/de.ts` | `data.restingTypical*` weg, `data.estimateWeight`, `data.estimateResult` neu |
 | 🟠 | `src/i18n/locales/en.ts` | Dieselben Schlüssel |
 | 🟠 | `docs/specs/2026-10-21-data-page.md` | Abschnitt Umsetzung auf den neuen Kern (kein Median) |
+| 🟠 | `src/health/scan.ts` | 🆕 `typicalResting` als private Hilfsfunktion fürs Intro (vorher aus `core/balance.ts`) |
 | 🔴 | `src/core/balance.ts` | Ersetzt durch `resting.ts`, `day-balance.ts`, `period-balance.ts` |
 | 🔴 | `src/core/__tests__/balance.test.ts` | Ersetzt durch die Tests aus M2–M4 |
 
 #### To-Dos
 
-- 🔲 Add `weightBefore(date)` to `HealthSource`: newest weight in kg strictly before local midnight `date`, `undefined` if none or unreadable
-- 🔲 Implement it in `healthKitSource` with `queryQuantitySamples(QUANTITY.weight, { limit: 1, ascending: false, unit: 'kg', filter: … end date ≤ date })`; look up the exact filter shape in the types of `@kingstinct/react-native-healthkit` 16.0.0 before writing it
-- 🔲 Implement it in `createDemoSource`: last series `weightKg` before `date`; `empty` → `undefined`
-- 🔲 Replace `fallbackInputs`/`estimateFromInputs`/`restingFallback` with `restingProfile(health, stored)`: Health first, then entered values, like today; returns `RestingProfile` and per value whether it came from Health, plus the shown sex („other“)
-- 🔲 Update `useBalance(settings = DEFAULT_SETTINGS)`: `resolvePeriod(settings.period, now, { includeToday, firstDataDate })`; load `days`, `profile`, `latestSources`, `weightBefore(start)` in parallel; `dayBalances` with `zeroDaysAsMaintenance`; `periodBalance` with `settings.tolerance`. Reload key = `JSON.stringify(settings)`
-- 🔲 Shape `BalanceReport` as `{ balance: PeriodBalance; days: DayBalance[]; estimate?: { profile, origins, lastWeightKg, avgKcal }; daysWithData; sources }`; `estimate` only when `restingEstimatedDays > 0`
-- 🔲 Update `balance-page.tsx`: empty state when `flagCounts.noFood === days`; hero from `balance.kcal` and `balance.fatKg` (rounding unchanged); „Tage ohne Eintrag als neutral gezählt“ from the number of maintenance days; „ohne Grundumsatz nicht mitgerechnet“ from `excludedDays`
-- 🔲 Update `data-rows.ts`: resting detail „an N Tagen geschätzt“ from `restingEstimatedDays`, „N Teiltage hochgerechnet“ from `restingScaledDays`; active detail from `daysWithoutActive`; remove `restingTypical`; „Was ankommt“ unchanged
-- 🔲 Update the estimate card on the data page (wireframe below): weight line „letzte Messung an/vor dem Tag · zuletzt 82,4 kg“ (or „Profil“ when only the profile weight was used), height, age today, sex with origin, result „Ø ≈ 1.750 kcal an 3 Tagen“
-- 🔲 Remove i18n keys `data.restingTypical_one/_other` (DE/EN), add `data.estimateWeight` and `data.estimateResult` with `{{count}}` plurals
-- 🔲 Delete `src/core/balance.ts` and `balance.test.ts`; grep that nothing imports `@/core/balance` any more
-- 🔲 Update `scenarios.test.ts` to the new core (numbers from M4) and keep the snapshot unchanged (the series itself doesn't change)
-- 🔲 🆕 Test `normal30` through the new core in `scenarios.test.ts` (moved from M4): `kcal` = 7.000, 24 of 30 complete (3 `restingEstimated`, 2 `lowFood`, 1 `noFood`); tolerance 5/10 → `range` ≈ 2.771,4 / 18.985,8
-- 🔲 Update the „Umsetzung“ section of `docs/specs/2026-10-21-data-page.md`
-- 🔲 Check in the simulator via the gallery: 1a shows +7.000 kcal / +0,9 kg as before; L1 (`gaps30`) shows 3 days „ohne Eintrag neutral“ and on the data page „2 Teiltage hochgerechnet“, „an 3 Tagen ohne Wert, mit 0 gerechnet“
-- 🔲 Run `npm run lint`, `npm run typecheck`, `npm test`, `npm run check:release-bundle`; all exit 0
-- 🔲 Commit (`refactor: compute balance with the new core`)
+- ✅ Add `weightBefore(date)` to `HealthSource`: newest weight in kg strictly before local midnight `date`, `undefined` if none or unreadable
+- ✅ Implement it in `healthKitSource` with `queryQuantitySamples(QUANTITY.weight, { limit: 1, ascending: false, unit: 'kg', filter: … end date ≤ date })`; look up the exact filter shape in the types of `@kingstinct/react-native-healthkit` 16.0.0 before writing it _(`filter: { date: { endDate, strictEndDate: true } }` aus `DateFilter` (@react-native-healthkit/core); Test prüft nur das Ergebnis, nicht den Mock-Aufruf (wie 187f11d))_
+- ✅ Implement it in `createDemoSource`: last series `weightKg` before `date`; `empty` → `undefined`
+- ✅ Replace `fallbackInputs`/`estimateFromInputs`/`restingFallback` with `restingProfile(health, stored)`: Health first, then entered values, like today; returns `RestingProfile` and per value whether it came from Health, plus the shown sex („other“) _(heißt `restingInputs`; dazu `estimateSummary(inputs, records, days, weightBeforeKg)` für die Daten-Seite)_
+- ✅ Update `useBalance(settings = DEFAULT_SETTINGS)`: `resolvePeriod(settings.period, now, { includeToday, firstDataDate })`; load `days`, `profile`, `latestSources`, `weightBefore(start)` in parallel; `dayBalances` with `zeroDaysAsMaintenance`; `periodBalance` with `settings.tolerance`. Reload key = `JSON.stringify(settings)`
+- ✅ Shape `BalanceReport` as `{ balance: PeriodBalance; days: DayBalance[]; estimate?: { profile, origins, lastWeightKg, avgKcal }; daysWithData; sources }`; `estimate` only when `restingEstimatedDays > 0` _(`estimate` = `EstimateSummary` (Werte des letzten Mifflin-Tags, Ø, Anzahl), nur Tage mit Quelle `formula`, die in den Summen zählen)_
+- ✅ Update `balance-page.tsx`: empty state when `flagCounts.noFood === days`; hero from `balance.kcal` and `balance.fatKg` (rounding unchanged); „Tage ohne Eintrag als neutral gezählt“ from the number of maintenance days; „ohne Grundumsatz nicht mitgerechnet“ from `excludedDays` _(Hinweis „neutral gezählt“ aus neuem Feld `maintenanceDays`)_
+- ✅ Update `data-rows.ts`: resting detail „an N Tagen geschätzt“ from `restingEstimatedDays`, „N Teiltage hochgerechnet“ from `restingScaledDays`; active detail from `daysWithoutActive`; remove `restingTypical`; „Was ankommt“ unchanged _(Ø läuft über `summedDays` (gezählte Tage ohne Null-Tage), wie vorher)_
+- ✅ Update the estimate card on the data page (wireframe below): weight line „letzte Messung an/vor dem Tag · zuletzt 82,4 kg“ (or „Profil“ when only the profile weight was used), height, age today, sex with origin, result „Ø ≈ 1.750 kcal an 3 Tagen“ _(Ergebnis-Zeile nutzt das vorhandene `data.avgDays` („Ø 1.750 kcal an 3 Tagen“), Gewichts-Label „Gewicht (letzte Messung)“, `estimateBody` erklärt „am jeweiligen Tag“)_
+- ✅ Remove i18n keys `data.restingTypical_one/_other` (DE/EN), add `data.estimateWeight` and `data.estimateResult` with `{{count}}` plurals _(neu nur `data.estimateWeight`, `data.estimateResult` unnötig (siehe oben))_
+- ✅ Delete `src/core/balance.ts` and `balance.test.ts`; grep that nothing imports `@/core/balance` any more _(`src/health/scan.ts` (Intro) nutzte noch `typicalResting`: als private Hilfsfunktion dorthin verschoben, Intro-Verhalten unverändert)_
+- ✅ Update `scenarios.test.ts` to the new core (numbers from M4) and keep the snapshot unchanged (the series itself doesn't change) _(Snapshot gibt es nicht mehr (entfernt in 187f11d); Kennzahlen-Test auf neuen Kern umgestellt, Test für `weightBefore` der Demo dazu)_
+- ✅ 🆕 Test `normal30` through the new core in `scenarios.test.ts` (moved from M4): `kcal` = 7.000, 24 of 30 complete (3 `restingEstimated`, 2 `lowFood`, 1 `noFood`); tolerance 5/10 → `range` ≈ 2.771,4 / 18.985,8 _(in „match the design key figures for 30 days“)_
+- ✅ Update the „Umsetzung“ section of `docs/specs/2026-10-21-data-page.md`
+- ✅ Check in the simulator via the gallery: 1a shows +7.000 kcal / +0,9 kg as before; L1 (`gaps30`) shows 3 days „ohne Eintrag neutral“ and on the data page „2 Teiltage hochgerechnet“, „an 3 Tagen ohne Wert, mit 0 gerechnet“ _(Simulator per Deep Link: 1a +7.000 kcal / +0,9 kg wie vorher; L1 zeigt „4 Tage ohne Eintrag“ (3 Urlaubstage + Null-Tag 15 aus der Basis, Erwartung 3 war falsch) und +9.330 kcal. Seite 2 ohne Wisch-Werkzeug nicht erreichbar, Zeilen per Wegwerf-Test geprüft: „2 Teiltage hochgerechnet“, „an 3 Tagen ohne Wert, mit 0 gerechnet“, Summe +9.330)_
+- ✅ Run `npm run lint`, `npm run typecheck`, `npm test`, `npm run check:release-bundle`; all exit 0 _(dazu `npm run check:release-bundle`)_
+- ✅ Commit (`refactor: compute balance with the new core`)
 
 #### Notes / Constraints
 

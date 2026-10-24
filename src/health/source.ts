@@ -17,4 +17,7 @@ export interface HealthSource {
   latestSources(): Promise<Record<EnergyKey, SourceRevision | undefined>>;
   // First day with food data, for the period "Alles".
   firstDataDate(): Promise<Date | undefined>;
+  // Newest weight in kg before `date` (local midnight), for the resting
+  // energy estimate on the first days of a period.
+  weightBefore(date: Date): Promise<number | undefined>;
 }

@@ -7,7 +7,8 @@ import { latest, readHealthProfile } from './scan';
 import type { HealthSource } from './source';
 
 // Energy per day from HealthKit statistics queries. Weight, body fat and lean
-// mass follow with the analysis screen and stay undefined until then. Must
+// mass per day follow with the analysis screen and stay undefined until then;
+// only the weight before a period is read for the resting estimate. Must
 // only run after requestReadAccess().
 export const healthKitSource: HealthSource = {
   days: queryDailyEnergy,
@@ -38,5 +39,19 @@ export const healthKitSource: HealthSource = {
       [],
     );
     return first?.startDate;
+  },
+
+  async weightBefore(date) {
+    const [last] = await safe(
+      () =>
+        queryQuantitySamples(QUANTITY.weight, {
+          limit: 1,
+          ascending: false,
+          unit: 'kg',
+          filter: { date: { endDate: date, strictEndDate: true } },
+        }),
+      [],
+    );
+    return last?.quantity;
   },
 };

@@ -29,7 +29,8 @@ export function HomeScreen({
   const colors = useColors();
   const { t } = useTranslation();
   const { width } = useWindowDimensions();
-  const state = useBalance(period);
+  // Settings UI follows with the homepage; until then only the period varies.
+  const state = useBalance({ ...DEFAULT_SETTINGS, period });
   const days =
     state.status === 'done'
       ? state.value.balance.days

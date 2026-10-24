@@ -66,5 +66,18 @@ export function createDemoSource(id: ScenarioId, now: Date): HealthSource {
     async firstDataDate() {
       return empty ? undefined : addDays(today, -SERIES_DAYS);
     },
+
+    async weightBefore(date) {
+      // Series index of the day before `date`, clamped to the series.
+      const last = Math.min(
+        SERIES_DAYS + daysBetween(today, date),
+        SERIES_DAYS,
+      );
+      for (let index = last - 1; index >= 0; index--) {
+        const weightKg = scenario.series[index]?.weightKg;
+        if (weightKg !== undefined) return weightKg;
+      }
+      return undefined;
+    },
   };
 }

@@ -1,8 +1,9 @@
 import { createDemoSource } from '../demo-source';
 import { buildScenario, SCENARIO_IDS } from '../scenarios';
-import { periodBreakdown } from '@/core/balance';
+import { dayBalances } from '@/core/day-balance';
 import type { DayRecord } from '@/core/day-record';
 import { resolvePeriod } from '@/core/period';
+import { periodBalance } from '@/core/period-balance';
 
 jest.mock('@kingstinct/react-native-healthkit', () => ({
   BiologicalSex: { notSet: 0, female: 1, male: 2, other: 3 },
@@ -39,15 +40,37 @@ describe('demo scenarios', () => {
     );
     expect(burn).toBe(80100);
 
-    const balance = periodBreakdown(days);
+    const daily = dayBalances(days, {
+      zeroDaysAsMaintenance: true,
+      profile: {},
+    });
+    const balance = periodBalance(daily, { foodPercent: 0, burnPercent: 0 });
     expect(balance.kcal).toBe(7000);
-    expect(balance.restingFallbackDays).toBe(3);
-    expect(balance.daysWithoutFood).toBe(1);
-    const lowFood = days.filter(
-      (day) =>
-        day.food !== undefined &&
-        day.food < 0.5 * ((day.resting ?? 0) + (day.active ?? 0)),
+    expect(balance.completeDays).toBe(24);
+    expect(balance.flagCounts).toEqual({
+      restingEstimated: 3,
+      noFood: 1,
+      lowFood: 2,
+      noResting: 0,
+    });
+
+    // Tolerance 1c: the zero day stays out of the sums, so the range is
+    // narrower than in the hi-fi (+2,645 to +19,365).
+    const { range } = periodBalance(daily, { foodPercent: 5, burnPercent: 10 });
+    expect(range.min).toBeCloseTo(2771.4);
+    expect(range.max).toBeCloseTo(18985.8);
+  });
+
+  it('give the last weight before a date', async () => {
+    const source = createDemoSource('normal30', NOW);
+    const days = await periodDays('normal30');
+    const first = days.findIndex((day) => day.weightKg !== undefined);
+    const weightBefore = await source.weightBefore(
+      new Date(2026, 8, 24 + first + 1),
     );
-    expect(lowFood).toHaveLength(2);
+    expect(weightBefore).toBe(days[first].weightKg);
+    expect(
+      await createDemoSource('empty', NOW).weightBefore(NOW),
+    ).toBeUndefined();
   });
 });
