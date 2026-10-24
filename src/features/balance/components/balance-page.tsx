@@ -1,14 +1,16 @@
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
+import { BalanceHero } from './balance-hero';
+import { heroModel } from '../hero';
 import { AppText } from '@/components/app-text';
 import { Button } from '@/components/button';
 import { LinkButton } from '@/components/link-button';
 import type { PeriodBalance } from '@/core/period-balance';
-import { formatSigned, roundKcal } from '@/core/format';
 import type { BalanceState } from '@/features/balance/use-balance';
 import { openHealthApp } from '@/health/open-health-app';
 import { formatLocale } from '@/i18n';
+import { useSettings } from '@/storage/settings-context';
 import { space } from '@/theme/spacing';
 
 type BalanceSummaryProps = {
@@ -21,6 +23,7 @@ type BalanceSummaryProps = {
 function BalanceSummary({ balance, days, onShowData }: BalanceSummaryProps) {
   const { t } = useTranslation();
   const locale = formatLocale();
+  const { tolerance } = useSettings();
 
   // iOS reports denied read access as empty data, so a period without any
   // food entries shows the empty state with a permissions hint instead of a
@@ -47,26 +50,7 @@ function BalanceSummary({ balance, days, onShowData }: BalanceSummaryProps) {
 
   return (
     <>
-      <View style={styles.group}>
-        <AppText variant="numberLarge" style={styles.center}>
-          {t('home.kcal', {
-            value: formatSigned(roundKcal(balance.kcal), locale),
-          })}
-        </AppText>
-        <AppText variant="secondary" tone="muted" style={styles.center}>
-          {t('home.sign')}
-        </AppText>
-      </View>
-      <View style={styles.group}>
-        <AppText variant="number" style={styles.center}>
-          {t('home.fat', {
-            value: formatSigned(balance.fatKg, locale, 1),
-          })}
-        </AppText>
-        <AppText variant="secondary" tone="muted" style={styles.center}>
-          {t('home.fatLabel')}
-        </AppText>
-      </View>
+      <BalanceHero model={heroModel(balance, tolerance, locale, t)} />
       {balance.maintenanceDays > 0 ? (
         <AppText variant="caption" tone="muted" style={styles.center}>
           {t('home.daysWithoutFood', { count: balance.maintenanceDays })}

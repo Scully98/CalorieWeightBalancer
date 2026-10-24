@@ -19,6 +19,10 @@ const SAMPLES: Record<TextVariant, string> = {
   number: '1.420 kcal',
   numberLarge: '+380 bis +2.150',
   hero: '+7.000',
+  heroRange: '+19.350',
+  heroUnit: 'kcal',
+  heroRangeUnit: 'bis',
+  heroWords: 'mehr gegessen als verbraucht',
 };
 
 export function TypeSpecimen() {

@@ -205,7 +205,7 @@ sequenceDiagram
 
 ---
 
-### Milestone 2 — Hero
+### ✅ Milestone 2 — Hero
 
 > Der Hero zeigt Einzelwert oder Spanne mit Satz, Ø pro Tag und Fett-Äquivalent, wie 1a und 1c, und hat die VoiceOver-Labels aus der Abnahme.
 
@@ -225,20 +225,20 @@ sequenceDiagram
 
 #### To-Dos
 
-- 🔲 Create `heroModel(balance, tolerance, locale, t)`: `kind: 'single'` when both percents are 0, else `'range'`; single uses `roundKcal(balance.kcal)`, range uses `roundRangeKcal` on `range.min/max`; Ø from `avgKcal`/`avgRange` rounded to whole kcal; fat from `fatKg`/`fatRange` with one digit; all through `formatSigned`
-- 🔲 Create `balanceWords`: single → rounded > 0 `more`, < 0 `less`, = 0 `even`; range → rounded min ≥ 0 `more`, rounded max < 0 `less`, else `either` (Key Decisions 3 and 5)
-- 🔲 Create `spokenSigned(value, locale, digits, t)`: „plus 7.000“, „minus 1.250“, „plus minus 0“ (EN „plus 7,000“, „minus 1,250“, „plus minus 0“), magnitude via `formatNumber`
-- 🔲 Build the labels: hero „{spoken} Kilokalorien, {words}“ / range „{min} bis {max} Kilokalorien, {words}“; Ø „Durchschnitt {spoken} Kilokalorien pro Tag“ (range „… {min} bis {max} …“); fat „etwa {spoken} Kilogramm Körperfett, theoretisch“ (Key Decision 19)
-- 🔲 Add texts DE: `home.hero.kcal` „kcal“, `home.hero.to` „bis“, `home.hero.avg` „Ø {{value}} kcal pro Tag“, `home.hero.avgRange` „Ø {{min}} bis {{max}} kcal pro Tag“, `home.hero.fat` „≈ {{value}} kg Körperfett“, `home.hero.fatNote` „(theoretisch, {{kcalPerKg}} kcal/kg)“, `home.hero.fatRange` „≈ {{min}} bis {{max}} kg Fett“, `home.hero.fatRangeNote` „(theoretisch)“; `home.words.more` „mehr gegessen als verbraucht“, `.less` „weniger gegessen als verbraucht“, `.even` „so viel gegessen wie verbraucht“, `.either` „je nach Messfehler Plus oder Minus“; `a11y.plus` „plus {{value}}“, `a11y.minus` „minus {{value}}“, `a11y.zero` „plus minus {{value}}“, `a11y.heroKcal` „{{value}} Kilokalorien, {{words}}“, `a11y.heroRange` „{{min}} bis {{max}} Kilokalorien, {{words}}“, `a11y.avg` „Durchschnitt {{value}} Kilokalorien pro Tag“, `a11y.avgRange`, `a11y.fat` „etwa {{value}} Kilogramm Körperfett, theoretisch“, `a11y.fatRange`
-- 🔲 Add the same keys EN: „kcal“, „to“, „Ø {{value}} kcal per day“, „≈ {{value}} kg body fat“, „(theoretical, {{kcalPerKg}} kcal/kg)“, „≈ {{min}} to {{max}} kg fat“, „(theoretical)“; „ate more than you burned“, „ate less than you burned“, „ate as much as you burned“, „plus or minus, depending on measurement error“; „{{value}} kilocalories, {{words}}“, „average {{value}} kilocalories per day“, „about {{value}} kilograms of body fat, theoretical“
-- 🔲 Test `heroModel` with the golden fixture: DE text „+7.000“, words „mehr gegessen als verbraucht“, Ø „Ø +233 kcal pro Tag“, fat „≈ +0,9 kg Körperfett“, label exactly „plus 7.000 Kilokalorien, mehr gegessen als verbraucht“; EN label „plus 7,000 kilocalories, ate more than you burned“
-- 🔲 Test golden with 5/10: „+2.650“ / „+19.350“, Ø „Ø +88 bis +645 kcal pro Tag“, „≈ +0,3 bis +2,5 kg Fett“, label „plus 2.650 bis plus 19.350 Kilokalorien, mehr gegessen als verbraucht“
-- 🔲 Test zero (balance +4 kcal): „±0“, „so viel gegessen wie verbraucht“, label „plus minus 0 Kilokalorien, so viel gegessen wie verbraucht“; minus case „−1.250“, „weniger gegessen als verbraucht“, label „minus 1.250 …“; range across 0 → `either`
-- 🔲 Create `BalanceHero` after the design: number row `hero` variant (68/600) + „kcal“ 26/600 baseline-aligned with wrap; range row 52/600 · „bis“ 22/500 · 52/600 · „kcal“ 22/600 (new text variants `heroRange`, `heroUnit`, `heroWords` in `typography.ts` if no existing one fits); words 20/500; 8 pt gap; Ø `secondary` muted; fat `body` + note `footnote` muted; colors only from tokens
-- 🔲 Accessibility: number row + words in one `accessible` View with the hero label; Ø and fat each one element with their labels; all text keeps Dynamic Type (number row wraps, 1i)
-- 🔲 Use `BalanceHero` in `BalancePage` with `settings.tolerance` (live draft follows in M5); remove `home.sign`, `home.kcal`, `home.fat`, `home.fatLabel` if nothing else uses them
-- 🔲 Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
-- 🔲 Commit (`feat: show the balance hero with words, average and fat`)
+- ✅ Create `heroModel(balance, tolerance, locale, t)`: _(Spanne schon hier über `toleranceRange` aus den Summen, damit M5 nur den Entwurf übergibt)_ `kind: 'single'` when both percents are 0, else `'range'`; single uses `roundKcal(balance.kcal)`, range uses `roundRangeKcal` on `range.min/max`; Ø from `avgKcal`/`avgRange` rounded to whole kcal; fat from `fatKg`/`fatRange` with one digit; all through `formatSigned`
+- ✅ Create `balanceWords`: single → rounded > 0 `more`, < 0 `less`, = 0 `even`; range → rounded min ≥ 0 `more`, rounded max < 0 `less`, else `either` (Key Decisions 3 and 5)
+- ✅ Create `spokenSigned(value, locale, digits, t)`: „plus 7.000“, „minus 1.250“, „plus minus 0“ (EN „plus 7,000“, „minus 1,250“, „plus minus 0“), magnitude via `formatNumber`
+- ✅ Build the labels: hero „{spoken} Kilokalorien, {words}“ / range „{min} bis {max} Kilokalorien, {words}“; Ø „Durchschnitt {spoken} Kilokalorien pro Tag“ (range „… {min} bis {max} …“); fat „etwa {spoken} Kilogramm Körperfett, theoretisch“ (Key Decision 19)
+- ✅ Add texts DE: `home.hero.kcal` „kcal“, `home.hero.to` „bis“, `home.hero.avg` „Ø {{value}} kcal pro Tag“, `home.hero.avgRange` „Ø {{min}} bis {{max}} kcal pro Tag“, `home.hero.fat` „≈ {{value}} kg Körperfett“, `home.hero.fatNote` „(theoretisch, {{kcalPerKg}} kcal/kg)“, `home.hero.fatRange` „≈ {{min}} bis {{max}} kg Fett“, `home.hero.fatRangeNote` „(theoretisch)“; `home.words.more` „mehr gegessen als verbraucht“, `.less` „weniger gegessen als verbraucht“, `.even` „so viel gegessen wie verbraucht“, `.either` „je nach Messfehler Plus oder Minus“; `a11y.plus` „plus {{value}}“, `a11y.minus` „minus {{value}}“, `a11y.zero` „plus minus {{value}}“, `a11y.heroKcal` „{{value}} Kilokalorien, {{words}}“, `a11y.heroRange` „{{min}} bis {{max}} Kilokalorien, {{words}}“, `a11y.avg` „Durchschnitt {{value}} Kilokalorien pro Tag“, `a11y.avgRange`, `a11y.fat` „etwa {{value}} Kilogramm Körperfett, theoretisch“, `a11y.fatRange`
+- ✅ Add the same keys EN: „kcal“, „to“, „Ø {{value}} kcal per day“, „≈ {{value}} kg body fat“, „(theoretical, {{kcalPerKg}} kcal/kg)“, „≈ {{min}} to {{max}} kg fat“, „(theoretical)“; „ate more than you burned“, „ate less than you burned“, „ate as much as you burned“, „plus or minus, depending on measurement error“; „{{value}} kilocalories, {{words}}“, „average {{value}} kilocalories per day“, „about {{value}} kilograms of body fat, theoretical“
+- ✅ Test `heroModel` with the golden fixture: DE text „+7.000“, words „mehr gegessen als verbraucht“, Ø „Ø +233 kcal pro Tag“, fat „≈ +0,9 kg Körperfett“, label exactly „plus 7.000 Kilokalorien, mehr gegessen als verbraucht“; EN label „plus 7,000 kilocalories, ate more than you burned“
+- ✅ Test golden with 5/10: „+2.650“ / „+19.350“, Ø „Ø +88 bis +645 kcal pro Tag“, „≈ +0,3 bis +2,5 kg Fett“, label „plus 2.650 bis plus 19.350 Kilokalorien, mehr gegessen als verbraucht“
+- ✅ Test zero (balance +4 kcal): „±0“, „so viel gegessen wie verbraucht“, label „plus minus 0 Kilokalorien, so viel gegessen wie verbraucht“; minus case „−1.250“, „weniger gegessen als verbraucht“, label „minus 1.250 …“; range across 0 → `either`
+- ✅ Create `BalanceHero` after the design: number row `hero` variant (68/600) + „kcal“ 26/600 baseline-aligned with wrap; range row 52/600 · „bis“ 22/500 · 52/600 · „kcal“ 22/600 (new text variants `heroRange`, `heroUnit`, `heroWords` in `typography.ts` if no existing one fits) _(dazu `heroRangeUnit` 22/600 für „bis“/„kcal“ der Spanne; Laufweite −2,5/−1,5 wie im Design; Schriftmuster ergänzt)_; words 20/500; 8 pt gap; Ø `secondary` muted; fat `body` + note `footnote` muted; colors only from tokens
+- ✅ Accessibility: number row + words in one `accessible` View with the hero label; Ø and fat each one element with their labels; all text keeps Dynamic Type (number row wraps, 1i)
+- ✅ Use `BalanceHero` in `BalancePage` with `settings.tolerance` (live draft follows in M5); remove `home.sign`, `home.kcal`, `home.fat`, `home.fatLabel` if nothing else uses them _(`home.kcal` bleibt, die Daten-Seite nutzt es)_
+- ✅ Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
+- ✅ Commit (`feat: show the balance hero with words, average and fat`)
 
 #### Notes / Constraints
 

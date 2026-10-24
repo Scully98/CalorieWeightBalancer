@@ -58,6 +58,36 @@ export const typography = {
     fontSize: 68,
     lineHeight: 76,
     fontWeight: '600',
+    letterSpacing: -2.5,
+    fontVariant: TABULAR,
+  },
+  // Both ends of the balance range.
+  heroRange: {
+    fontSize: 52,
+    lineHeight: 58,
+    fontWeight: '600',
+    letterSpacing: -1.5,
+    fontVariant: TABULAR,
+  },
+  // "kcal" next to the hero number.
+  heroUnit: {
+    fontSize: 26,
+    lineHeight: 32,
+    fontWeight: '600',
+    fontVariant: TABULAR,
+  },
+  // "bis" and "kcal" between and after the range ends.
+  heroRangeUnit: {
+    fontSize: 22,
+    lineHeight: 28,
+    fontWeight: '600',
+    fontVariant: TABULAR,
+  },
+  // "mehr gegessen als verbraucht".
+  heroWords: {
+    fontSize: 20,
+    lineHeight: 25,
+    fontWeight: '500',
     fontVariant: TABULAR,
   },
 } satisfies Record<string, TextStyle>;

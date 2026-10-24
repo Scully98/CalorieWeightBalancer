@@ -12,6 +12,9 @@ const MAX_FONT_SCALE: Partial<Record<TextVariant, number>> = {
   number: 2,
   numberLarge: 1.5,
   hero: 1.2,
+  heroRange: 1.2,
+  heroUnit: 1.4,
+  heroRangeUnit: 1.4,
 };
 
 export type TextTone = 'foreground' | 'muted' | 'inverse';
