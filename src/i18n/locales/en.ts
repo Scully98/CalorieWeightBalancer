@@ -15,7 +15,24 @@ export const en: typeof de = {
   },
   settings: {
     title: 'Settings',
-    placeholder: 'Period, measurement error and zero days will live here.',
+    calculation: 'Calculation',
+    zeroDays: 'Empty days = maintenance',
+    zeroDaysDetail:
+      'Days without food entries count as 0 instead of a full deficit.',
+    includeToday: 'Include today',
+    includeTodayDetail:
+      "The day isn't over; your burn keeps rising until midnight.",
+    data: 'Data',
+    restingEstimate: 'Resting energy estimate',
+    restingMissing: 'missing',
+    healthPermissions: 'Health permissions',
+    info: 'Info',
+    language: 'Language',
+    languageName: 'English',
+    calculationPage: 'How is it calculated?',
+    privacy: 'Privacy',
+    imprint: 'Imprint',
+    footer: 'Not medical advice · v{{version}}',
   },
   home: {
     period_one: 'Last day, excluding today',

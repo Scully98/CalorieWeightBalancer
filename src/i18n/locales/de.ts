@@ -13,7 +13,24 @@ export const de = {
   },
   settings: {
     title: 'Einstellungen',
-    placeholder: 'Hier kommen Zeitraum, Messfehler und Null-Tage hin.',
+    calculation: 'Berechnung',
+    zeroDays: 'Null-Tage = Erhaltung',
+    zeroDaysDetail:
+      'Tage ohne Nahrungseintrag zählen mit Bilanz 0 statt mit vollem Defizit.',
+    includeToday: 'Heute einrechnen',
+    includeTodayDetail:
+      'Der Tag läuft noch, der Verbrauch steigt bis Mitternacht.',
+    data: 'Daten',
+    restingEstimate: 'Grundumsatz-Schätzung',
+    restingMissing: 'fehlt',
+    healthPermissions: 'Health-Berechtigungen',
+    info: 'Info',
+    language: 'Sprache',
+    languageName: 'Deutsch',
+    calculationPage: 'Wie wird gerechnet?',
+    privacy: 'Datenschutz',
+    imprint: 'Impressum',
+    footer: 'Keine medizinische Beratung · v{{version}}',
   },
   home: {
     period_one: 'Letzter Tag, ohne heute',

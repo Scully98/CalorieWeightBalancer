@@ -45,6 +45,8 @@ export default function RootLayout() {
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Protected guard={introCompleted}>
           <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="settings/resting-estimate" />
+          <Stack.Screen name="settings/calculation" />
         </Stack.Protected>
         {/* Development only; the routes are empty in release builds. */}
         <Stack.Protected guard={__DEV__ && introCompleted}>

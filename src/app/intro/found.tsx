@@ -53,7 +53,9 @@ export default function IntroFoundScreen() {
     (!needsEstimate || inputs?.estimate !== undefined);
 
   function start() {
-    store.completeIntro(needsEstimate && inputs ? toStoredProfile(inputs, now) : {});
+    store.completeIntro(
+      needsEstimate && inputs ? toStoredProfile(inputs, now) : {},
+    );
   }
 
   return (

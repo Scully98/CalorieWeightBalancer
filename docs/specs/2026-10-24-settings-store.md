@@ -191,7 +191,7 @@ Abnahmekriterien → Milestones:
 
 ---
 
-### Milestone 4 — Einstellungen-Screen
+### ✅ Milestone 4 — Einstellungen-Screen
 
 > Der Einstellungen-Screen wird eine gruppierte iOS-Liste mit zwei Schaltern, Daten-Zeilen, Info-Zeilen und Fußzeile.
 
@@ -211,16 +211,16 @@ Abnahmekriterien → Milestones:
 
 #### To-Dos
 
-- 🔲 Create `SwitchRow` (`label`, `detail?`, `value`, `onValueChange`): `Switch` with `trackColor.true = colors.foreground`, thumb from tokens, no color literals; `accessibilityRole="switch"`, the whole row toggles
-- 🔲 Create `NavRow` (`label`, `value?`, `external?`, `onPress`): `›` for pages, `↗` for links leaving the app; min height `touchTarget`
-- 🔲 Create `links.ts` with the two URLs (Key Decision 12), `Linking.openURL` for both, `Linking.openSettings()` for the language
-- 🔲 Build the settings page (see wireframe): BERECHNUNG with the two switches writing `updateSettings`; Null-Tage detail shows the affected days of the current period only if cheap (otherwise the fixed text); DATEN with „Grundumsatz-Schätzung ›“ (value: „≈ 1.800 kcal“ when an estimate is possible, else „fehlt“) and „Health-Berechtigungen ↗“ (`openHealthApp`, caption `common.permissionsPath`); INFO with „Sprache ›“ (value: current language name), „Wie wird gerechnet? ›“, „Datenschutz ↗“, „Impressum ↗“; footer „Keine medizinische Beratung · v{{version}}“ from `Constants.expoConfig?.version`
-- 🔲 Register routes `settings/resting-estimate` and `settings/calculation` in the root `Stack` inside the `introCompleted` guard (pages follow in M5/M6; placeholder screens until then)
-- 🔲 Add the i18n keys DE/EN
-- 🔲 Test `links.ts`: both URLs are https on `scully98.github.io/CalorieWeightBalancer`
-- 🔲 Check in the simulator: switching „Heute einrechnen“ and going back to Bilanz shows „inkl. heute“ and a new number without restart; „Null-Tage“ off changes the number at once; light and dark mode; largest Dynamic Type size wraps without clipping
-- 🔲 Run `npm run lint`, `npm run typecheck`, `npm test`, `npm run check:release-bundle`; all exit 0
-- 🔲 Commit (`feat: add settings screen with toggles and links`)
+- ✅ Create `SwitchRow` (`label`, `detail?`, `value`, `onValueChange`): `Switch` with `trackColor.true = colors.foreground`, thumb from tokens, no color literals; `accessibilityRole="switch"`, the whole row toggles _(ab Bedienungshilfen-Schriftgröße (`fontScale` > 1,35, `STACKED_FONT_SCALE`) steht der Schalter unter dem Text)_
+- ✅ Create `NavRow` (`label`, `value?`, `external?`, `onPress`): `›` for pages, `↗` for links leaving the app; min height `touchTarget` _(Wert rutscht bei Bedienungshilfen-Größen unter das Label)_
+- ✅ Create `links.ts` with the two URLs (Key Decision 12), `Linking.openURL` for both, `Linking.openSettings()` for the language
+- ✅ Build the settings page (see wireframe): BERECHNUNG with the two switches writing `updateSettings`; Null-Tage detail shows the affected days of the current period only if cheap (otherwise the fixed text); DATEN with „Grundumsatz-Schätzung ›“ (value: „≈ 1.800 kcal“ when an estimate is possible, else „fehlt“) and „Health-Berechtigungen ↗“ (`openHealthApp`, caption `common.permissionsPath`); INFO with „Sprache ›“ (value: current language name), „Wie wird gerechnet? ›“, „Datenschutz ↗“, „Impressum ↗“; footer „Keine medizinische Beratung · v{{version}}“ from `Constants.expoConfig?.version` _(Null-Tage mit festem Text (Open Question 2); Grundumsatz-Wert über `todayRestingEstimate` + `useHealthProfile` in `src/features/settings/resting-estimate.ts` (getestet); Abschnittstitel als Großbuchstaben per `textTransform`)_
+- ✅ Register routes `settings/resting-estimate` and `settings/calculation` in the root `Stack` inside the `introCompleted` guard (pages follow in M5/M6; placeholder screens until then) _(Platzhalter-Routen in `src/app/settings/`)_
+- ✅ Add the i18n keys DE/EN _(dazu `settings.languageName`; `settings.placeholder` entfernt)_
+- ✅ Test `links.ts`: both URLs are https on `scully98.github.io/CalorieWeightBalancer`
+- ✅ Check in the simulator: switching „Heute einrechnen“ and going back to Bilanz shows „inkl. heute“ and a new number without restart; „Null-Tage“ off changes the number at once; light and dark mode; largest Dynamic Type size wraps without clipping _(Tippen geht im Simulator nicht (kein Bedienungshilfen-Zugriff für Tap-Werkzeuge). Stattdessen `settings.v1` in der App-Group-plist gesetzt (7 Tage, Null-Tage aus, heute an) und neu gestartet: Bilanz zeigt „Letzte 7 Tage, inkl. heute“, beide Schalter stehen richtig. Hell, Dunkel und größte Schrift geprüft. Live-Wechsel ohne Neustart prüft Julius am iPhone; im Code über `useSyncExternalStore` und die M3-Tests abgedeckt)_
+- ✅ Run `npm run lint`, `npm run typecheck`, `npm test`, `npm run check:release-bundle`; all exit 0
+- ✅ Commit (`feat: add settings screen with toggles and links`)
 
 **Texte (DE / EN)**
 
