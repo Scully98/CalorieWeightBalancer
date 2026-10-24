@@ -74,6 +74,7 @@ export function HomeScreen({ initialUi }: { initialUi?: HomeUi } = {}) {
             days={span?.days}
             periodLabel={periodLabel}
             pageCount={PAGES}
+            toleranceOpen={initialUi?.toleranceOpen}
             onShowData={() => showPage(1)}
             onPickCustom={() =>
               setPicking({

@@ -128,6 +128,28 @@ export const en: typeof de = {
       'No food data in the last {{count}} days. Does your tracker sync with Apple Health?',
     checkPermissions: 'Check permissions',
   },
+  tolerance: {
+    title: 'Include measurement error',
+    off: 'off',
+    summary: 'Food ±{{food}} % · Burn −{{burn}} %',
+    summaryFood: 'Food ±{{food}} %',
+    summaryBurn: 'Burn −{{burn}} %',
+    explain:
+      'Shows the balance as a range instead of a single value. 0 % means off.',
+    food: 'Food ±',
+    foodHint: 'Tracking entries are imprecise',
+    burn: 'Burn −',
+    burnHint: 'Watches tend to overestimate, downwards only',
+    typical: 'typically {{min}}–{{max}} %',
+    percent: '{{value}} %',
+    foodSpoken: 'Food tolerance',
+    burnSpoken: 'Burn tolerance',
+    percentSpoken: '{{value}} percent',
+    summarySpoken:
+      'food plus minus {{food}} percent, burn minus {{burn}} percent',
+    summaryFoodSpoken: 'food plus minus {{food}} percent',
+    summaryBurnSpoken: 'burn minus {{burn}} percent',
+  },
   // Dates spelled like the design („Sep 24“).
   date: {
     dayMonth: '{{month}} {{day}}',

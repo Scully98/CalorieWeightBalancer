@@ -1,6 +1,6 @@
 import { createInstance } from 'i18next';
 
-import { balanceWords, heroModel } from '../hero';
+import { balanceWords, heroModel, toleranceSummary } from '../hero';
 import { GOLDEN_DAYS, GOLDEN_TOLERANCE } from '@/core/__fixtures__/golden-30';
 import { dayBalances } from '@/core/day-balance';
 import { periodBalance, type PeriodBalance } from '@/core/period-balance';
@@ -131,5 +131,22 @@ describe('heroModel', () => {
     expect(heroModel(golden, GOLDEN_TOLERANCE, 'de-DE', tDe)).toEqual(
       heroModel(stored, GOLDEN_TOLERANCE, 'de-DE', tDe),
     );
+  });
+});
+
+describe('toleranceSummary', () => {
+  it('says „aus“ or names the sides that are on', () => {
+    const summary = (foodPercent: number, burnPercent: number) =>
+      toleranceSummary({ foodPercent, burnPercent }, tDe).text;
+    expect(summary(0, 0)).toBe('aus');
+    expect(summary(5, 10)).toBe('Nahrung ±5 % · Verbrauch −10 %');
+    expect(summary(5, 0)).toBe('Nahrung ±5 %');
+    expect(summary(0, 10)).toBe('Verbrauch −10 %');
+  });
+
+  it('spells the signs for VoiceOver', () => {
+    expect(
+      toleranceSummary({ foodPercent: 5, burnPercent: 10 }, tDe).spoken,
+    ).toBe('Nahrung plus minus 5 Prozent, Verbrauch minus 10 Prozent');
   });
 });

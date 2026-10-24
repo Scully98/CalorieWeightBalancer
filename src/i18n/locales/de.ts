@@ -127,6 +127,28 @@ export const de = {
       'Keine Nahrungsdaten in den letzten {{count}} Tagen. Synchronisiert dein Tracker mit Apple Health?',
     checkPermissions: 'Berechtigungen prüfen',
   },
+  tolerance: {
+    title: 'Messfehler einrechnen',
+    off: 'aus',
+    summary: 'Nahrung ±{{food}} % · Verbrauch −{{burn}} %',
+    summaryFood: 'Nahrung ±{{food}} %',
+    summaryBurn: 'Verbrauch −{{burn}} %',
+    explain:
+      'Rechnet die Bilanz als Spanne statt als Einzelwert. 0 % heißt aus.',
+    food: 'Nahrung ±',
+    foodHint: 'Tracking-Einträge sind ungenau',
+    burn: 'Verbrauch −',
+    burnHint: 'Uhren überschätzen eher, nur nach unten',
+    typical: 'typisch {{min}}–{{max}} %',
+    percent: '{{value}} %',
+    foodSpoken: 'Toleranz Nahrung',
+    burnSpoken: 'Toleranz Verbrauch',
+    percentSpoken: '{{value}} Prozent',
+    summarySpoken:
+      'Nahrung plus minus {{food}} Prozent, Verbrauch minus {{burn}} Prozent',
+    summaryFoodSpoken: 'Nahrung plus minus {{food}} Prozent',
+    summaryBurnSpoken: 'Verbrauch minus {{burn}} Prozent',
+  },
   // Dates spelled like the design („24. Sep“); Intl writes „24. Sept.“.
   date: {
     dayMonth: '{{day}}. {{month}}',

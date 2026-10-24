@@ -118,3 +118,27 @@ export function heroModel(
     }),
   };
 }
+
+// Header of the tolerance card: „aus“, or the sides that are on, with the
+// spoken text for VoiceOver.
+export function toleranceSummary(
+  { foodPercent: food, burnPercent: burn }: Settings['tolerance'],
+  t: TFunction,
+): { text: string; spoken: string } {
+  if (food > 0 && burn > 0)
+    return {
+      text: t('tolerance.summary', { food, burn }),
+      spoken: t('tolerance.summarySpoken', { food, burn }),
+    };
+  if (food > 0)
+    return {
+      text: t('tolerance.summaryFood', { food }),
+      spoken: t('tolerance.summaryFoodSpoken', { food }),
+    };
+  if (burn > 0)
+    return {
+      text: t('tolerance.summaryBurn', { burn }),
+      spoken: t('tolerance.summaryBurnSpoken', { burn }),
+    };
+  return { text: t('tolerance.off'), spoken: t('tolerance.off') };
+}

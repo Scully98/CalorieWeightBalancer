@@ -1,9 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
-import { BalanceHero } from './balance-hero';
+import { HeroSection } from './hero-section';
 import { PeriodSegments } from './period-segments';
-import { heroModel } from '../hero';
 import { AppText } from '@/components/app-text';
 import { Button } from '@/components/button';
 import { LinkButton } from '@/components/link-button';
@@ -11,8 +10,6 @@ import { PageIndicator } from '@/components/page-indicator';
 import type { PeriodBalance } from '@/core/period-balance';
 import type { BalanceState } from '@/features/balance/use-balance';
 import { openHealthApp } from '@/health/open-health-app';
-import { formatLocale } from '@/i18n';
-import { useSettings } from '@/storage/settings-context';
 import { space } from '@/theme/spacing';
 
 function EmptyState({ days }: { days?: number }) {
@@ -37,18 +34,18 @@ function EmptyState({ days }: { days?: number }) {
 
 function BalanceSummary({
   balance,
+  toleranceOpen,
   onShowData,
 }: {
   balance: PeriodBalance;
+  toleranceOpen?: boolean;
   onShowData: () => void;
 }) {
   const { t } = useTranslation();
-  const locale = formatLocale();
-  const { tolerance } = useSettings();
 
   return (
     <View style={styles.summary}>
-      <BalanceHero model={heroModel(balance, tolerance, locale, t)} />
+      <HeroSection balance={balance} initialOpen={toleranceOpen} />
       {/* Until the data quality row replaces them. */}
       {balance.maintenanceDays > 0 ? (
         <AppText variant="caption" tone="muted">
@@ -73,6 +70,8 @@ type BalancePageProps = {
   days?: number;
   periodLabel?: string;
   pageCount: number;
+  // Gallery preset: the tolerance card starts open.
+  toleranceOpen?: boolean;
   onShowData: () => void;
   onPickCustom: () => void;
 };
@@ -83,6 +82,7 @@ export function BalancePage({
   days,
   periodLabel,
   pageCount,
+  toleranceOpen,
   onShowData,
   onPickCustom,
 }: BalancePageProps) {
