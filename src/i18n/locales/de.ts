@@ -18,6 +18,8 @@ export const de = {
   home: {
     period_one: 'Letzter Tag, ohne heute',
     period_other: 'Letzte {{count}} Tage, ohne heute',
+    periodWithToday_one: 'Heute',
+    periodWithToday_other: 'Letzte {{count}} Tage, inkl. heute',
     loading: 'Rechne …',
     kcal: '{{value}} kcal',
     sign: 'Plus = mehr gegessen als verbraucht',

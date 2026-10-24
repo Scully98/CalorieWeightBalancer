@@ -59,7 +59,7 @@ export function EntryScreen() {
     <View style={[styles.flex, { backgroundColor: colors.background }]}>
       <HealthSourceProvider source={source}>
         <SettingsStoreProvider store={store}>
-          <HomeScreen period={buildScenario(entry.scenario).period} />
+          <HomeScreen />
         </SettingsStoreProvider>
       </HealthSourceProvider>
       <SafeAreaView

@@ -10,10 +10,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { BalancePage } from './balance-page';
 import { DataPage } from './data-page';
+import { periodText } from '../data-rows';
 import { useBalance } from '../use-balance';
 import { PageIndicator } from '@/components/page-indicator';
-import type { Period } from '@/core/period';
-import { DEFAULT_SETTINGS } from '@/core/settings';
+import { useSettings } from '@/storage/settings-context';
 import { space } from '@/theme/spacing';
 import { useColors } from '@/theme/use-colors';
 
@@ -21,22 +21,19 @@ const PAGES = 2;
 
 // Balance on the first page, the Health data behind it one swipe to the right.
 // Both pages read the same load, so their numbers always match.
-export function HomeScreen({
-  period = DEFAULT_SETTINGS.period,
-}: {
-  period?: Period;
-}) {
+export function HomeScreen() {
   const colors = useColors();
   const { t } = useTranslation();
   const { width } = useWindowDimensions();
-  // Settings UI follows with the homepage; until then only the period varies.
-  const state = useBalance({ ...DEFAULT_SETTINGS, period });
+  const { period, includeToday } = useSettings();
+  const state = useBalance();
   const days =
     state.status === 'done' || state.status === 'empty'
       ? state.value.balance.days
       : period.kind === 'days'
         ? period.days
         : undefined;
+  const periodLabel = periodText(days, includeToday, t);
   const pager = useRef<ScrollView>(null);
   const [page, setPage] = useState(0);
 
@@ -74,11 +71,12 @@ export function HomeScreen({
           <BalancePage
             state={state}
             days={days}
+            periodLabel={periodLabel}
             onShowData={() => showPage(1)}
           />
         </View>
         <View style={{ width }}>
-          <DataPage state={state} days={days} />
+          <DataPage state={state} periodLabel={periodLabel} />
         </View>
       </ScrollView>
     </SafeAreaView>

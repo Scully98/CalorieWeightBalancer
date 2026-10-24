@@ -20,6 +20,8 @@ export const en: typeof de = {
   home: {
     period_one: 'Last day, excluding today',
     period_other: 'Last {{count}} days, excluding today',
+    periodWithToday_one: 'Today',
+    periodWithToday_other: 'Last {{count}} days, including today',
     loading: 'Calculating …',
     kcal: '{{value}} kcal',
     sign: 'Plus = ate more than you burned',

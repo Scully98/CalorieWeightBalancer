@@ -155,7 +155,7 @@ Abnahmekriterien → Milestones:
 
 ---
 
-### Milestone 3 — Homepage liest den Store
+### ✅ Milestone 3 — Homepage liest den Store
 
 > Die Homepage nimmt Zeitraum, Null-Tage, heute und Toleranz aus dem Store; Null-Tage, Toleranz und Körperdaten rechnen sofort neu, nur Zeitraum und „heute“ laden Health-Daten neu.
 
@@ -173,16 +173,16 @@ Abnahmekriterien → Milestones:
 
 #### To-Dos
 
-- 🔲 Split `loadBalance`: `loadPeriodData` does everything that queries the source (lead-in, period, today record, Health profile, sources, `weightBefore`) and returns it with `start`/`count`; `buildReport(data, { zeroDaysAsMaintenance, tolerance }, storedProfile)` does the rest and is pure
-- 🔲 `useBalance()`: settings from `useSettings()`, profile from `useStoredProfile()`; the load callback depends only on `source`, `period` and `includeToday` (as a key like today); the report is built from the latest loaded data, settings and profile on every render (React Compiler memoizes)
-- 🔲 Keep `toBalanceState` on the built report; `loading` only before the first load, a later reload keeps the previous report until the new one arrives (as today)
-- 🔲 `HomeScreen`: drop the `period` prop; days for the header from the state or from `settings.period`
-- 🔲 Add `home.periodWithToday` („Letzte {{count}} Tage, inkl. heute“ / „Last {{count}} days, including today“; `_one`: „Heute“ / „Today“) and use it on both pages when `includeToday` is on
-- 🔲 Test `buildReport`: the same loaded data with zero days on/off gives different `balance.kcal` and `maintenanceDays`; tolerance 5/10 gives the range; a changed stored profile changes the estimate (result tests, no mock-call assertions)
-- 🔲 Test the load key: settings that differ only in zero days or tolerance give the same key; period or `includeToday` give a different key
-- 🔲 Update the existing `use-balance.test.ts` cases to pass the profile instead of mocking `@/storage/settings`
-- 🔲 Run `npm run lint`, `npm run typecheck`, `npm run test:coverage`; all exit 0
-- 🔲 Commit (`feat: recompute the balance from stored settings without reloading`)
+- ✅ Split `loadBalance`: `loadPeriodData` does everything that queries the source (lead-in, period, today record, Health profile, sources, `weightBefore`) and returns it with `start`/`count`; `buildReport(data, { zeroDaysAsMaintenance, tolerance }, storedProfile)` does the rest and is pure _(`PeriodData` = Vorlauf, Zeitraum, heutiger Tag, Health-Profil, Quellen, Gewicht davor)_
+- ✅ `useBalance()`: settings from `useSettings()`, profile from `useStoredProfile()`; the load callback depends only on `source`, `period` and `includeToday` (as a key like today); the report is built from the latest loaded data, settings and profile on every render (React Compiler memoizes)
+- ✅ Keep `toBalanceState` on the built report; `loading` only before the first load, a later reload keeps the previous report until the new one arrives (as today)
+- ✅ `HomeScreen`: drop the `period` prop; days for the header from the state or from `settings.period` _(Zeitraum-Text als `periodLabel` an beide Seiten (`periodText` in `data-rows.ts`))_
+- ✅ Add `home.periodWithToday` („Letzte {{count}} Tage, inkl. heute“ / „Last {{count}} days, including today“; `_one`: „Heute“ / „Today“) and use it on both pages when `includeToday` is on _(Test `periodText`)_
+- ✅ Test `buildReport`: the same loaded data with zero days on/off gives different `balance.kcal` and `maintenanceDays`; tolerance 5/10 gives the range; a changed stored profile changes the estimate (result tests, no mock-call assertions)
+- ✅ Test the load key: settings that differ only in zero days or tolerance give the same key; period or `includeToday` give a different key
+- ✅ Update the existing `use-balance.test.ts` cases to pass the profile instead of mocking `@/storage/settings` _(kein Mock mehr nötig; `loadBalance` nimmt das Profil als optionalen Parameter)_
+- ✅ Run `npm run lint`, `npm run typecheck`, `npm run test:coverage`; all exit 0
+- ✅ Commit (`feat: recompute the balance from stored settings without reloading`)
 
 #### Notes / Constraints
 

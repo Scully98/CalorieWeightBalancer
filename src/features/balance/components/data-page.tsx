@@ -124,22 +124,17 @@ function Report({ report }: { report: BalanceReport }) {
 // Second page: what arrives from Health and how the balance adds up.
 export function DataPage({
   state,
-  days,
+  periodLabel,
 }: {
   state: BalanceState;
-  // Days of the period; undefined while a period like "all" is loading.
-  days?: number;
+  // Undefined while a period like "all" is loading.
+  periodLabel?: string;
 }) {
   const { t } = useTranslation();
 
   return (
     <ScrollView contentContainerStyle={styles.content}>
-      <Headline
-        title={t('data.title')}
-        subline={
-          days === undefined ? undefined : t('home.period', { count: days })
-        }
-      />
+      <Headline title={t('data.title')} subline={periodLabel} />
       {state.status === 'done' || state.status === 'empty' ? (
         <Report report={state.value} />
       ) : state.status === 'error' ? (

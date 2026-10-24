@@ -15,14 +15,16 @@ import { toDateKey, type DayRecord } from '@/core/day-record';
 import { chartLines, type ChartLines } from '@/core/lines';
 import { resolvePeriod } from '@/core/period';
 import { periodBalance, type PeriodBalance } from '@/core/period-balance';
-import { DEFAULT_SETTINGS, type Settings } from '@/core/settings';
+import type { Settings } from '@/core/settings';
+import type { HealthProfile } from '@/health/scan';
 import type { DataKey, HealthSource } from '@/health/source';
 import { useHealthSource } from '@/health/source-context';
 import {
   useForegroundRefresh,
   type LoadState,
 } from '@/hooks/use-foreground-refresh';
-import { appSettingsStore } from '@/storage/settings-store';
+import { useSettings, useStoredProfile } from '@/storage/settings-context';
+import type { StoredProfile } from '@/storage/settings-store';
 
 export type { DataKey, EnergyKey } from '@/health/source';
 
@@ -79,13 +81,34 @@ const HAS_VALUE: Record<DataKey, (day: DayRecord) => boolean> = {
     day.bodyFatFraction !== undefined || day.leanMassKg !== undefined,
 };
 
-// Exported for the scenario tests.
-export async function loadBalance(
+// What the period needs from Health. Loaded again only for another period,
+// on return to the foreground or with another source; everything else is
+// computed from it on every change (`buildReport`).
+export type PeriodData = {
+  // Lead-in and period, without the running day.
+  history: DayRecord[];
+  records: DayRecord[];
+  // The running day, when the period ends yesterday.
+  todayRecord?: DayRecord;
+  health: HealthProfile;
+  sources: Record<DataKey, SourceRevision | undefined>;
+  weightBeforeKg?: number;
+};
+
+type LoadSettings = Pick<Settings, 'period' | 'includeToday'>;
+type ComputeSettings = Pick<Settings, 'zeroDaysAsMaintenance' | 'tolerance'>;
+
+// Settings that change which days are loaded; zero days and tolerance only
+// change the calculation.
+export function loadKey({ period, includeToday }: Settings): string {
+  return JSON.stringify({ period, includeToday });
+}
+
+export async function loadPeriodData(
   source: HealthSource,
-  settings: Settings,
+  { period, includeToday }: LoadSettings,
   now: Date,
-): Promise<BalanceReport> {
-  const { period, includeToday, zeroDaysAsMaintenance, tolerance } = settings;
+): Promise<PeriodData> {
   const firstDataDate =
     period.kind === 'all' ? await source.firstDataDate() : undefined;
   const { start, days: count } = resolvePeriod(period, now, {
@@ -107,12 +130,27 @@ export async function loadBalance(
     source.weightBefore(start),
   ]);
 
-  // Lead-in and period, without the running day.
   const history = loaded.slice(0, LEAD_IN_DAYS + count);
-  const records = history.slice(LEAD_IN_DAYS);
-  const todayRecord = withToday ? loaded[LEAD_IN_DAYS + count] : undefined;
+  return {
+    history,
+    records: history.slice(LEAD_IN_DAYS),
+    todayRecord: withToday ? loaded[LEAD_IN_DAYS + count] : undefined,
+    health,
+    sources,
+    weightBeforeKg,
+  };
+}
 
-  const inputs = restingInputs(health, appSettingsStore.getProfile());
+// Pure: the same data with other settings or body data gives the new numbers
+// at once, without asking Health again.
+export function buildReport(
+  data: PeriodData,
+  { zeroDaysAsMaintenance, tolerance }: ComputeSettings,
+  stored: StoredProfile,
+): BalanceReport {
+  const { history, records, todayRecord, health, sources, weightBeforeKg } =
+    data;
+  const inputs = restingInputs(health, stored);
   const options = {
     zeroDaysAsMaintenance,
     profile: inputs.profile,
@@ -148,15 +186,35 @@ export async function loadBalance(
   };
 }
 
-export function useBalance(
-  settings: Settings = DEFAULT_SETTINGS,
-): BalanceState {
-  const source = useHealthSource();
-  // New settings with the same content must not trigger a reload.
-  const settingsKey = JSON.stringify(settings);
-  const load = useCallback(
-    () => loadBalance(source, JSON.parse(settingsKey) as Settings, new Date()),
-    [source, settingsKey],
+// Load and calculation in one step, for the tests.
+export async function loadBalance(
+  source: HealthSource,
+  settings: Settings,
+  now: Date,
+  stored: StoredProfile = {},
+): Promise<BalanceReport> {
+  return buildReport(
+    await loadPeriodData(source, settings, now),
+    settings,
+    stored,
   );
-  return toBalanceState(useForegroundRefresh(load));
+}
+
+// Settings and body data come from the store; a change shows at once.
+export function useBalance(): BalanceState {
+  const source = useHealthSource();
+  const settings = useSettings();
+  const stored = useStoredProfile();
+  // New settings with the same days must not trigger a reload.
+  const key = loadKey(settings);
+  const load = useCallback(
+    () => loadPeriodData(source, JSON.parse(key) as LoadSettings, new Date()),
+    [source, key],
+  );
+  const state = useForegroundRefresh(load);
+  return toBalanceState(
+    state.status === 'done'
+      ? { status: 'done', value: buildReport(state.value, settings, stored) }
+      : state,
+  );
 }

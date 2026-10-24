@@ -86,17 +86,23 @@ type BalancePageProps = {
   state: BalanceState;
   // Days of the period; undefined while a period like "all" is loading.
   days?: number;
+  periodLabel?: string;
   onShowData: () => void;
 };
 
-export function BalancePage({ state, days, onShowData }: BalancePageProps) {
+export function BalancePage({
+  state,
+  days,
+  periodLabel,
+  onShowData,
+}: BalancePageProps) {
   const { t } = useTranslation();
 
   return (
     <ScrollView contentContainerStyle={styles.content}>
-      {days === undefined ? null : (
+      {periodLabel === undefined ? null : (
         <AppText variant="bodyStrong" style={styles.center}>
-          {t('home.period', { count: days })}
+          {periodLabel}
         </AppText>
       )}
       {state.status === 'done' ? (
