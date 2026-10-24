@@ -50,6 +50,7 @@ export default function RootLayout() {
         <Stack.Protected guard={__DEV__ && introCompleted}>
           <Stack.Screen name="dev/gallery" />
           <Stack.Screen name="dev/[entry]" />
+          <Stack.Screen name="dev/day-values" />
         </Stack.Protected>
         <Stack.Protected guard={!introCompleted}>
           <Stack.Screen name="intro" />

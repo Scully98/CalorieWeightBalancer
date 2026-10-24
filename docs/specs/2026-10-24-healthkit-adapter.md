@@ -172,7 +172,7 @@ Abnahmekriterien → Milestones:
 
 ---
 
-### Milestone 4 — Dev-Screen Tageswerte
+### ✅ Milestone 4 — Dev-Screen Tageswerte
 
 > Ein Development-Screen zeigt die Rohwerte der letzten 30 Tage und von heute, damit sich einzelne Tage mit der Health-App vergleichen lassen.
 
@@ -192,15 +192,15 @@ Abnahmekriterien → Milestones:
 
 #### To-Dos
 
-- 🔲 Create `dayValueRows(record)` → `{ date, lines: string[] }` with: food, resting (kcal, plus „Abdeckung 75 %“ when `restingCoverage < 1`), active, weight (kg, 2 decimals), body fat (% with 1 decimal from the 0–1 fraction), lean mass (kg, 2 decimals); kcal whole numbers like the Health app; missing values as „–“; dev texts stay English/unübersetzt like the other dev screens
-- 🔲 Create `day-values-screen.tsx`: loads `days(addDays(today, −30), 31)` from the active `HealthSource` on mount and on pull-to-refresh, newest day first, title „Tageswerte (dev)“, back link „‹ Einstellungen“; marker constant `DAY_VALUES_MARKER = 'kcalwaage-day-values'`
-- 🔲 Create the stub route and register it in `_layout.tsx` next to the gallery routes
-- 🔲 Add the link to the dev section in Einstellungen
-- 🔲 Extend `check-release-bundle.sh` with `kcalwaage-day-values`; run it, expect exit 0
-- 🔲 Test `dayValueRows`: full record; record without any value; coverage line only below 100 %; body fat 0.2134 → „21,3 %“
-- 🔲 Check in the simulator: the screen opens from Einstellungen (dev) and lists 31 days (no Health data in the simulator → all „–“)
-- 🔲 Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
-- 🔲 Commit (`feat: add dev screen with daily Health values`)
+- ✅ Create `dayValueRows(record)` → `{ date, lines: string[] }` with: food, resting (kcal, plus „Abdeckung 75 %“ when `restingCoverage < 1`), active, weight (kg, 2 decimals), body fat (% with 1 decimal from the 0–1 fraction), lean mass (kg, 2 decimals); kcal whole numbers like the Health app; missing values as „–“; dev texts stay English/unübersetzt like the other dev screens _(heißt `dayValueRow(record, locale, isToday)` → `{ date, title, lines }`; Texte deutsch wie die Galerie (nicht englisch); Zeilen: Nahrung/Ruhe, Aktiv, Gewicht/KFA, Mager)_
+- ✅ Create `day-values-screen.tsx`: loads `days(addDays(today, −30), 31)` from the active `HealthSource` on mount and on pull-to-refresh, newest day first, title „Tageswerte (dev)“, back link „‹ Einstellungen“; marker constant `DAY_VALUES_MARKER = 'kcalwaage-day-values'` _(lädt im Effect ohne synchrones `setState` (React-Compiler-Lint), „Pull to refresh“ zählt einen Reload-Zähler hoch)_
+- ✅ Create the stub route and register it in `_layout.tsx` next to the gallery routes
+- ✅ Add the link to the dev section in Einstellungen
+- ✅ Extend `check-release-bundle.sh` with `kcalwaage-day-values`; run it, expect exit 0
+- ✅ Test `dayValueRows`: full record; record without any value; coverage line only below 100 %; body fat 0.2134 → „21,3 %“
+- ✅ Check in the simulator: the screen opens from Einstellungen (dev) and lists 31 days (no Health data in the simulator → all „–“) _(per Deep Link `calorieweightbalancer://dev/day-values`: 31 Tage ab „Sa. 24.10. (heute)“, alle Werte „–“)_
+- ✅ Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
+- ✅ Commit (`feat: add dev screen with daily Health values`)
 
 #### Notes / Constraints
 

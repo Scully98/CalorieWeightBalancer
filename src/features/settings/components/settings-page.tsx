@@ -34,6 +34,10 @@ export function SettingsPage() {
               label="Zustandsgalerie (dev) ›"
               onPress={() => router.push('/dev/gallery')}
             />
+            <LinkButton
+              label="Tageswerte (dev) ›"
+              onPress={() => router.push('/dev/day-values')}
+            />
             <TypeSpecimen />
           </View>
         ) : null}
