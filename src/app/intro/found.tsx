@@ -1,7 +1,6 @@
 import { BiologicalSex } from '@kingstinct/react-native-healthkit';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, useWindowDimensions, View } from 'react-native';
 
 import { AppText } from '@/components/app-text';
 import { Button } from '@/components/button';
@@ -20,7 +19,6 @@ import { openHealthApp } from '@/health/open-health-app';
 import type { HealthProfile } from '@/health/scan';
 import { formatLocale } from '@/i18n';
 import { completeIntro } from '@/storage/settings';
-import { space } from '@/theme/spacing';
 
 // Used when the scan failed: every value is then asked for.
 const EMPTY_PROFILE: HealthProfile = { biologicalSex: BiologicalSex.notSet };
@@ -29,9 +27,9 @@ const EMPTY_PROFILE: HealthProfile = { biologicalSex: BiologicalSex.notSet };
 // estimate when Health has none.
 export default function IntroFoundScreen() {
   const { t } = useTranslation();
-  const { fontScale } = useWindowDimensions();
   const locale = formatLocale();
-  const now = useMemo(() => new Date(), []);
+  // One fixed point in time for age, relative dates and the stored profile.
+  const [now] = useState(() => new Date());
   const scanState = useHealthScan();
   const [userInput, setUserInput] = useState<UserInput>({
     weight: '',
@@ -53,9 +51,6 @@ export default function IntroFoundScreen() {
     (scan !== undefined || failed) &&
     (!needsEstimate || inputs?.estimate !== undefined);
 
-  const stacked = fontScale > 1.3;
-  const buttonStyle = stacked ? undefined : styles.button;
-
   function start() {
     completeIntro(needsEstimate && inputs ? toStoredProfile(inputs, now) : {});
   }
@@ -64,25 +59,21 @@ export default function IntroFoundScreen() {
     <IntroLayout
       step={3}
       footer={
-        <View style={styles.stacked}>
-          <View style={stacked ? styles.stacked : styles.row}>
-            <Button
-              variant="secondary"
-              label={t('intro.found.checkPermissions')}
-              onPress={openHealthApp}
-              style={buttonStyle}
-            />
-            <Button
-              label={t('intro.found.start')}
-              onPress={start}
-              disabled={!canStart}
-              style={buttonStyle}
-            />
-          </View>
+        <>
+          <Button
+            label={t('intro.found.start')}
+            onPress={start}
+            disabled={!canStart}
+          />
+          <Button
+            variant="secondary"
+            label={t('intro.found.checkPermissions')}
+            onPress={openHealthApp}
+          />
           <AppText variant="caption" tone="muted">
             {t('common.permissionsPath')}
           </AppText>
-        </View>
+        </>
       }
     >
       <Headline
@@ -110,17 +101,3 @@ export default function IntroFoundScreen() {
     </IntroLayout>
   );
 }
-
-const styles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    gap: space.s,
-  },
-  stacked: {
-    gap: space.s,
-  },
-  button: {
-    flexGrow: 1,
-    flexBasis: 0,
-  },
-});

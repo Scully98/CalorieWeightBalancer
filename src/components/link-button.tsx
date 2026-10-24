@@ -1,4 +1,4 @@
-import { Pressable } from 'react-native';
+import { Pressable, StyleSheet } from 'react-native';
 
 import { AppText } from './app-text';
 
@@ -15,9 +15,16 @@ export function LinkButton({ label, onPress }: LinkButtonProps) {
       onPress={onPress}
       style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}
     >
-      <AppText variant="secondary" tone="muted">
+      {/* Without an accent color the underline is what marks it as tappable. */}
+      <AppText variant="secondary" style={styles.label}>
         {label}
       </AppText>
     </Pressable>
   );
 }
+
+const styles = StyleSheet.create({
+  label: {
+    textDecorationLine: 'underline',
+  },
+});

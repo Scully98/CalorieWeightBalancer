@@ -6,10 +6,10 @@ import type { TextVariant } from '@/theme/typography';
 
 export type HeadlineLevel = 'h1' | 'h2' | 'h3';
 
-// h1 = iOS Title 1 (screen title), h2 = Title 2 (section), h3 = Headline.
+// h1 = screen title, h2 = section title, h3 = iOS Headline.
 const TITLE_VARIANT: Record<HeadlineLevel, TextVariant> = {
-  h1: 'title',
-  h2: 'title2',
+  h1: 'screenTitle',
+  h2: 'sectionTitle',
   h3: 'bodyStrong',
 };
 

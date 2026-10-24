@@ -22,7 +22,9 @@ function BalanceSummary({ balance, onShowData }: BalanceSummaryProps) {
   const { t } = useTranslation();
   const locale = formatLocale();
 
-  // iOS can't tell us about denied access, so no data at all means "check".
+  // iOS reports denied read access as empty data, so a period without any
+  // food entries shows the empty state with a permissions hint instead of a
+  // balance.
   if (!balance || balance.daysWithoutFood === balance.days) {
     return (
       <>

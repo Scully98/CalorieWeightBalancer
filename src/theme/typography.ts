@@ -3,8 +3,10 @@ import type { TextStyle } from 'react-native';
 // Base sizes of the iOS text styles at the default content size ("Large").
 // React Native scales them with Dynamic Type as long as allowFontScaling stays on.
 export const typography = {
-  title: { fontSize: 28, lineHeight: 34, fontWeight: '700' },
-  title2: { fontSize: 22, lineHeight: 28, fontWeight: '700' },
+  // iOS Title 1.
+  screenTitle: { fontSize: 28, lineHeight: 34, fontWeight: '700' },
+  // iOS Title 2.
+  sectionTitle: { fontSize: 22, lineHeight: 28, fontWeight: '700' },
   body: { fontSize: 17, lineHeight: 22 },
   bodyStrong: { fontSize: 17, lineHeight: 22, fontWeight: '600' },
   secondary: { fontSize: 15, lineHeight: 20 },

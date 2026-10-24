@@ -25,7 +25,13 @@ i18n.use(initReactI18next).init({
   initAsync: false,
 });
 
-// Locale tag for Intl number and date formatting, following the app language.
+// Locale tag for Intl number and date formatting: the device's own tag (e.g.
+// de-CH, en-GB) when it is in the app language, so separators and date order
+// match the region; otherwise a default for the app language.
 export function formatLocale(): string {
-  return i18n.language === 'de' ? 'de-DE' : 'en-US';
+  const language = i18n.language;
+  const device = getLocales().find(
+    (locale) => locale.languageCode === language,
+  );
+  return device?.languageTag ?? (language === 'de' ? 'de-DE' : 'en-US');
 }

@@ -10,13 +10,16 @@ type StatusIconProps = {
   status: Status;
 };
 
-export function StatusIcon({ status }: StatusIconProps) {
+function StatusIcon({ status }: StatusIconProps) {
   const colors = useColors();
   const { fontScale } = useWindowDimensions();
   const size = Math.round(22 * fontScale);
 
+  // Decorative: the row's accessibility label already names the status.
   return (
     <View
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
       style={[
         styles.icon,
         {
