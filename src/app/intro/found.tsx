@@ -18,7 +18,7 @@ import { useHealthScan } from '@/features/intro/use-health-scan';
 import { openHealthApp } from '@/health/open-health-app';
 import type { HealthProfile } from '@/health/scan';
 import { formatLocale } from '@/i18n';
-import { completeIntro } from '@/storage/settings';
+import { useSettingsStore } from '@/storage/settings-context';
 
 // Used when the scan failed: every value is then asked for.
 const EMPTY_PROFILE: HealthProfile = { biologicalSex: BiologicalSex.notSet };
@@ -27,6 +27,7 @@ const EMPTY_PROFILE: HealthProfile = { biologicalSex: BiologicalSex.notSet };
 // estimate when Health has none.
 export default function IntroFoundScreen() {
   const { t } = useTranslation();
+  const store = useSettingsStore();
   const locale = formatLocale();
   // One fixed point in time for age, relative dates and the stored profile.
   const [now] = useState(() => new Date());
@@ -52,7 +53,7 @@ export default function IntroFoundScreen() {
     (!needsEstimate || inputs?.estimate !== undefined);
 
   function start() {
-    completeIntro(needsEstimate && inputs ? toStoredProfile(inputs, now) : {});
+    store.completeIntro(needsEstimate && inputs ? toStoredProfile(inputs, now) : {});
   }
 
   return (

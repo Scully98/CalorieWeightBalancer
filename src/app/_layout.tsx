@@ -12,7 +12,7 @@ import { StyleSheet, useColorScheme, View } from 'react-native';
 import { AppText } from '@/components/app-text';
 import { Button } from '@/components/button';
 import '@/i18n';
-import { useIntroCompleted } from '@/storage/settings';
+import { useIntroCompleted } from '@/storage/settings-context';
 import { space } from '@/theme/spacing';
 import { useColors } from '@/theme/use-colors';
 

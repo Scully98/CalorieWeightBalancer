@@ -7,7 +7,7 @@ import { TypeSpecimen } from './type-specimen';
 import { AppText } from '@/components/app-text';
 import { Divider } from '@/components/divider';
 import { LinkButton } from '@/components/link-button';
-import { resetIntro } from '@/storage/settings';
+import { useSettingsStore } from '@/storage/settings-context';
 import { space } from '@/theme/spacing';
 import { useColors } from '@/theme/use-colors';
 
@@ -15,6 +15,7 @@ import { useColors } from '@/theme/use-colors';
 export function SettingsPage() {
   const colors = useColors();
   const { t } = useTranslation();
+  const store = useSettingsStore();
 
   return (
     <SafeAreaView
@@ -29,7 +30,7 @@ export function SettingsPage() {
         {__DEV__ ? (
           <View style={styles.dev}>
             <Divider />
-            <LinkButton label="Reset intro (dev)" onPress={resetIntro} />
+            <LinkButton label="Reset intro (dev)" onPress={store.resetIntro} />
             <LinkButton
               label="Zustandsgalerie (dev) ›"
               onPress={() => router.push('/dev/gallery')}

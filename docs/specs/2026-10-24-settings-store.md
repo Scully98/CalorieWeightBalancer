@@ -122,7 +122,7 @@ Abnahmekriterien → Milestones:
 
 ---
 
-### Milestone 2 — Store in React
+### ✅ Milestone 2 — Store in React
 
 > Komponenten lesen den Store über Kontext und Hooks; die Galerie gibt jedem Eintrag einen eigenen In-Memory-Store.
 
@@ -142,12 +142,12 @@ Abnahmekriterien → Milestones:
 
 #### To-Dos
 
-- 🔲 Create `settings-context.tsx`: context default `appSettingsStore`; hooks via `useSyncExternalStore(store.subscribe, store.getSettings)` etc.
-- 🔲 Switch `_layout.tsx`, `found.tsx`, the dev reset and the `StoredProfile` imports to the new modules; no import of `@/storage/settings` remains
-- 🔲 Gallery: each entry renders inside its own `SettingsStoreProvider` with a memory store seeded from the scenario (period, later toggles), so the gallery never writes the real settings
-- 🔲 Check in the simulator: intro still shows once; gallery 1a still +7.000 kcal / +0,9 kg; „Reset intro (dev)“ still brings back the intro
-- 🔲 Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
-- 🔲 Commit (`refactor: read settings through a store context`)
+- ✅ Create `settings-context.tsx`: context default `appSettingsStore`; hooks via `useSyncExternalStore(store.subscribe, store.getSettings)` etc.
+- ✅ Switch `_layout.tsx`, `found.tsx`, the dev reset and the `StoredProfile` imports to the new modules; no import of `@/storage/settings` remains _(`src/storage/settings.ts` gelöscht; `use-balance.ts` liest bis M3 `appSettingsStore.getProfile()`; die Tests brauchen keinen Mock mehr, weil `ExtensionStorage` ohne natives Modul nichts tut)_
+- ✅ Gallery: each entry renders inside its own `SettingsStoreProvider` with a memory store seeded from the scenario (period, later toggles), so the gallery never writes the real settings
+- ✅ Check in the simulator: intro still shows once; gallery 1a still +7.000 kcal / +0,9 kg; „Reset intro (dev)“ still brings back the intro _(nach Neustart bleibt das Intro erledigt (gespeicherter Key wird gelesen), 1a +7.000 kcal / +0,9 kg; „Reset intro (dev)“ nicht angetippt (kein Tap-Werkzeug), das Verhalten deckt der Store-Test ab)_
+- ✅ Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
+- ✅ Commit (`refactor: read settings through a store context`)
 
 #### Notes / Constraints
 

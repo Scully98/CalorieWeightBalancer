@@ -11,6 +11,9 @@ import { createDemoSource } from '@/dev/demo/demo-source';
 import { buildScenario } from '@/dev/demo/scenarios';
 import { HomeScreen } from '@/features/balance/components/home-screen';
 import { HealthSourceProvider } from '@/health/source-context';
+import { createMemoryStore } from '@/storage/key-value-store';
+import { SettingsStoreProvider } from '@/storage/settings-context';
+import { createSettingsStore } from '@/storage/settings-store';
 import { space } from '@/theme/spacing';
 import { useColors } from '@/theme/use-colors';
 
@@ -24,6 +27,14 @@ export function EntryScreen() {
   const [source] = useState(() =>
     entry ? createDemoSource(entry.scenario, new Date()) : undefined,
   );
+  // Settings of the entry in memory, so the gallery never changes the real
+  // ones.
+  const [store] = useState(() => {
+    const memory = createSettingsStore(createMemoryStore());
+    if (entry)
+      memory.updateSettings({ period: buildScenario(entry.scenario).period });
+    return memory;
+  });
   const colorScheme = entry?.ui?.colorScheme;
 
   // Overrides the system appearance for the whole app while open.
@@ -47,7 +58,9 @@ export function EntryScreen() {
   return (
     <View style={[styles.flex, { backgroundColor: colors.background }]}>
       <HealthSourceProvider source={source}>
-        <HomeScreen period={buildScenario(entry.scenario).period} />
+        <SettingsStoreProvider store={store}>
+          <HomeScreen period={buildScenario(entry.scenario).period} />
+        </SettingsStoreProvider>
       </HealthSourceProvider>
       <SafeAreaView
         edges={['bottom']}

@@ -8,7 +8,6 @@ import type { HealthSource } from '@/health/source';
 jest.mock('@kingstinct/react-native-healthkit', () => ({
   BiologicalSex: { notSet: 0, female: 1, male: 2, other: 3 },
 }));
-jest.mock('@/storage/settings', () => ({ getProfile: () => ({}) }));
 
 const NOW = new Date(2026, 9, 24, 14, 32);
 

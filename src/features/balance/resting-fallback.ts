@@ -3,7 +3,7 @@ import { fromDateKey, type DayRecord } from '@/core/day-record';
 import { ageOn, weightsByDay, type RestingProfile } from '@/core/resting';
 import { sexState } from '@/features/intro/bmr-inputs';
 import type { HealthProfile } from '@/health/scan';
-import type { StoredProfile } from '@/storage/settings';
+import type { StoredProfile } from '@/storage/settings-store';
 
 export type Sourced<T> = { value: T; fromHealth: boolean };
 

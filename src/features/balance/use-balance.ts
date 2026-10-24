@@ -22,7 +22,7 @@ import {
   useForegroundRefresh,
   type LoadState,
 } from '@/hooks/use-foreground-refresh';
-import { getProfile } from '@/storage/settings';
+import { appSettingsStore } from '@/storage/settings-store';
 
 export type { DataKey, EnergyKey } from '@/health/source';
 
@@ -112,7 +112,7 @@ export async function loadBalance(
   const records = history.slice(LEAD_IN_DAYS);
   const todayRecord = withToday ? loaded[LEAD_IN_DAYS + count] : undefined;
 
-  const inputs = restingInputs(health, getProfile());
+  const inputs = restingInputs(health, appSettingsStore.getProfile());
   const options = {
     zeroDaysAsMaintenance,
     profile: inputs.profile,

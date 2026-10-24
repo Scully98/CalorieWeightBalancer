@@ -9,7 +9,7 @@ import {
 } from '@/core/bmr';
 import { parseLocaleNumber } from '@/core/format';
 import type { HealthScan } from '@/health/scan';
-import type { StoredProfile } from '@/storage/settings';
+import type { StoredProfile } from '@/storage/settings-store';
 
 export { LIMITS, type NumberKey } from '@/core/bmr';
 

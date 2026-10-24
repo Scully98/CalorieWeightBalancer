@@ -14,7 +14,6 @@ import type { RestingProfile } from '@/core/resting';
 import { de } from '@/i18n/locales/de';
 
 jest.mock('@kingstinct/react-native-healthkit', () => ({}));
-jest.mock('@/storage/settings', () => ({}));
 jest.mock('@/health/daily-energy', () => ({}));
 
 const i18n = createInstance();
