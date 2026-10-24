@@ -45,6 +45,41 @@ export const en: typeof de = {
       save: 'Save',
     },
   },
+  calculation: {
+    title: 'How is it calculated?',
+    balance: {
+      title: 'Balance',
+      body: 'Per day: food minus burn (resting + active energy). Plus means you ate more than you burned. The days of the period are added up.',
+    },
+    zeroDays: {
+      title: 'Days without entries',
+      body: 'With “Empty days = maintenance” on, a day without food entries counts as 0 instead of a full deficit. The number of such days is shown below the balance. Days with less than {{lowFood}} % of the burn count as unusually little food.',
+    },
+    today: {
+      title: 'Today',
+      body: 'The running day doesn’t count by default, because food and burn are still missing. “Include today” adds it.',
+    },
+    tolerance: {
+      title: 'Measurement error',
+      body: 'Labels and watches are imprecise. With tolerance the balance shows a range: food ± up to {{food}} %, burn only downwards up to {{burn}} %, applied to the sums of the period.',
+    },
+    fat: {
+      title: 'Body fat',
+      body: 'Balance ÷ {{kcalPerKg}} kcal per kg of fat tissue. This is theoretical: early in a diet mostly water and glycogen change.',
+    },
+    resting: {
+      title: 'Estimated resting energy',
+      body: 'Without resting energy (no watch), the app estimates it with Mifflin-St Jeor from weight, height, age and sex. These days are marked as “estimated”.',
+    },
+    analysis: {
+      title: 'Comparison with the scale',
+      body: 'From the change in fat and lean mass ({{fat}} and {{lean}} kcal per kg, Hall 2008) and your food, the app estimates your actual burn. From {{days}} days and {{measurements}} measurements; start and end as a {{trend}}-day trend.',
+    },
+    medical: {
+      title: 'Not medical advice',
+      body: 'The app calculates with your Health data and does not replace a doctor.',
+    },
+  },
   home: {
     period_one: 'Last day, excluding today',
     period_other: 'Last {{count}} days, excluding today',

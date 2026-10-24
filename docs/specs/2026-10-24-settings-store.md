@@ -380,7 +380,7 @@ Keine App-Kürzel. Zahlenfelder mit Ziffern-Tastatur wie im Intro; „Fertig“ 
 
 ---
 
-### Milestone 6 — Seite „Wie wird gerechnet?“
+### ✅ Milestone 6 — Seite „Wie wird gerechnet?“
 
 > Eine Textseite erklärt Bilanz, Null-Tage, heute, Toleranz, Fett-Umrechnung, Grundumsatz-Schätzung und den Abgleich mit der Waage.
 
@@ -397,11 +397,11 @@ Keine App-Kürzel. Zahlenfelder mit Ziffern-Tastatur wie im Intro; „Fertig“ 
 
 #### To-Dos
 
-- 🔲 Create the page with the sections below (DE as written, EN translated with the same content), headers as `accessibilityRole="header"`
-- 🔲 Numbers in the texts come from the code constants where they exist (7.700, 9.400, 1.800, 50 %, 21 Tage, 6 Messungen, Toleranz-Grenzen), not typed twice
-- 🔲 Check in the simulator: page opens from Einstellungen, largest Dynamic Type size readable, back link works
-- 🔲 Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
-- 🔲 Commit (`feat: explain the calculation in settings`)
+- ✅ Create the page with the sections below (DE as written, EN translated with the same content), headers as `accessibilityRole="header"` _(Abschnitt 2 ergänzt um „Tage mit weniger als 50 % des Verbrauchs gelten als auffällig wenig Nahrung“)_
+- ✅ Numbers in the texts come from the code constants where they exist (7.700, 9.400, 1.800, 50 %, 21 Tage, 6 Messungen, Toleranz-Grenzen), not typed twice _(`calculationSections(t, locale)` in `src/features/settings/calculation-sections.ts`, getestet (Zahlen, keine Platzhalter in DE/EN))_
+- ✅ Check in the simulator: page opens from Einstellungen, largest Dynamic Type size readable, back link works _(per Deep Link geöffnet; Antippen der Zeile geht im Simulator nicht)_
+- ✅ Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
+- ✅ Commit (`feat: explain the calculation in settings`)
 
 **Texte (DE, Entwurf; Julius prüft)**
 

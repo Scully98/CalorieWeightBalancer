@@ -43,6 +43,41 @@ export const de = {
       save: 'Sichern',
     },
   },
+  calculation: {
+    title: 'Wie wird gerechnet?',
+    balance: {
+      title: 'Bilanz',
+      body: 'Pro Tag: Nahrung minus Verbrauch (Ruheenergie + Aktivenergie). Plus heißt mehr gegessen als verbraucht. Die Tage des Zeitraums werden zusammengezählt.',
+    },
+    zeroDays: {
+      title: 'Tage ohne Eintrag',
+      body: 'Ist „Null-Tage = Erhaltung“ an, zählt ein Tag ohne Nahrungseintrag mit 0 statt mit vollem Defizit. Wie viele Tage das betrifft, steht unter der Bilanz. Tage mit weniger als {{lowFood}} % des Verbrauchs gelten als auffällig wenig Nahrung.',
+    },
+    today: {
+      title: 'Heute',
+      body: 'Der laufende Tag zählt standardmäßig nicht, weil Essen und Verbrauch noch fehlen. „Heute einrechnen“ nimmt ihn mit.',
+    },
+    tolerance: {
+      title: 'Messfehler',
+      body: 'Etiketten und Uhren schätzen ungenau. Mit Toleranz zeigt die Bilanz eine Spanne: Nahrung ± bis {{food}} %, Verbrauch nur nach unten bis {{burn}} %, angewendet auf die Summen des Zeitraums.',
+    },
+    fat: {
+      title: 'Körperfett',
+      body: 'Bilanz ÷ {{kcalPerKg}} kcal pro kg Fettgewebe. Das ist theoretisch: Am Anfang einer Diät ändern sich vor allem Wasser und Glykogen.',
+    },
+    resting: {
+      title: 'Grundumsatz geschätzt',
+      body: 'Fehlt die Ruheenergie (keine Watch), schätzt die App sie nach Mifflin-St Jeor aus Gewicht, Größe, Alter und Geschlecht. Diese Tage sind als „geschätzt“ markiert.',
+    },
+    analysis: {
+      title: 'Abgleich mit der Waage',
+      body: 'Aus der Veränderung von Fett- und Magermasse ({{fat}} bzw. {{lean}} kcal pro kg, Hall 2008) und deiner Nahrung schätzt die App deinen tatsächlichen Verbrauch. Ab {{days}} Tagen und {{measurements}} Messungen; Start und Ende als {{trend}}-Tage-Trend.',
+    },
+    medical: {
+      title: 'Keine medizinische Beratung',
+      body: 'Die App rechnet mit deinen Health-Daten und ersetzt keinen Arzt.',
+    },
+  },
   home: {
     period_one: 'Letzter Tag, ohne heute',
     period_other: 'Letzte {{count}} Tage, ohne heute',
