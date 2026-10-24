@@ -1,17 +1,27 @@
 import { queryQuantitySamples } from '@kingstinct/react-native-healthkit';
 
+import { queryDailyBody } from './daily-body';
 import { queryDailyEnergy } from './daily-energy';
 import { QUANTITY } from './read-types';
 import { safe } from './safe';
 import { latest, readHealthProfile } from './scan';
 import type { HealthSource } from './source';
 
-// Energy per day from HealthKit statistics queries. Weight, body fat and lean
-// mass per day follow with the analysis screen and stay undefined until then;
-// only the weight before a period is read for the resting estimate. Must
-// only run after requestReadAccess().
+// Energy sums and the last weight, body fat and lean mass per day from
+// HealthKit statistics queries. Must only run after requestReadAccess().
 export const healthKitSource: HealthSource = {
-  days: queryDailyEnergy,
+  async days(start, count) {
+    const [energy, body] = await Promise.all([
+      queryDailyEnergy(start, count),
+      queryDailyBody(start, count),
+    ]);
+    return energy.map((day, index) => {
+      const values = Object.entries(body[index]).filter(
+        ([, value]) => value !== undefined,
+      );
+      return { ...day, ...Object.fromEntries(values) };
+    });
+  },
 
   profile: readHealthProfile,
 

@@ -352,7 +352,7 @@ export function analyzeBalance(
 
 ---
 
-### Milestone 5 — Körperwerte aus HealthKit
+### ✅ Milestone 5 — Körperwerte aus HealthKit
 
 > `HealthKitSource.days` liefert Gewicht, Körperfett und Magermasse als letzten Wert jedes Tages.
 
@@ -369,14 +369,14 @@ export function analyzeBalance(
 
 #### To-Dos
 
-- 🔲 Create `queryDailyBody(start, days)` with `queryStatisticsCollectionForQuantity(type, ['mostRecent'], start, { day: 1 }, { unit, filter })` per type; map `bucket.mostRecentQuantity?.quantity` to the local day; units `kg`, `%` (HealthKit gives 0–1), `kg`; failures → no values (`safe`)
-- 🔲 Check in the library types that `mostRecentQuantity` is on the statistics result and the unit string for percent is `'%'`
-- 🔲 Merge into `healthKitSource.days`: `{ ...energy, weightKg, bodyFatFraction, leanMassKg }` by date key
-- 🔲 Extend `fake-statistics.ts` so tests can return `mostRecentQuantity` buckets
-- 🔲 Test: values land on their local day (also across DST), days without bucket stay `undefined`, a failing query leaves energy values intact
-- 🔲 Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
-- 🔲 Check on the iPhone (Julius): a weight from the scale app shows up on its day (needs the data page or a dev log until the homepage exists)
-- 🔲 Commit (`feat: read daily weight and body composition from HealthKit`)
+- ✅ Create `queryDailyBody(start, days)` with `queryStatisticsCollectionForQuantity(type, ['mostRecent'], start, { day: 1 }, { unit, filter })` per type; map `bucket.mostRecentQuantity?.quantity` to the local day; units `kg`, `%` (HealthKit gives 0–1), `kg`; failures → no values (`safe`)
+- ✅ Check in the library types that `mostRecentQuantity` is on the statistics result and the unit string for percent is `'%'` _(`QueryStatisticsResponse.mostRecentQuantity` und Einheit `'%'` in den Typen von 16.0.0 vorhanden)_
+- ✅ Merge into `healthKitSource.days`: `{ ...energy, weightKg, bodyFatFraction, leanMassKg }` by date key _(nur definierte Werte werden übernommen, Datensätze ohne Messung bleiben ohne Körper-Schlüssel)_
+- ✅ Extend `fake-statistics.ts` so tests can return `mostRecentQuantity` buckets _(`mostRecentQuantity` = gleicher Wert wie `sumQuantity`)_
+- ✅ Test: values land on their local day (also across DST), days without bucket stay `undefined`, a failing query leaves energy values intact _(in `daily-body.test.ts`, inkl. 25-Stunden-Tag 25.10.2026)_
+- ✅ Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
+- 🔲 Check on the iPhone (Julius): a weight from the scale app shows up on its day (needs the data page or a dev log until the homepage exists) _(offen für Julius: braucht echte Health-Daten am Gerät)_
+- ✅ Commit (`feat: read daily weight and body composition from HealthKit`)
 
 #### Notes / Constraints
 
