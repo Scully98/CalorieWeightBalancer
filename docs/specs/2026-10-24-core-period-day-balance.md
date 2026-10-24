@@ -207,7 +207,7 @@ export function dayResting(
 
 ---
 
-### Milestone 3 — Tagesbilanz & Flags
+### ✅ Milestone 3 — Tagesbilanz & Flags
 
 > Für jeden Tag des Zeitraums liefert der Kern B, ob der Tag zählt, und seine Qualitäts-Flags. Der Null-Tage-Schalter wirkt hier.
 
@@ -222,23 +222,23 @@ export function dayResting(
 
 #### To-Dos
 
-- 🔲 Create `DayFlag = 'restingEstimated' | 'noFood' | 'lowFood' | 'noResting'` in this order (= order in the sheet later)
-- 🔲 Create `dayBalances(records, { zeroDaysAsMaintenance, profile, weightBeforeKg })` (sketch below); weights via `weightsByDay`, R via `dayResting`, day date via `fromDateKey(record.date)`
-- 🔲 Compute B per day:
+- ✅ reate `DayFlag = 'restingEstimated' | 'noFood' | 'lowFood' | 'noResting'` in this order (= order in the sheet later) _(plus `DAY_FLAGS` als geordnete Liste)_
+- ✅ reate `dayBalances(records, { zeroDaysAsMaintenance, profile, weightBeforeKg })` (sketch below); weights via `weightsByDay`, R via `dayResting`, day date via `fromDateKey(record.date)`
+- ✅ ompute B per day:
   - food set and R known → `B = food − (R + K)`, `K = active ?? 0`
   - no food and switch on → `B = 0`, `maintenance: true` (R not needed)
   - no food and switch off and R known → `B = −(R + K)`
   - R unknown (`missing`) and not a zero day → `kcal: undefined`, day doesn't count
-- 🔲 Set flags independent of the switch (Key Decision 8): `restingEstimated` if `isEstimatedResting(source)`; `noResting` if source `missing`; `noFood` if no food; `lowFood` if food set, R known and `food < 0.5 × (R + K)`
-- 🔲 Keep `activeMissing` per day (data page: „mit 0 gerechnet“); it is no flag (Key Decision 6)
-- 🔲 Create `isComplete(day)` = `day.flags.length === 0`
-- 🔲 Test B for a normal day, a zero day with switch on (B = 0) and off (B = −(R + K)), a day without active energy (K = 0, complete)
-- 🔲 Test `lowFood`: 49,9 % → flag, exactly 50 % → no flag; uses the formula R on estimated days; no `lowFood` without R
-- 🔲 Test multiple flags: estimated R + low food on one day → 2 flags, 1 incomplete day; no food + no R → `noFood` + `noResting`; no food + formula R → `noFood` + `restingEstimated`
-- 🔲 Test a zero day without R: switch on → counts with B = 0; switch off → doesn't count
-- 🔲 Test records across the fall DST change: the 25-hour day keeps its own date and age/weight lookup
-- 🔲 Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
-- 🔲 Commit (`feat: compute daily balance with quality flags`)
+- ✅ et flags independent of the switch (Key Decision 8): `restingEstimated` if `isEstimatedResting(source)`; `noResting` if source `missing`; `noFood` if no food; `lowFood` if food set, R known and `food < 0.5 × (R + K)`
+- ✅ eep `activeMissing` per day (data page: „mit 0 gerechnet“); it is no flag (Key Decision 6)
+- ✅ reate `isComplete(day)` = `day.flags.length === 0`
+- ✅ est B for a normal day, a zero day with switch on (B = 0) and off (B = −(R + K)), a day without active energy (K = 0, complete)
+- ✅ est `lowFood`: 49,9 % → flag, exactly 50 % → no flag; uses the formula R on estimated days; no `lowFood` without R _(1.299 von 2.600 → Flag, 1.300 → kein Flag)_
+- ✅ est multiple flags: estimated R + low food on one day → 2 flags, 1 incomplete day; no food + no R → `noFood` + `noResting`; no food + formula R → `noFood` + `restingEstimated`
+- ✅ est a zero day without R: switch on → counts with B = 0; switch off → doesn't count
+- ✅ est records across the fall DST change: the 25-hour day keeps its own date and age/weight lookup
+- ✅ un `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
+- ✅ ommit (`feat: compute daily balance with quality flags`)
 
 ```ts
 // src/core/day-balance.ts
