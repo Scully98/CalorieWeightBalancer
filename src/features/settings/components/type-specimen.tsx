@@ -16,6 +16,7 @@ const SAMPLES: Record<TextVariant, string> = {
   footnote: '≈ +0,9 kg Körperfett (theoretisch, 7.700 kcal/kg)',
   caption: '25. Sep – 24. Okt · 30 Tage · ohne heute',
   caption2: 'KW 43 · −1.000 · +0,5',
+  segment: '30 T',
   number: '1.420 kcal',
   numberLarge: '+380 bis +2.150',
   hero: '+7.000',

@@ -17,6 +17,9 @@ type SegmentedControlProps<T extends string> = {
   value: T | undefined;
   onChange: (value: T) => void;
   accessibilityLabel: string;
+  // Segments grow to fill the width and wrap at large text sizes, e.g. the
+  // period on the balance page; compact like the design there.
+  stretch?: boolean;
 };
 
 export function SegmentedControl<T extends string>({
@@ -24,6 +27,7 @@ export function SegmentedControl<T extends string>({
   value,
   onChange,
   accessibilityLabel,
+  stretch = false,
 }: SegmentedControlProps<T>) {
   const colors = useColors();
 
@@ -31,7 +35,11 @@ export function SegmentedControl<T extends string>({
     <View
       accessibilityRole="radiogroup"
       accessibilityLabel={accessibilityLabel}
-      style={[styles.group, { borderColor: colors.foreground }]}
+      style={[
+        styles.group,
+        stretch && styles.stretchGroup,
+        { borderColor: colors.foreground },
+      ]}
     >
       {options.map((option) => {
         const selected = option.value === value;
@@ -43,13 +51,16 @@ export function SegmentedControl<T extends string>({
             accessibilityLabel={`${accessibilityLabel}: ${option.accessibilityLabel ?? option.label}`}
             accessibilityState={{ checked: selected }}
             onPress={() => onChange(option.value)}
+            // 32 pt high like the design; the slop keeps 44 pt to tap.
+            hitSlop={stretch ? STRETCH_SLOP : undefined}
             style={[
               styles.segment,
+              stretch && styles.stretchSegment,
               selected && { backgroundColor: colors.foreground },
             ]}
           >
             <AppText
-              variant="secondary"
+              variant={stretch ? 'segment' : 'secondary'}
               tone={selected ? 'inverse' : 'foreground'}
             >
               {option.label}
@@ -60,6 +71,8 @@ export function SegmentedControl<T extends string>({
     </View>
   );
 }
+
+const STRETCH_SLOP = { top: 6, bottom: 6 };
 
 const styles = StyleSheet.create({
   group: {
@@ -75,5 +88,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: space.m,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  stretchGroup: {
+    borderWidth: border.medium,
+    borderRadius: 11,
+    padding: 2,
+    gap: 2,
+  },
+  stretchSegment: {
+    flexGrow: 1,
+    minHeight: 32,
+    paddingHorizontal: 6,
+    borderRadius: 8,
   },
 });

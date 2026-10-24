@@ -2,10 +2,12 @@ import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { BalanceHero } from './balance-hero';
+import { PeriodSegments } from './period-segments';
 import { heroModel } from '../hero';
 import { AppText } from '@/components/app-text';
 import { Button } from '@/components/button';
 import { LinkButton } from '@/components/link-button';
+import { PageIndicator } from '@/components/page-indicator';
 import type { PeriodBalance } from '@/core/period-balance';
 import type { BalanceState } from '@/features/balance/use-balance';
 import { openHealthApp } from '@/health/open-health-app';
@@ -13,56 +15,55 @@ import { formatLocale } from '@/i18n';
 import { useSettings } from '@/storage/settings-context';
 import { space } from '@/theme/spacing';
 
-type BalanceSummaryProps = {
-  // Without a balance (empty period or failed load) the empty state is shown.
-  balance?: PeriodBalance;
-  days?: number;
-  onShowData: () => void;
-};
+function EmptyState({ days }: { days?: number }) {
+  const { t } = useTranslation();
 
-function BalanceSummary({ balance, days, onShowData }: BalanceSummaryProps) {
+  // iOS reports denied read access as empty data, so a period without any
+  // food entries shows a permissions hint instead of a balance.
+  return (
+    <View style={styles.group}>
+      <AppText>{t('home.empty', { count: days ?? 0 })}</AppText>
+      <Button
+        variant="secondary"
+        label={t('home.checkPermissions')}
+        onPress={openHealthApp}
+      />
+      <AppText variant="caption" tone="muted">
+        {t('common.permissionsPath')}
+      </AppText>
+    </View>
+  );
+}
+
+function BalanceSummary({
+  balance,
+  onShowData,
+}: {
+  balance: PeriodBalance;
+  onShowData: () => void;
+}) {
   const { t } = useTranslation();
   const locale = formatLocale();
   const { tolerance } = useSettings();
 
-  // iOS reports denied read access as empty data, so a period without any
-  // food entries shows the empty state with a permissions hint instead of a
-  // balance.
-  if (!balance) {
-    return (
-      <>
-        <AppText style={styles.center}>
-          {t('home.empty', { count: days ?? 0 })}
-        </AppText>
-        <View style={styles.group}>
-          <Button
-            variant="secondary"
-            label={t('home.checkPermissions')}
-            onPress={openHealthApp}
-          />
-          <AppText variant="caption" tone="muted" style={styles.center}>
-            {t('common.permissionsPath')}
-          </AppText>
-        </View>
-      </>
-    );
-  }
-
   return (
-    <>
+    <View style={styles.summary}>
       <BalanceHero model={heroModel(balance, tolerance, locale, t)} />
+      {/* Until the data quality row replaces them. */}
       {balance.maintenanceDays > 0 ? (
-        <AppText variant="caption" tone="muted" style={styles.center}>
+        <AppText variant="caption" tone="muted">
           {t('home.daysWithoutFood', { count: balance.maintenanceDays })}
         </AppText>
       ) : null}
       {balance.excludedDays > 0 ? (
-        <AppText variant="caption" tone="muted" style={styles.center}>
+        <AppText variant="caption" tone="muted">
           {t('home.daysWithoutResting', { count: balance.excludedDays })}
         </AppText>
       ) : null}
-      <LinkButton label={t('data.showData')} onPress={onShowData} />
-    </>
+      <View style={styles.link}>
+        <LinkButton label={t('data.showData')} onPress={onShowData} />
+      </View>
+    </View>
   );
 }
 
@@ -71,34 +72,51 @@ type BalancePageProps = {
   // Days of the period; undefined while a period like "all" is loading.
   days?: number;
   periodLabel?: string;
+  pageCount: number;
   onShowData: () => void;
+  onPickCustom: () => void;
 };
 
+// First page of the balance tab: period, then the balance of that period.
 export function BalancePage({
   state,
   days,
   periodLabel,
+  pageCount,
   onShowData,
+  onPickCustom,
 }: BalancePageProps) {
   const { t } = useTranslation();
 
   return (
     <ScrollView contentContainerStyle={styles.content}>
-      {periodLabel === undefined ? null : (
-        <AppText variant="bodyStrong" style={styles.center}>
-          {periodLabel}
-        </AppText>
-      )}
+      <View style={styles.top}>
+        <View style={styles.titleRow}>
+          <AppText variant="largeTitle" accessibilityRole="header">
+            {t('home.title')}
+          </AppText>
+          <PageIndicator
+            count={pageCount}
+            index={0}
+            accessibilityLabel={t('common.pageOf', {
+              current: 1,
+              count: pageCount,
+            })}
+          />
+        </View>
+        <PeriodSegments onPickCustom={onPickCustom} />
+        {periodLabel === undefined ? null : (
+          <AppText variant="secondary" tone="muted">
+            {periodLabel}
+          </AppText>
+        )}
+      </View>
       {state.status === 'done' ? (
-        <BalanceSummary
-          balance={state.value.balance}
-          days={days}
-          onShowData={onShowData}
-        />
+        <BalanceSummary balance={state.value.balance} onShowData={onShowData} />
       ) : state.status === 'empty' || state.status === 'error' ? (
-        <BalanceSummary days={days} onShowData={onShowData} />
+        <EmptyState days={days} />
       ) : (
-        <AppText variant="secondary" tone="muted" style={styles.center}>
+        <AppText variant="secondary" tone="muted">
           {t('home.loading')}
         </AppText>
       )}
@@ -108,18 +126,27 @@ export function BalancePage({
 
 const styles = StyleSheet.create({
   content: {
-    flexGrow: 1,
+    paddingHorizontal: 20,
+    paddingTop: 6,
+    paddingBottom: space.xxl,
+    gap: 28,
+  },
+  top: {
+    gap: space.m,
+  },
+  titleRow: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: space.xl,
-    paddingVertical: space.xl,
-    gap: space.xl,
+    justifyContent: 'space-between',
+    gap: space.m,
+  },
+  summary: {
+    gap: 14,
   },
   group: {
-    alignItems: 'center',
-    gap: space.xs,
+    gap: space.m,
   },
-  center: {
-    textAlign: 'center',
+  link: {
+    alignItems: 'flex-start',
   },
 });

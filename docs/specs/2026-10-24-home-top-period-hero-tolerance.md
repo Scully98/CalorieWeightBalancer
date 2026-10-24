@@ -280,7 +280,7 @@ Keine App-Kürzel: reine Touch-App fürs iPhone (siehe P0/P1-Spec). VoiceOver: H
 
 ---
 
-### Milestone 3 — Zeitraum und Seitenaufbau
+### ✅ Milestone 3 — Zeitraum und Seitenaufbau
 
 > Die Bilanz-Seite bekommt den Aufbau von 1a: Titel mit Seitenpunkten, Segmente, Untertitel, Hero; die Segmente schreiben den Zeitraum in den Store.
 
@@ -303,20 +303,20 @@ Keine App-Kürzel: reine Touch-App fürs iPhone (siehe P0/P1-Spec). VoiceOver: H
 
 #### To-Dos
 
-- 🔲 Create `periodSubtitle({ period, firstDay, lastDay, days, includeToday, today }, locale, t)`: presets and custom „{first} – {last} · {n} Tage“ plus „ · ohne heute“ when the last day is yesterday and `includeToday` is off, „ · inkl. heute“ when it is on; „Alles“ „seit erstem Datenpunkt {TT.MM.JJJJ} · {n} Tage“ with the same suffix; dates „24. Sep“ from `date.monthsShort` (Key Decision 18), with year on both ends when the period crosses a year
-- 🔲 Add texts DE: `home.title` „Bilanz“; `home.segments.days` „{{count}} T“, `.all` „Alles“, `.custom` „Eigener“, `.label` „Zeitraum“; spoken segment labels „{{count}} Tage“, „Alles seit erstem Datenpunkt“, „Eigener Zeitraum“; `home.subtitle.range` „{{from}} – {{to}} · {{count}} Tage“ (`_one` „… · 1 Tag“), `.all` „seit erstem Datenpunkt {{date}} · {{count}} Tage“, `.withoutToday` „ohne heute“, `.withToday` „inkl. heute“; `date.monthsShort` Jan…Dez. EN: „Balance“, „{{count}} d“, „All“, „Custom“, „Period“, „{{from}} – {{to}} · {{count}} days“, „since first data point {{date}} · {{count}} days“, „excluding today“, „including today“, months „Jan … Dec“ with EN order „Sep 24“
-- 🔲 Test `periodSubtitle`: 30 days ending yesterday → „24. Sep – 23. Okt · 30 Tage · ohne heute“; with today on → ends „23. Okt“… „· inkl. heute“ with today’s date as last day; „Alles“ with first day 26.06.2026 and 120 days → „seit erstem Datenpunkt 26.06.2026 · 120 Tage · ohne heute“; custom ending 4 days ago → no suffix; 1 day; Dec–Jan with years; EN „Sep 24 – Oct 23 · 30 days · excluding today“
-- 🔲 Add `stretch` to `SegmentedControl`: border 1,5 pt (`border.thick` stays for m/w unless 1a shows a difference), inner padding 2, group radius 11, segment radius 8, min height 32 + padding to keep a 44 pt touch area per row, label 14/600, `flexGrow: 1`, `flexWrap: 'wrap'` so large Dynamic Type wraps to two rows (1i)
-- 🔲 Create `PeriodSegments`: options from `PERIOD_PRESETS`; value from `settings.period`; tap on a preset → `updateSettings({ period: { kind: 'days', days } })` or `{ kind: 'all' }`; tap on „Eigener“ opens the picker (M4; until then it does nothing visible); `accessibilityLabel` per option with the spoken text
-- 🔲 Rebuild the top of `BalancePage` left-aligned (Key Decision 16): row with `largeTitle` „Bilanz“ and `PageIndicator` on the right, `PeriodSegments`, subtitle `secondary` muted, then hero; 12 pt between title/segments/subtitle, 28 pt to the hero like the design; horizontal padding 20; below the hero the two hint lines and „Daten anzeigen“ stay
-- 🔲 Empty state (Key Decision 17): title, segments and subtitle stay; below the existing empty text with „Health-Berechtigungen öffnen“ left-aligned; no hero, no tolerance card
-- 🔲 Loading: title and segments stay; subtitle from `resolvePeriod` when the period is not „Alles“; hero area shows `home.loading` like today
-- 🔲 `HomeScreen`: drop the header row above the pager; pass `page` index to both pages for their `PageIndicator`; subtitle via `periodSubtitle` from the report’s first/last `DayBalance.date` or `resolvePeriod` while loading
-- 🔲 `DataPage`: `PageIndicator` next to its `Headline`, subtitle from `periodSubtitle`
-- 🔲 Remove `periodText` and `home.period*` keys once unused; move their tests
-- 🔲 Check in the simulator: gallery 1a top part matches the design (title, segments, subtitle „… · 30 Tage · ohne heute“, hero +7.000 kcal); 1d shows 90 T selected; 1f shows tappable segments above the empty state; tapping 7 T in 1a reloads and shows 7 days
-- 🔲 Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
-- 🔲 Commit (`feat: choose the period on the balance page`)
+- ✅ Create `periodSubtitle({ period, firstDay, lastDay, days, includeToday, today }, locale, t)`: _(`periodSpan(period, includeToday, now, loadedDays)` + `periodSubtitle(period, span, includeToday, now, locale, t)`; Monatskürzel als ein String in `date.monthsShort`)_ presets and custom „{first} – {last} · {n} Tage“ plus „ · ohne heute“ when the last day is yesterday and `includeToday` is off, „ · inkl. heute“ when it is on; „Alles“ „seit erstem Datenpunkt {TT.MM.JJJJ} · {n} Tage“ with the same suffix; dates „24. Sep“ from `date.monthsShort` (Key Decision 18), with year on both ends when the period crosses a year
+- ✅ Add texts DE: `home.title` „Bilanz“; `home.segments.days` „{{count}} T“, `.all` „Alles“, `.custom` „Eigener“, `.label` „Zeitraum“; spoken segment labels „{{count}} Tage“, „Alles seit erstem Datenpunkt“, „Eigener Zeitraum“; `home.subtitle.range` „{{from}} – {{to}} · {{count}} Tage“ (`_one` „… · 1 Tag“), `.all` „seit erstem Datenpunkt {{date}} · {{count}} Tage“, `.withoutToday` „ohne heute“, `.withToday` „inkl. heute“; `date.monthsShort` Jan…Dez. EN: „Balance“, „{{count}} d“, „All“, „Custom“, „Period“, „{{from}} – {{to}} · {{count}} days“, „since first data point {{date}} · {{count}} days“, „excluding today“, „including today“, months „Jan … Dec“ with EN order „Sep 24“
+- ✅ Test `periodSubtitle`: 30 days ending yesterday → „24. Sep – 23. Okt · 30 Tage · ohne heute“; with today on → ends „23. Okt“… „· inkl. heute“ with today’s date as last day; „Alles“ with first day 26.06.2026 and 120 days → „seit erstem Datenpunkt 26.06.2026 · 120 Tage · ohne heute“; custom ending 4 days ago → no suffix; 1 day; Dec–Jan with years; EN „Sep 24 – Oct 23 · 30 days · excluding today“
+- ✅ Add `stretch` to `SegmentedControl`: border 1,5 pt (`border.thick` stays for m/w unless 1a shows a difference), inner padding 2, group radius 11, segment radius 8, min height 32 + padding to keep a 44 pt touch area per row, label 14/600, `flexGrow: 1`, `flexWrap: 'wrap'` so large Dynamic Type wraps to two rows (1i) _(neuer Rahmen-Wert `border.medium` = 1,5, Text-Variante `segment` 14/600, `hitSlop` 6 oben/unten)_
+- ✅ Create `PeriodSegments`: options from `PERIOD_PRESETS`; value from `settings.period`; tap on a preset → `updateSettings({ period: { kind: 'days', days } })` or `{ kind: 'all' }`; tap on „Eigener“ opens the picker (M4; until then it does nothing visible); `accessibilityLabel` per option with the spoken text
+- ✅ Rebuild the top of `BalancePage` left-aligned (Key Decision 16): row with `largeTitle` „Bilanz“ and `PageIndicator` on the right, `PeriodSegments`, subtitle `secondary` muted, then hero; 12 pt between title/segments/subtitle, 28 pt to the hero like the design; horizontal padding 20; below the hero the two hint lines and „Daten anzeigen“ stay
+- ✅ Empty state (Key Decision 17): title, segments and subtitle stay; below the existing empty text with „Health-Berechtigungen öffnen“ left-aligned; no hero, no tolerance card
+- ✅ Loading: title and segments stay; subtitle from `resolvePeriod` when the period is not „Alles“; hero area shows `home.loading` like today
+- ✅ `HomeScreen`: drop the header row above the pager; _(Seiten zeigen feste Punkte 1 bzw. 2 von `pageCount`; der `page`-State entfällt)_ pass `page` index to both pages for their `PageIndicator`; subtitle via `periodSubtitle` from the report’s first/last `DayBalance.date` or `resolvePeriod` while loading
+- ✅ `DataPage`: `PageIndicator` next to its `Headline`, subtitle from `periodSubtitle`
+- ✅ Remove `periodText` and `home.period*` keys once unused; move their tests
+- ✅ Check in the simulator: gallery 1a top part matches the design (title, segments, subtitle „… · 30 Tage · ohne heute“, hero +7.000 kcal); 1d shows 90 T selected; 1f shows tappable segments above the empty state; tapping 7 T in 1a reloads and shows 7 days _(1a, 1d, 1f per Deep Link geprüft wie im Design; Antippen geht im Simulator ohne Tap-Werkzeug nicht, offen für Julius am iPhone)_
+- ✅ Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
+- ✅ Commit (`feat: choose the period on the balance page`)
 
 #### Notes / Constraints
 

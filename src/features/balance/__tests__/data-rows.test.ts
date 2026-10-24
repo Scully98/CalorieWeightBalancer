@@ -5,7 +5,6 @@ import {
   buildCalcNotes,
   buildDataRows,
   buildEstimateLines,
-  periodText,
 } from '../data-rows';
 import type { BalanceReport } from '../use-balance';
 import { dayBalances } from '@/core/day-balance';
@@ -208,14 +207,5 @@ describe('buildEstimateLines', () => {
       '34 Jahre · deine Angabe',
       'männlich · Health',
     ]);
-  });
-});
-
-describe('periodText', () => {
-  it('says whether today counts', () => {
-    expect(periodText(30, false, t)).toBe('Letzte 30 Tage, ohne heute');
-    expect(periodText(30, true, t)).toBe('Letzte 30 Tage, inkl. heute');
-    expect(periodText(1, true, t)).toBe('Heute');
-    expect(periodText(undefined, true, t)).toBeUndefined();
   });
 });

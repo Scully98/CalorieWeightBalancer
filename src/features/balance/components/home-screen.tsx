@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ScrollView,
@@ -10,11 +10,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { BalancePage } from './balance-page';
 import { DataPage } from './data-page';
-import { periodText } from '../data-rows';
+import { periodSpan, periodSubtitle } from '../period-subtitle';
 import { useBalance } from '../use-balance';
-import { PageIndicator } from '@/components/page-indicator';
+import { formatLocale } from '@/i18n';
 import { useSettings } from '@/storage/settings-context';
-import { space } from '@/theme/spacing';
 import { useColors } from '@/theme/use-colors';
 
 const PAGES = 2;
@@ -27,19 +26,21 @@ export function HomeScreen() {
   const { width } = useWindowDimensions();
   const { period, includeToday } = useSettings();
   const state = useBalance();
-  const days =
+  const now = new Date();
+  const span = periodSpan(
+    period,
+    includeToday,
+    now,
     state.status === 'done' || state.status === 'empty'
-      ? state.value.balance.days
-      : period.kind === 'days'
-        ? period.days
-        : undefined;
-  const periodLabel = periodText(days, includeToday, t);
+      ? state.value.days
+      : undefined,
+  );
+  const periodLabel =
+    span && periodSubtitle(period, span, includeToday, now, formatLocale(), t);
   const pager = useRef<ScrollView>(null);
-  const [page, setPage] = useState(0);
 
   function showPage(index: number) {
     pager.current?.scrollTo({ x: index * width, animated: true });
-    setPage(index);
   }
 
   return (
@@ -47,36 +48,25 @@ export function HomeScreen() {
       edges={['top']}
       style={[styles.flex, { backgroundColor: colors.background }]}
     >
-      <View style={styles.header}>
-        <PageIndicator
-          count={PAGES}
-          index={page}
-          accessibilityLabel={t('common.pageOf', {
-            current: page + 1,
-            count: PAGES,
-          })}
-        />
-      </View>
       <ScrollView
         ref={pager}
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
-        onMomentumScrollEnd={(event) =>
-          setPage(Math.round(event.nativeEvent.contentOffset.x / width))
-        }
         style={styles.flex}
       >
         <View style={{ width }}>
           <BalancePage
             state={state}
-            days={days}
+            days={span?.days}
             periodLabel={periodLabel}
+            pageCount={PAGES}
             onShowData={() => showPage(1)}
+            onPickCustom={() => {}}
           />
         </View>
         <View style={{ width }}>
-          <DataPage state={state} periodLabel={periodLabel} />
+          <DataPage state={state} periodLabel={periodLabel} pageCount={PAGES} />
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -86,11 +76,5 @@ export function HomeScreen() {
 const styles = StyleSheet.create({
   flex: {
     flex: 1,
-  },
-  header: {
-    minHeight: 44,
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: space.xl,
   },
 });

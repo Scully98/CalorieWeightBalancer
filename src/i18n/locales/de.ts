@@ -79,10 +79,25 @@ export const de = {
     },
   },
   home: {
-    period_one: 'Letzter Tag, ohne heute',
-    period_other: 'Letzte {{count}} Tage, ohne heute',
-    periodWithToday_one: 'Heute',
-    periodWithToday_other: 'Letzte {{count}} Tage, inkl. heute',
+    title: 'Bilanz',
+    segments: {
+      label: 'Zeitraum',
+      days: '{{count}} T',
+      all: 'Alles',
+      custom: 'Eigener',
+      daysSpoken_one: '{{count}} Tag',
+      daysSpoken_other: '{{count}} Tage',
+      allSpoken: 'Alles seit erstem Datenpunkt',
+      customSpoken: 'Eigener Zeitraum',
+    },
+    subtitle: {
+      range: '{{from}} – {{to}}',
+      days_one: '{{count}} Tag',
+      days_other: '{{count}} Tage',
+      all: 'seit erstem Datenpunkt {{date}}',
+      withoutToday: 'ohne heute',
+      withToday: 'inkl. heute',
+    },
     loading: 'Rechne …',
     kcal: '{{value}} kcal',
     hero: {
@@ -111,6 +126,12 @@ export const de = {
     empty_other:
       'Keine Nahrungsdaten in den letzten {{count}} Tagen. Synchronisiert dein Tracker mit Apple Health?',
     checkPermissions: 'Berechtigungen prüfen',
+  },
+  // Dates spelled like the design („24. Sep“); Intl writes „24. Sept.“.
+  date: {
+    dayMonth: '{{day}}. {{month}}',
+    dayMonthYear: '{{day}}. {{month}} {{year}}',
+    monthsShort: 'Jan Feb Mär Apr Mai Jun Jul Aug Sep Okt Nov Dez',
   },
   // Spoken by VoiceOver instead of signs and units.
   a11y: {

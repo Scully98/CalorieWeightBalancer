@@ -39,6 +39,13 @@ export const typography = {
   // iOS Footnote.
   footnote: { fontSize: 13, lineHeight: 18, fontVariant: TABULAR },
   caption: { fontSize: 12, lineHeight: 16, fontVariant: TABULAR },
+  // Labels of compact segments, e.g. „30 T“.
+  segment: {
+    fontSize: 14,
+    lineHeight: 18,
+    fontWeight: '600',
+    fontVariant: TABULAR,
+  },
   // iOS Caption 2, e.g. chart labels.
   caption2: { fontSize: 11, lineHeight: 13, fontVariant: TABULAR },
   number: {

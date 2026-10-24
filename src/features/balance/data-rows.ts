@@ -12,18 +12,6 @@ import type { PeriodBalance } from '@/core/period-balance';
 import { formatNumber, formatSigned, roundKcal } from '@/core/format';
 import { sourceLabel } from '@/features/intro/found-rows';
 
-// Header of both pages; undefined while a period like "all" is loading.
-export function periodText(
-  days: number | undefined,
-  includeToday: boolean,
-  t: TFunction,
-): string | undefined {
-  if (days === undefined) return undefined;
-  return t(includeToday ? 'home.periodWithToday' : 'home.period', {
-    count: days,
-  });
-}
-
 export type CalcLine = {
   key: EnergyKey | 'total';
   label: string;

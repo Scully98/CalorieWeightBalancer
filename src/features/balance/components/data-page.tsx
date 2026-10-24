@@ -7,6 +7,7 @@ import { Card } from '@/components/card';
 import { Divider } from '@/components/divider';
 import { Headline } from '@/components/headline';
 import { InfoRow } from '@/components/info-row';
+import { PageIndicator } from '@/components/page-indicator';
 import { StatusRow } from '@/components/status-row';
 import { formatNumber, roundKcal } from '@/core/format';
 import {
@@ -125,16 +126,30 @@ function Report({ report }: { report: BalanceReport }) {
 export function DataPage({
   state,
   periodLabel,
+  pageCount,
 }: {
   state: BalanceState;
   // Undefined while a period like "all" is loading.
   periodLabel?: string;
+  pageCount: number;
 }) {
   const { t } = useTranslation();
 
   return (
     <ScrollView contentContainerStyle={styles.content}>
-      <Headline title={t('data.title')} subline={periodLabel} />
+      <View style={styles.titleRow}>
+        <View style={styles.title}>
+          <Headline title={t('data.title')} subline={periodLabel} />
+        </View>
+        <PageIndicator
+          count={pageCount}
+          index={1}
+          accessibilityLabel={t('common.pageOf', {
+            current: 2,
+            count: pageCount,
+          })}
+        />
+      </View>
       {state.status === 'done' || state.status === 'empty' ? (
         <Report report={state.value} />
       ) : state.status === 'error' ? (
@@ -164,6 +179,14 @@ const styles = StyleSheet.create({
     paddingTop: space.l,
     paddingBottom: space.xl,
     gap: space.l,
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: space.m,
+  },
+  title: {
+    flex: 1,
   },
   calcRow: {
     flexDirection: 'row',

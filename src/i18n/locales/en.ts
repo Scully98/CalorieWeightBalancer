@@ -81,10 +81,25 @@ export const en: typeof de = {
     },
   },
   home: {
-    period_one: 'Last day, excluding today',
-    period_other: 'Last {{count}} days, excluding today',
-    periodWithToday_one: 'Today',
-    periodWithToday_other: 'Last {{count}} days, including today',
+    title: 'Balance',
+    segments: {
+      label: 'Period',
+      days: '{{count}} d',
+      all: 'All',
+      custom: 'Custom',
+      daysSpoken_one: '{{count}} day',
+      daysSpoken_other: '{{count}} days',
+      allSpoken: 'All since the first data point',
+      customSpoken: 'Custom period',
+    },
+    subtitle: {
+      range: '{{from}} – {{to}}',
+      days_one: '{{count}} day',
+      days_other: '{{count}} days',
+      all: 'since first data point {{date}}',
+      withoutToday: 'excluding today',
+      withToday: 'including today',
+    },
     loading: 'Calculating …',
     kcal: '{{value}} kcal',
     hero: {
@@ -112,6 +127,12 @@ export const en: typeof de = {
     empty_other:
       'No food data in the last {{count}} days. Does your tracker sync with Apple Health?',
     checkPermissions: 'Check permissions',
+  },
+  // Dates spelled like the design („Sep 24“).
+  date: {
+    dayMonth: '{{month}} {{day}}',
+    dayMonthYear: '{{month}} {{day}}, {{year}}',
+    monthsShort: 'Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec',
   },
   // Spoken by VoiceOver instead of signs and units.
   a11y: {

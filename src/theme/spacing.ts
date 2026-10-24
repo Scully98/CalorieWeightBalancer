@@ -18,6 +18,8 @@ export const touchTarget = 44;
 
 export const border = {
   thin: 1,
+  // Cards and controls on the balance page (design: 1.5 pt).
+  medium: 1.5,
   thick: 2,
 } as const;
 
