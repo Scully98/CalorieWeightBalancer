@@ -38,6 +38,8 @@ export const healthKitSource: HealthSource = {
     };
   },
 
+  // Raw samples are fine in the next two: one entry each (limit 1), nothing
+  // is summed.
   async firstDataDate() {
     const [first] = await safe(
       () =>

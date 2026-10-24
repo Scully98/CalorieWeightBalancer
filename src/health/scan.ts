@@ -136,6 +136,8 @@ async function daysWithEnergy(
   ).length;
 }
 
+// Counts measurements up to MAX_COUNTED_SAMPLES; a raw sample query is fine
+// here because nothing is summed.
 async function sampleCount(
   identifier:
     typeof QUANTITY.weight | typeof QUANTITY.bodyFat | typeof QUANTITY.leanMass,
@@ -167,6 +169,7 @@ export async function scanHealthData(now: Date): Promise<HealthScan> {
     recentDays,
   ] = await Promise.all([
     latest(QUANTITY.food),
+    // Only the first entry (limit 1), nothing is summed.
     safe(
       () =>
         queryQuantitySamples(QUANTITY.food, {

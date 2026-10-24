@@ -7,6 +7,16 @@ const COLOR_MESSAGE = 'Use a color token from src/theme/colors.ts.';
 const HEX = '#([0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})';
 const FUNCTION = '(rgb|rgba|hsl|hsla)\\(';
 
+const DEV_CODE = {
+  group: ['@/dev/*', '**/dev/*'],
+  message: 'Development-only code; load it in src/app/dev behind __DEV__.',
+};
+const RAW_SAMPLES = {
+  name: '@kingstinct/react-native-healthkit',
+  importNames: ['queryQuantitySamples'],
+  message: 'Sum Health values with statistics queries, not raw samples.',
+};
+
 module.exports = defineConfig([
   expoConfig,
   {
@@ -41,22 +51,36 @@ module.exports = defineConfig([
   },
   // Demo data and the state gallery stay out of release builds: only dev code
   // imports them; routes in src/app/dev load them behind __DEV__.
+  // Health values are summed by statistics queries, which deduplicate iPhone
+  // and Watch; raw samples are only read where nothing is summed.
+  // ESLint keeps one config per rule and file, so each block lists every
+  // restriction that applies to its files.
   {
     files: ['src/**/*.{ts,tsx}'],
-    ignores: ['src/dev/**', 'src/app/dev/**'],
     rules: {
       'no-restricted-imports': [
         'error',
-        {
-          patterns: [
-            {
-              group: ['@/dev/*', '**/dev/*'],
-              message:
-                'Development-only code; load it in src/app/dev behind __DEV__.',
-            },
-          ],
-        },
+        { paths: [RAW_SAMPLES], patterns: [DEV_CODE] },
       ],
+    },
+  },
+  {
+    files: ['src/health/scan.ts', 'src/health/healthkit-source.ts'],
+    rules: {
+      'no-restricted-imports': ['error', { patterns: [DEV_CODE] }],
+    },
+  },
+  {
+    files: ['src/dev/**/*.{ts,tsx}', 'src/app/dev/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': ['error', { paths: [RAW_SAMPLES] }],
+    },
+  },
+  {
+    // Tests mock the HealthKit module, including the raw sample query.
+    files: ['src/health/__tests__/**'],
+    rules: {
+      'no-restricted-imports': ['error', { patterns: [DEV_CODE] }],
     },
   },
   eslintConfigPrettier,

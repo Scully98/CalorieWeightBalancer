@@ -105,7 +105,7 @@ Abnahmekriterien → Milestones:
 
 ---
 
-### Milestone 2 — Keine Rohsamples
+### ✅ Milestone 2 — Keine Rohsamples
 
 > Rohsample-Abfragen sind nur an den Stellen erlaubt, die nichts summieren; der Lint meldet jede neue.
 
@@ -121,12 +121,12 @@ Abnahmekriterien → Milestones:
 
 #### To-Dos
 
-- 🔲 Add the `no-restricted-imports` rule (`paths: [{ name: '@kingstinct/react-native-healthkit', importNames: ['queryQuantitySamples'], message: 'Sum Health values with statistics queries, not raw samples.' }]`) for `src/**/*.{ts,tsx}`, ignoring `src/health/scan.ts`, `src/health/healthkit-source.ts` and `src/health/__tests__/**`
-- 🔲 Combine it with the existing `@/dev/*` patterns: one block for all `src/**` files with both the `paths` (raw samples) and `patterns` (`@/dev/*`) options, and a later block for `scan.ts` and `healthkit-source.ts` that sets the rule again with only the `@/dev/*` patterns (ESLint keeps only the last config per rule and file)
-- 🔲 Verify the rule: a temporary import in `daily-energy.ts` gives the error; the `@/dev/*` rule still reports a temporary `@/dev` import in `balance-page.tsx`; then revert both
-- 🔲 Add the comments at the four allowed calls
-- 🔲 Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
-- 🔲 Commit (`chore: allow raw HealthKit samples only where nothing is summed`)
+- ✅ Add the `no-restricted-imports` rule (`paths: [{ name: '@kingstinct/react-native-healthkit', importNames: ['queryQuantitySamples'], message: 'Sum Health values with statistics queries, not raw samples.' }]`) for `src/**/*.{ts,tsx}`, ignoring `src/health/scan.ts`, `src/health/healthkit-source.ts` and `src/health/__tests__/**` _(Dev-Code (`src/dev/**`, `src/app/dev/**`) unterliegt der Rohsample-Sperre auch; Tests in `src/health/__tests__/**` sind ausgenommen (sie mocken das Modul))_
+- ✅ Combine it with the existing `@/dev/*` patterns: one block for all `src/**` files with both the `paths` (raw samples) and `patterns` (`@/dev/*`) options, and a later block for `scan.ts` and `healthkit-source.ts` that sets the rule again with only the `@/dev/*` patterns (ESLint keeps only the last config per rule and file) _(vier Blöcke mit gemeinsamen Konstanten `DEV_CODE` und `RAW_SAMPLES`: alle `src/**` beide Sperren; `scan.ts`/`healthkit-source.ts` und Health-Tests nur `@/dev`; Dev-Code nur Rohsamples)_
+- ✅ Verify the rule: a temporary import in `daily-energy.ts` gives the error; the `@/dev/*` rule still reports a temporary `@/dev` import in `balance-page.tsx`; then revert both _(Probe: `daily-energy.ts` und `demo-source.ts` melden den Rohsample-Import, `balance-page.tsx` den `@/dev`-Import, `scan.ts` nichts; zurückgesetzt)_
+- ✅ Add the comments at the four allowed calls _(drei Kommentare: `sampleCount`, erster Nahrungseintrag in `scan.ts`, gemeinsamer Kommentar für `firstDataDate`/`weightBefore`)_
+- ✅ Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
+- ✅ Commit (`chore: allow raw HealthKit samples only where nothing is summed`)
 
 #### Notes / Constraints
 
