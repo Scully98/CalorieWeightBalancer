@@ -122,15 +122,15 @@ Abnahmekriterien → Milestones:
 
 #### To-Dos
 
-- ✅ dd `periodDateKeys({ start, days })`: one local date key per day via `addDays` + `toDateKey`, so a 23- or 25-hour day never skips or repeats a key
-- ✅ est spring DST: today = 31 Mar 2026 12:00 (clocks went forward on 29 Mar), 7 days → first `2026-03-24`, last `2026-03-30`, 7 keys without gap or duplicate
-- ✅ est fall DST with `periodDateKeys`: today = 27 Oct 2026, 7 days → keys `2026-10-20` … `2026-10-26`, `2026-10-25` exactly once (existing test only checks `start` and `days`)
-- ✅ est month boundary: 30 days ending 23 Oct → first key `2026-09-24`, keys run through `2026-09-30` → `2026-10-01` without gap; custom `2026-09-28` to `2026-10-03` → 6 days
-- ✅ est year boundary: today = 3 Jan 2027, 7 days → `2026-12-27` … `2027-01-02`
-- ✅ est „heute einbeziehen“ on/off for every kind: `days` (7/30/60/90), `all` (ends yesterday vs. today; first data today → 0 vs. 1 day), `custom` ending in the future (clamped to yesterday vs. today) _(schon vorhanden für `custom` (Test „clamps a custom period“); neu für `days` (7/30/60/90) und `all`)_
-- ✅ est that the time of day of `today` doesn't matter: 00:00:30 and 23:59:30 give the same period
-- ✅ un `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
-- ✅ ommit (`test: cover DST, month boundary and today in periods`)
+- ✅ Add `periodDateKeys({ start, days })`: one local date key per day via `addDays` + `toDateKey`, so a 23- or 25-hour day never skips or repeats a key
+- ✅ Test spring DST: today = 31 Mar 2026 12:00 (clocks went forward on 29 Mar), 7 days → first `2026-03-24`, last `2026-03-30`, 7 keys without gap or duplicate
+- ✅ Test fall DST with `periodDateKeys`: today = 27 Oct 2026, 7 days → keys `2026-10-20` … `2026-10-26`, `2026-10-25` exactly once (existing test only checks `start` and `days`)
+- ✅ Test month boundary: 30 days ending 23 Oct → first key `2026-09-24`, keys run through `2026-09-30` → `2026-10-01` without gap; custom `2026-09-28` to `2026-10-03` → 6 days
+- ✅ Test year boundary: today = 3 Jan 2027, 7 days → `2026-12-27` … `2027-01-02`
+- ✅ Test „heute einbeziehen“ on/off for every kind: `days` (7/30/60/90), `all` (ends yesterday vs. today; first data today → 0 vs. 1 day), `custom` ending in the future (clamped to yesterday vs. today) _(schon vorhanden für `custom` (Test „clamps a custom period“); neu für `days` (7/30/60/90) und `all`)_
+- ✅ Test that the time of day of `today` doesn't matter: 00:00:30 and 23:59:30 give the same period
+- ✅ Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
+- ✅ Commit (`test: cover DST, month boundary and today in periods`)
 
 #### Notes / Constraints
 
@@ -155,22 +155,22 @@ Abnahmekriterien → Milestones:
 
 #### To-Dos
 
-- ✅ reate `RestingProfile` (sketch below): height, sex, date of birth or entered age with date, profile weight; all optional
-- ✅ reate `ageOn(profile, day)`: date of birth → `ageInYears(dateOfBirth, day)`; else entered age → `currentAge(ageYears, ageRecordedOn, day)`; else `undefined`
-- ✅ reate `weightsByDay(records, weightBeforeKg, profileWeightKg)` → weight per record index: last `weightKg` on or before the day (starting with `weightBeforeKg` from before the period), else the first `weightKg` after the day, else `profileWeightKg`, else `undefined`. One pass forward and one backward, O(n) _(Lücken in den Messungen werden in einem Vorwärts- und einem Rückwärtsdurchlauf gefüllt)_
-- ✅ reate `dayResting(record, weightKg, profile, day)` → `{ kcal?: number; source: RestingSource }`:
+- ✅ Create `RestingProfile` (sketch below): height, sex, date of birth or entered age with date, profile weight; all optional
+- ✅ Create `ageOn(profile, day)`: date of birth → `ageInYears(dateOfBirth, day)`; else entered age → `currentAge(ageYears, ageRecordedOn, day)`; else `undefined`
+- ✅ Create `weightsByDay(records, weightBeforeKg, profileWeightKg)` → weight per record index: last `weightKg` on or before the day (starting with `weightBeforeKg` from before the period), else the first `weightKg` after the day, else `profileWeightKg`, else `undefined`. One pass forward and one backward, O(n) _(Lücken in den Messungen werden in einem Vorwärts- und einem Rückwärtsdurchlauf gefüllt)_
+- ✅ Create `dayResting(record, weightKg, profile, day)` → `{ kcal?: number; source: RestingSource }`:
   - `source`: the source supplies an estimate (`restingEstimated` and `resting` set, demo) → its own value
   - `measured`: `resting` set and coverage ≥ 20/24 (or no coverage given)
   - `scaled`: `resting` set and 6/24 ≤ coverage < 20/24 → `resting / coverage`
   - `formula`: no `resting` or coverage < 6/24, and weight, height, age and sex known → `estimateRestingEnergy` with that day's weight and age
   - `missing`: otherwise, `kcal` undefined
-- ✅ xport `isEstimatedResting(source)`: true for `source` and `formula`, false for `measured` and `scaled` (Key Decision 4)
-- ✅ est each source; boundaries exactly at 6/24 and 20/24
-- ✅ est weight lookup: measurement on the day itself wins; value from before the period; no earlier value → first later one; no measurement at all → profile weight; nothing → `undefined` → `missing` _(Geburtstag am 10.10.: 33 → 34 Jahre, Differenz 5 kcal; eingegebenes Alter mit `ageRecordedOn` 2025-10-01 ergibt ab 01.10.2026 35)_
-- ✅ est age on the day: birthday inside the period changes the result by 5 kcal from that day on; entered age with `ageRecordedOn` one year back is one year higher
-- ✅ est `sex: 'unspecified'` uses −78 (existing `SEX_CONSTANT`)
-- ✅ un `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
-- ✅ ommit (`feat: estimate resting energy per day with weight and age of the day`)
+- ✅ Export `isEstimatedResting(source)`: true for `source` and `formula`, false for `measured` and `scaled` (Key Decision 4)
+- ✅ Test each source; boundaries exactly at 6/24 and 20/24
+- ✅ Test weight lookup: measurement on the day itself wins; value from before the period; no earlier value → first later one; no measurement at all → profile weight; nothing → `undefined` → `missing` _(Geburtstag am 10.10.: 33 → 34 Jahre, Differenz 5 kcal; eingegebenes Alter mit `ageRecordedOn` 2025-10-01 ergibt ab 01.10.2026 35)_
+- ✅ Test age on the day: birthday inside the period changes the result by 5 kcal from that day on; entered age with `ageRecordedOn` one year back is one year higher
+- ✅ Test `sex: 'unspecified'` uses −78 (existing `SEX_CONSTANT`)
+- ✅ Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
+- ✅ Commit (`feat: estimate resting energy per day with weight and age of the day`)
 
 ```ts
 // src/core/resting.ts
@@ -222,23 +222,23 @@ export function dayResting(
 
 #### To-Dos
 
-- ✅ reate `DayFlag = 'restingEstimated' | 'noFood' | 'lowFood' | 'noResting'` in this order (= order in the sheet later) _(plus `DAY_FLAGS` als geordnete Liste)_
-- ✅ reate `dayBalances(records, { zeroDaysAsMaintenance, profile, weightBeforeKg })` (sketch below); weights via `weightsByDay`, R via `dayResting`, day date via `fromDateKey(record.date)`
-- ✅ ompute B per day:
+- ✅ Create `DayFlag = 'restingEstimated' | 'noFood' | 'lowFood' | 'noResting'` in this order (= order in the sheet later) _(plus `DAY_FLAGS` als geordnete Liste)_
+- ✅ Create `dayBalances(records, { zeroDaysAsMaintenance, profile, weightBeforeKg })` (sketch below); weights via `weightsByDay`, R via `dayResting`, day date via `fromDateKey(record.date)`
+- ✅ Compute B per day:
   - food set and R known → `B = food − (R + K)`, `K = active ?? 0`
   - no food and switch on → `B = 0`, `maintenance: true` (R not needed)
   - no food and switch off and R known → `B = −(R + K)`
   - R unknown (`missing`) and not a zero day → `kcal: undefined`, day doesn't count
-- ✅ et flags independent of the switch (Key Decision 8): `restingEstimated` if `isEstimatedResting(source)`; `noResting` if source `missing`; `noFood` if no food; `lowFood` if food set, R known and `food < 0.5 × (R + K)`
-- ✅ eep `activeMissing` per day (data page: „mit 0 gerechnet“); it is no flag (Key Decision 6)
-- ✅ reate `isComplete(day)` = `day.flags.length === 0`
-- ✅ est B for a normal day, a zero day with switch on (B = 0) and off (B = −(R + K)), a day without active energy (K = 0, complete)
-- ✅ est `lowFood`: 49,9 % → flag, exactly 50 % → no flag; uses the formula R on estimated days; no `lowFood` without R _(1.299 von 2.600 → Flag, 1.300 → kein Flag)_
-- ✅ est multiple flags: estimated R + low food on one day → 2 flags, 1 incomplete day; no food + no R → `noFood` + `noResting`; no food + formula R → `noFood` + `restingEstimated`
-- ✅ est a zero day without R: switch on → counts with B = 0; switch off → doesn't count
-- ✅ est records across the fall DST change: the 25-hour day keeps its own date and age/weight lookup
-- ✅ un `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
-- ✅ ommit (`feat: compute daily balance with quality flags`)
+- ✅ Set flags independent of the switch (Key Decision 8): `restingEstimated` if `isEstimatedResting(source)`; `noResting` if source `missing`; `noFood` if no food; `lowFood` if food set, R known and `food < 0.5 × (R + K)`
+- ✅ Keep `activeMissing` per day (data page: „mit 0 gerechnet“); it is no flag (Key Decision 6)
+- ✅ Create `isComplete(day)` = `day.flags.length === 0`
+- ✅ Test B for a normal day, a zero day with switch on (B = 0) and off (B = −(R + K)), a day without active energy (K = 0, complete)
+- ✅ Test `lowFood`: 49,9 % → flag, exactly 50 % → no flag; uses the formula R on estimated days; no `lowFood` without R _(1.299 von 2.600 → Flag, 1.300 → kein Flag)_
+- ✅ Test multiple flags: estimated R + low food on one day → 2 flags, 1 incomplete day; no food + no R → `noFood` + `noResting`; no food + formula R → `noFood` + `restingEstimated`
+- ✅ Test a zero day without R: switch on → counts with B = 0; switch off → doesn't count
+- ✅ Test records across the fall DST change: the 25-hour day keeps its own date and age/weight lookup
+- ✅ Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
+- ✅ Commit (`feat: compute daily balance with quality flags`)
 
 ```ts
 // src/core/day-balance.ts
@@ -276,7 +276,7 @@ export type DayBalanceOptions = {
 
 ---
 
-### Milestone 4 — Periodenbilanz & Spanne
+### ✅ Milestone 4 — Periodenbilanz & Spanne
 
 > Der Zeitraum wird zu Summe, Ø pro Tag, theoretischem Fett und Spanne zusammengefasst. Der goldene Testfall und `normal30` ergeben die erwarteten Zahlen.
 
@@ -294,27 +294,27 @@ export type DayBalanceOptions = {
 
 #### To-Dos
 
-- 🔲 Create `periodBalance(days, tolerance)` (sketch below)
-- 🔲 Sum A, R and K over days that count and are no zero day; a zero day with switch off adds A = 0 and its R + K. So always `kcal = foodKcal − restingKcal − activeKcal`
-- 🔲 Leave zero days (switch on) out of Σ A and Σ V (Key Decision 2); they add B = 0 and count in `countedDays`
-- 🔲 Compute `avgKcal = kcal / countedDays` (0 without counted days), `fatKg = kcal / 7700`
-- 🔲 Compute the range on the period sums, not per day, with tA = `foodPercent / 100`, tV = `burnPercent / 100`, V = Σ R + Σ K: `min = A(1 − tA) − V`, `max = A(1 + tA) − V(1 − tV)`; plus `avgRange` (÷ `countedDays`) and `fatRange` (÷ 7.700)
-- 🔲 Count `flagCounts` per flag over all days of the period, `completeDays` = days without flags, `excludedDays` = days that don't count; `restingFormulaDays`, `restingScaledDays`, `daysWithoutActive` only over days in the sums (data page)
-- 🔲 Test tolerance 0 %/0 %: `range.min === range.max === kcal` (strict equality, also for `avgRange` and `fatRange`)
-- 🔲 Test that one tolerance alone works (food 5 %/burn 0 % and food 0 %/burn 10 %) and that burn only goes down (`max` grows, `min` unchanged)
-- 🔲 Test the count: 30 days, 3 × `restingEstimated`, 2 × `lowFood`, 1 × `noFood`, plus one day with `restingEstimated` + `lowFood` → `completeDays` stays `days − days with any flag`, `flagCounts.restingEstimated` counts that day as well
-- 🔲 Test that a zero day doesn't widen the range: adding one zero day (switch on) to a period leaves `kcal`, `range.min` and `range.max` unchanged and raises `countedDays` by 1
-- 🔲 Create `golden-30.ts`: 30 days from 2026-09-24 to 2026-10-23, `food` 2.900 each (Σ 87.000), `resting` 1.800 each (Σ 54.000), `active` 867 on the first 20 days and 866 on the last 10 (Σ 26.000), so Σ V = 80.000; no weights; export `GOLDEN_TOLERANCE = { foodPercent: 5, burnPercent: 10 }`, `GOLDEN_DELTA = { fatKg: 0.4, leanKg: 0.3 }` and the expected values
-- 🔲 Test golden case through `dayBalances` (switch on, empty profile) + `periodBalance`:
+- ✅ Create `periodBalance(days, tolerance)` (sketch below) _(zusätzlich `maintenanceDays` für „als neutral gezählt“)_
+- ✅ Sum A, R and K over days that count and are no zero day; a zero day with switch off adds A = 0 and its R + K. So always `kcal = foodKcal − restingKcal − activeKcal`
+- ✅ Leave zero days (switch on) out of Σ A and Σ V (Key Decision 2); they add B = 0 and count in `countedDays`
+- ✅ Compute `avgKcal = kcal / countedDays` (0 without counted days), `fatKg = kcal / 7700`
+- ✅ Compute the range on the period sums, not per day, with tA = `foodPercent / 100`, tV = `burnPercent / 100`, V = Σ R + Σ K: `min = A(1 − tA) − V`, `max = A(1 + tA) − V(1 − tV)`; plus `avgRange` (÷ `countedDays`) and `fatRange` (÷ 7.700)
+- ✅ Count `flagCounts` per flag over all days of the period, `completeDays` = days without flags, `excludedDays` = days that don't count; `restingEstimatedDays`, `restingScaledDays`, `daysWithoutActive` only over days in the sums (data page) _(Feld heißt `restingEstimatedDays` statt `restingFormulaDays`, weil es Schätzungen der Quelle mitzählt)_
+- ✅ Test tolerance 0 %/0 %: `range.min === range.max === kcal` (strict equality, also for `avgRange` and `fatRange`)
+- ✅ Test that one tolerance alone works (food 5 %/burn 0 % and food 0 %/burn 10 %) and that burn only goes down (`max` grows, `min` unchanged)
+- ✅ Test the count: 30 days, 3 × `restingEstimated`, 2 × `lowFood`, 1 × `noFood`, plus one day with `restingEstimated` + `lowFood` → `completeDays` stays `days − days with any flag`, `flagCounts.restingEstimated` counts that day as well _(23 vollständig + 3 geschätzt + 2 wenig + 1 ohne Nahrung + 1 Tag mit zwei Flags → 23 von 30, `restingEstimated` 4, `lowFood` 3)_
+- ✅ Test that a zero day doesn't widen the range: adding one zero day (switch on) to a period leaves `kcal`, `range.min` and `range.max` unchanged and raises `countedDays` by 1
+- ✅ Create `golden-30.ts`: 30 days from 2026-09-24 to 2026-10-23, `food` 2.900 each (Σ 87.000), `resting` 1.800 each (Σ 54.000), `active` 867 on the first 20 days and 866 on the last 10 (Σ 26.000), so Σ V = 80.000; no weights; export `GOLDEN_TOLERANCE = { foodPercent: 5, burnPercent: 10 }`, `GOLDEN_DELTA = { fatKg: 0.4, leanKg: 0.3 }` and the expected values
+- ✅ Test golden case through `dayBalances` (switch on, empty profile) + `periodBalance`: _(in `golden.test.ts`; Format geprüft mit de-DE)_
   - `kcal` = 7.000, `avgKcal` ≈ 233,33, `fatKg` ≈ 0,909
   - `range` ≈ 2.650 / 19.350 (`toBeCloseTo`, floating point), `fatRange` ≈ 0,344 / 2,513
   - `completeDays` = 30, all `flagCounts` 0
   - formatted (de-DE): `formatKcal(kcal)` „+7.000“, `formatKcal(Math.round(avgKcal))` „+233“, `formatSignedKg(fatKg)` „+0,9“, `formatKcal(Math.round(range.min))` „+2.650“, `formatKcal(Math.round(range.max))` „+19.350“, `formatSignedKg` „+0,3“ / „+2,5“
-- 🔲 Test `normal30` from the demo through the new core: `kcal` = 7.000, 24 of 30 complete (3 `restingEstimated`, 2 `lowFood`, 1 `noFood`); tolerance 5/10 → `range` ≈ 2.771,4 / 18.985,8 (Σ A 84.572, Σ V 77.572 without the zero day; design 2.645 / 19.365, see Concerns Nr. 2)
-- 🔲 Add section „Goldener Testfall“ to `CLAUDE.md` with both tables verbatim, the note „erster Test in P2 und P3“ and the path of the fixture
-- 🔲 Update `CLAUDE.md` Rechenkern bullets: missing R → Mifflin per day (weight on/before the day, age on the day) instead of „manuell eingegebener Grundumsatz“; zero days stay out of the tolerance sums; quality flags incl. A < 50 % of R + K
-- 🔲 Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
-- 🔲 Commit (`feat: summarize period balance with tolerance range`)
+- 🔲 ~~Test `normal30` from the demo through the new core: `kcal` = 7.000, 24 of 30 complete (3 `restingEstimated`, 2 `lowFood`, 1 `noFood`); tolerance 5/10 → `range` ≈ 2.771,4 / 18.985,8 (Σ A 84.572, Σ V 77.572 without the zero day; design 2.645 / 19.365, see Concerns Nr. 2)~~ _(verschoben nach M5 in `scenarios.test.ts`: Kern-Tests dürfen `@/dev/*` nicht importieren, Lint-Regel aus P1 M9)_
+- ✅ Add section „Goldener Testfall“ to `CLAUDE.md` with both tables verbatim, the note „erster Test in P2 und P3“ and the path of the fixture
+- ✅ Update `CLAUDE.md` Rechenkern bullets: missing R → Mifflin per day (weight on/before the day, age on the day) instead of „manuell eingegebener Grundumsatz“; zero days stay out of the tolerance sums; quality flags incl. A < 50 % of R + K
+- ✅ Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
+- ✅ Commit (`feat: summarize period balance with tolerance range`)
 
 ```ts
 // src/core/period-balance.ts
@@ -336,7 +336,7 @@ export type PeriodBalance = {
   restingKcal: number;
   activeKcal: number;
   // Of those days: resting by formula or source estimate, scaled, without active.
-  restingFormulaDays: number;
+  restingEstimatedDays: number;
   restingScaledDays: number;
   daysWithoutActive: number;
   // Plus = ate more than burned.
@@ -385,7 +385,7 @@ export function periodBalance(
 | 🟠 | `src/features/balance/data-rows.ts` | Liest `PeriodBalance`; Text „mit Median ergänzt“ entfällt; Schätzungs-Zeilen aus `restingProfile` |
 | 🟠 | `src/features/balance/__tests__/data-rows.test.ts` | Erwartungen anpassen |
 | 🟠 | `src/features/balance/components/balance-page.tsx` | `fatKg`, `flagCounts.noFood`, `excludedDays` statt alter Felder |
-| 🟠 | `src/features/balance/components/data-page.tsx` | Karte „Geschätzte Ruheenergie“ bei `restingFormulaDays > 0` |
+| 🟠 | `src/features/balance/components/data-page.tsx` | Karte „Geschätzte Ruheenergie“ bei `restingEstimatedDays > 0` |
 | 🟠 | `src/features/balance/components/home-screen.tsx` | `settings` statt `period` an `useBalance` |
 | 🟠 | `src/i18n/locales/de.ts` | `data.restingTypical*` weg, `data.estimateWeight`, `data.estimateResult` neu |
 | 🟠 | `src/i18n/locales/en.ts` | Dieselben Schlüssel |
@@ -400,13 +400,14 @@ export function periodBalance(
 - 🔲 Implement it in `createDemoSource`: last series `weightKg` before `date`; `empty` → `undefined`
 - 🔲 Replace `fallbackInputs`/`estimateFromInputs`/`restingFallback` with `restingProfile(health, stored)`: Health first, then entered values, like today; returns `RestingProfile` and per value whether it came from Health, plus the shown sex („other“)
 - 🔲 Update `useBalance(settings = DEFAULT_SETTINGS)`: `resolvePeriod(settings.period, now, { includeToday, firstDataDate })`; load `days`, `profile`, `latestSources`, `weightBefore(start)` in parallel; `dayBalances` with `zeroDaysAsMaintenance`; `periodBalance` with `settings.tolerance`. Reload key = `JSON.stringify(settings)`
-- 🔲 Shape `BalanceReport` as `{ balance: PeriodBalance; days: DayBalance[]; estimate?: { profile, origins, lastWeightKg, avgKcal }; daysWithData; sources }`; `estimate` only when `restingFormulaDays > 0`
+- 🔲 Shape `BalanceReport` as `{ balance: PeriodBalance; days: DayBalance[]; estimate?: { profile, origins, lastWeightKg, avgKcal }; daysWithData; sources }`; `estimate` only when `restingEstimatedDays > 0`
 - 🔲 Update `balance-page.tsx`: empty state when `flagCounts.noFood === days`; hero from `balance.kcal` and `balance.fatKg` (rounding unchanged); „Tage ohne Eintrag als neutral gezählt“ from the number of maintenance days; „ohne Grundumsatz nicht mitgerechnet“ from `excludedDays`
-- 🔲 Update `data-rows.ts`: resting detail „an N Tagen geschätzt“ from `restingFormulaDays`, „N Teiltage hochgerechnet“ from `restingScaledDays`; active detail from `daysWithoutActive`; remove `restingTypical`; „Was ankommt“ unchanged
+- 🔲 Update `data-rows.ts`: resting detail „an N Tagen geschätzt“ from `restingEstimatedDays`, „N Teiltage hochgerechnet“ from `restingScaledDays`; active detail from `daysWithoutActive`; remove `restingTypical`; „Was ankommt“ unchanged
 - 🔲 Update the estimate card on the data page (wireframe below): weight line „letzte Messung an/vor dem Tag · zuletzt 82,4 kg“ (or „Profil“ when only the profile weight was used), height, age today, sex with origin, result „Ø ≈ 1.750 kcal an 3 Tagen“
 - 🔲 Remove i18n keys `data.restingTypical_one/_other` (DE/EN), add `data.estimateWeight` and `data.estimateResult` with `{{count}}` plurals
 - 🔲 Delete `src/core/balance.ts` and `balance.test.ts`; grep that nothing imports `@/core/balance` any more
 - 🔲 Update `scenarios.test.ts` to the new core (numbers from M4) and keep the snapshot unchanged (the series itself doesn't change)
+- 🔲 🆕 Test `normal30` through the new core in `scenarios.test.ts` (moved from M4): `kcal` = 7.000, 24 of 30 complete (3 `restingEstimated`, 2 `lowFood`, 1 `noFood`); tolerance 5/10 → `range` ≈ 2.771,4 / 18.985,8
 - 🔲 Update the „Umsetzung“ section of `docs/specs/2026-10-21-data-page.md`
 - 🔲 Check in the simulator via the gallery: 1a shows +7.000 kcal / +0,9 kg as before; L1 (`gaps30`) shows 3 days „ohne Eintrag neutral“ and on the data page „2 Teiltage hochgerechnet“, „an 3 Tagen ohne Wert, mit 0 gerechnet“
 - 🔲 Run `npm run lint`, `npm run typecheck`, `npm test`, `npm run check:release-bundle`; all exit 0
@@ -477,7 +478,7 @@ DataPage
 └── Report
     ├── Card „So entsteht deine Bilanz“ (CalcRow[], Divider, Notizen)
     ├── View „Was ankommt“ (StatusRow[])
-    └── Card „Geschätzte Ruheenergie“ (nur bei `restingFormulaDays > 0`)
+    └── Card „Geschätzte Ruheenergie“ (nur bei `restingEstimatedDays > 0`)
         ├── Headline
         ├── InfoRow[] (Gewicht, Größe, Alter, Geschlecht)
         ├── Divider

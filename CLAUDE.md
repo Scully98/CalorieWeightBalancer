@@ -41,18 +41,38 @@ Fragen, die die App beantwortet: Bin ich diesen Monat im Plus oder Minus? Wie la
 
 - Summen per `HKStatisticsCollectionQuery` pro Kalendertag (dedupliziert iPhone/Watch), keine Rohsamples summieren.
 - Fehlt `leanBodyMass`: Magermasse = Gewicht × (1 − KFA), Fett = Gewicht × KFA.
-- Fehlt Ruheenergie (keine Watch): manuell eingegebener Grundumsatz als Ersatz.
+- Fehlt Ruheenergie (keine Watch, unter 6 h Tragezeit): Mifflin-St Jeor pro Tag. Gewicht = letzte Messung an/vor dem Tag, sonst erste danach, sonst Profilgewicht; Alter am jeweiligen Tag. Teiltage ab 6 h werden auf 24 h hochgerechnet und gelten als gemessen.
 - iOS verrät nicht, ob Leserechte verweigert wurden: leere Daten immer mit „Berechtigungen prüfen“ erklären.
 
 ## Rechenmodell
 - Tagesbilanz `B = A − (R + K)` (A Nahrung, R Ruhe, K Aktiv). **Plus = mehr gegessen als verbraucht.**
-- Null-Tage-Schalter: Tag ohne Nahrungseintrag zählt mit B = 0 statt vollem Defizit; Anzahl betroffener Tage anzeigen.
+- Null-Tage-Schalter: Tag ohne Nahrungseintrag zählt mit B = 0 statt vollem Defizit; Anzahl betroffener Tage anzeigen. Null-Tage bleiben aus den Summen A und V, die Toleranz rechnet nur mit echten Einträgen.
+- Datenqualität je Tag (mehrere Flags möglich, „X von N vollständig“ = Tage ohne Flag): Grundumsatz geschätzt, ohne Nahrung, auffällig wenig Nahrung (A < 50 % von R + K), ohne Grundumsatz (auch Mifflin nicht möglich, Tag zählt nicht). Fehlende Aktivenergie zählt als K = 0 und ist kein Flag.
 - Heutiger Tag: standardmäßig nicht in der Bilanz (im Chart markiert), per Schalter zuschaltbar.
 - Toleranzen standardmäßig aus; eingeschaltet wählt der Nutzer im Normbereich (Nahrung 5–20 %, Verbrauch 10–30 %, vorausgewählt der untere Rand). Angewendet auf Zeitraumsummen, nicht pro Tag:
   `Bmin = A(1 − tA) − V`, `Bmax = A(1 + tA) − V(1 − tV)` mit V = R + K. Verbrauch nur nach unten korrigiert.
 - Körperfett: Bilanz ÷ 7.700 kcal/kg Fettgewebe, beschriftet als „theoretisch“.
 - Analyse Bilanz vs. Messung: `E ≈ 9400·ΔFettmasse + 1800·ΔMagermasse` (Hall 2008), Start/Ende als 7-Tage-Mittel oder Trend. Erst ab 21 Tagen mit mindestens 6 Messungen.
-- Rechenkern als reines TypeScript-Modul mit Unit-Tests, unabhängig von HealthKit.
+- Rechenkern als reines TypeScript-Modul mit Unit-Tests, unabhängig von HealthKit (`src/core/`, Abdeckung ≥ 90 %). Er rechnet ungerundet, gerundet wird erst in der Anzeige.
+
+## Goldener Testfall
+Die Zahlen aus dem Design-Prompt passen zusammen, wenn man diese 30 Tage annimmt. Das ist der erste Test in P2 und P3 (Fixture `src/core/__fixtures__/golden-30.ts`, Test `src/core/__tests__/golden.test.ts`).
+
+| Eingabe (30 Tage) | Wert |
+|---|---|
+| Σ Nahrung A | 87.000 kcal (2.900/Tag) |
+| Σ Verbrauch V = R + K | 80.000 kcal (2.667/Tag) |
+| Toleranz Nahrung / Verbrauch | 5 % / 10 % |
+| Δ Fettmasse / Δ Magermasse | +0,4 kg / +0,3 kg |
+
+| Erwartetes Ergebnis | Wert |
+|---|---|
+| Bilanz | +7.000 kcal, Ø +233 kcal/Tag |
+| Fett theoretisch | ≈ +0,9 kg |
+| Spanne mit Toleranz | +2.650 bis +19.350 kcal, ≈ +0,3 bis +2,5 kg |
+| Laut Waage gespeichert | 9400 × 0,4 + 1800 × 0,3 = 4.300 kcal |
+| Geschätzter tatsächlicher Verbrauch | (87.000 − 4.300) ÷ 30 ≈ 2.760 kcal/Tag |
+| Tracker / Differenz | 2.670 kcal/Tag / +90 |
 
 ## Features V1
 Drei Screens (Bilanz, Analyse-Chart, Einstellungen) plus Widget.
