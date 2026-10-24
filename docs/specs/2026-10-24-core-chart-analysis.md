@@ -215,7 +215,7 @@ export function chartBuckets(
 
 ---
 
-### Milestone 3 — Linien
+### ✅ Milestone 3 — Linien
 
 > Für jeden Tag des Zeitraums gibt es Δ kg seit Zeitraumbeginn für Gewicht (Trend und Punkt), Fettmasse (Trend) und theoretisches Fett.
 
@@ -230,19 +230,19 @@ export function chartBuckets(
 
 #### To-Dos
 
-- 🔲 Create `chartLines(records, days, leadInDays)`: `records` = lead-in + period (oldest first), `days` = `DayBalance[]` of the period; per period day:
+- ✅ Create `chartLines(records, days, leadInDays)`: `records` = lead-in + period (oldest first), `days` = `DayBalance[]` of the period; per period day:
   - `weightTrend` = weight trend − baseline; `weightPoint` = measured weight − baseline, only on days with a weight measurement
   - `fatTrend` = fat trend − fat baseline
   - `theoreticalFat` = cumulative B up to and including the day ÷ 7.700 (days without B add 0)
-- 🔲 Baseline = trend on the first period day; if `undefined`, the first defined trend value in the period (Key Decision 11); before it Δ is `undefined`
-- 🔲 Return `hasWeight` / `hasFat` = any defined value in the period (UI hides a line without)
-- 🔲 Test a 30-day period with measurements every other day: trend defined on every day (no gap), `weightPoint` only on measured days
-- 🔲 Test baseline from the lead-in: measurement 5 days before the period counts for the first day's trend
-- 🔲 Test first measurement on day 10 without lead-in: Δ `undefined` on days 0–9, 0 on day 10
-- 🔲 Test no measurements: `hasWeight: false`, all `undefined`; theoretical fat still defined
-- 🔲 Test theoretical fat: 7.700 kcal over the period → +1,0 kg on the last day; a day without B keeps the value
-- 🔲 Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
-- 🔲 Commit (`feat: compute weight, fat and theoretical fat lines`)
+- ✅ Baseline = trend on the first period day; if `undefined`, the first defined trend value in the period (Key Decision 11); before it Δ is `undefined` _(Punkte messen gegen denselben Bezug wie die Trendlinie)_
+- ✅ Return `hasWeight` / `hasFat` = any defined value in the period (UI hides a line without)
+- ✅ Test a 30-day period with measurements every other day: trend defined on every day (no gap), `weightPoint` only on measured days
+- ✅ Test baseline from the lead-in: measurement 5 days before the period counts for the first day's trend _(Vorlauf-Messung 5 Tage vor dem Zeitraum zählt an Tag 0 und 1, ab Tag 2 (7 Tage zurück) nicht mehr)_
+- ✅ Test first measurement on day 10 without lead-in: Δ `undefined` on days 0–9, 0 on day 10
+- ✅ Test no measurements: `hasWeight: false`, all `undefined`; theoretical fat still defined
+- ✅ Test theoretical fat: 7.700 kcal over the period → +1,0 kg on the last day; a day without B keeps the value
+- ✅ Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
+- ✅ Commit (`feat: compute weight, fat and theoretical fat lines`)
 
 ```ts
 // src/core/lines.ts
