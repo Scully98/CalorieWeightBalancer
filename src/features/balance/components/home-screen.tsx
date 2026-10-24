@@ -17,6 +17,7 @@ import { useBalance } from '../use-balance';
 import { formatLocale } from '@/i18n';
 import { addDays } from '@/core/dates';
 import { toDateKey } from '@/core/day-record';
+import { ScrollLockContext } from '@/hooks/scroll-lock';
 import { useSettings, useSettingsStore } from '@/storage/settings-context';
 import { useColors } from '@/theme/use-colors';
 
@@ -51,6 +52,8 @@ export function HomeScreen({ initialUi }: { initialUi?: HomeUi } = {}) {
   const store = useSettingsStore();
   // Open while „Eigener“ is being picked.
   const [picking, setPicking] = useState(initialUi?.picker);
+  // A slider is being dragged: neither the pager nor the page may scroll.
+  const [scrollLocked, setScrollLocked] = useState(false);
 
   function showPage(index: number) {
     pager.current?.scrollTo({ x: index * width, animated: true });
@@ -61,34 +64,42 @@ export function HomeScreen({ initialUi }: { initialUi?: HomeUi } = {}) {
       edges={['top']}
       style={[styles.flex, { backgroundColor: colors.background }]}
     >
-      <ScrollView
-        ref={pager}
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        style={styles.flex}
-      >
-        <View style={{ width }}>
-          <BalancePage
-            state={state}
-            days={span?.days}
-            periodLabel={periodLabel}
-            pageCount={PAGES}
-            toleranceOpen={initialUi?.toleranceOpen}
-            onShowData={() => showPage(1)}
-            onPickCustom={() =>
-              setPicking({
-                from: span?.first ?? toDateKey(addDays(now, -30)),
-                to: span?.last ?? toDateKey(addDays(now, -1)),
-                editing: 'from',
-              })
-            }
-          />
-        </View>
-        <View style={{ width }}>
-          <DataPage state={state} periodLabel={periodLabel} pageCount={PAGES} />
-        </View>
-      </ScrollView>
+      <ScrollLockContext value={setScrollLocked}>
+        <ScrollView
+          ref={pager}
+          horizontal
+          pagingEnabled
+          scrollEnabled={!scrollLocked}
+          showsHorizontalScrollIndicator={false}
+          style={styles.flex}
+        >
+          <View style={{ width }}>
+            <BalancePage
+              state={state}
+              days={span?.days}
+              periodLabel={periodLabel}
+              pageCount={PAGES}
+              toleranceOpen={initialUi?.toleranceOpen}
+              scrollEnabled={!scrollLocked}
+              onShowData={() => showPage(1)}
+              onPickCustom={() =>
+                setPicking({
+                  from: span?.first ?? toDateKey(addDays(now, -30)),
+                  to: span?.last ?? toDateKey(addDays(now, -1)),
+                  editing: 'from',
+                })
+              }
+            />
+          </View>
+          <View style={{ width }}>
+            <DataPage
+              state={state}
+              periodLabel={periodLabel}
+              pageCount={PAGES}
+            />
+          </View>
+        </ScrollView>
+      </ScrollLockContext>
       {picking ? (
         <DateRangeSheet
           initial={picking}

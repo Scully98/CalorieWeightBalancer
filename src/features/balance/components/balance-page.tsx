@@ -72,6 +72,8 @@ type BalancePageProps = {
   pageCount: number;
   // Gallery preset: the tolerance card starts open.
   toleranceOpen?: boolean;
+  // Off while a slider is dragged.
+  scrollEnabled?: boolean;
   onShowData: () => void;
   onPickCustom: () => void;
 };
@@ -83,13 +85,17 @@ export function BalancePage({
   periodLabel,
   pageCount,
   toleranceOpen,
+  scrollEnabled = true,
   onShowData,
   onPickCustom,
 }: BalancePageProps) {
   const { t } = useTranslation();
 
   return (
-    <ScrollView contentContainerStyle={styles.content}>
+    <ScrollView
+      scrollEnabled={scrollEnabled}
+      contentContainerStyle={styles.content}
+    >
       <View style={styles.top}>
         <View style={styles.titleRow}>
           <AppText variant="largeTitle" accessibilityRole="header">
@@ -112,7 +118,11 @@ export function BalancePage({
         )}
       </View>
       {state.status === 'done' ? (
-        <BalanceSummary balance={state.value.balance} onShowData={onShowData} />
+        <BalanceSummary
+          balance={state.value.balance}
+          toleranceOpen={toleranceOpen}
+          onShowData={onShowData}
+        />
       ) : state.status === 'empty' || state.status === 'error' ? (
         <EmptyState days={days} />
       ) : (

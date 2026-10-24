@@ -111,8 +111,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 10,
   },
+  // The title keeps its words; a long summary wraps instead.
   title: {
-    flex: 1,
+    flexGrow: 1,
+    flexShrink: 0,
+    maxWidth: '60%',
   },
   summary: {
     flexShrink: 1,

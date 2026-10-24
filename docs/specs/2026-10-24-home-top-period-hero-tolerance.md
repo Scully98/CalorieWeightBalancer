@@ -4,7 +4,7 @@ Stand 2026-10-24. In Arbeit auf Branch `feature/home-page-base`. Voraussetzung P
 
 ## Overview
 
-P6 baut den oberen Teil der Homepage nach dem Hi-Fi-Design (`.claude/design/homepage/Gewichtslinie strukturieren/BilanzScreen.dc.html`). Oben stehen der Titel „Bilanz“, die Segment-Auswahl 7 T · 30 T · 60 T · 90 T · Alles · Eigener mit Datumsbereich-Picker und ein Untertitel mit den Daten des Zeitraums. Darunter folgt der Hero: Einzelwert oder Spanne, der Satz „mehr/weniger gegessen als verbraucht“, Ø pro Tag und Fett-Äquivalent. Die aufklappbare Karte „Messfehler einrechnen“ hat zwei Slider mit markiertem Normbereich. Beim Ziehen rechnet der Hero live mit, nur auf den Periodensummen und ohne HealthKit-Abfrage. Zeitraum und Toleranz landen im `SettingsStore` aus P5. Betroffen: `src/core/format.ts`, `src/core/period-balance.ts`, `src/core/settings.ts`, `src/features/balance/`, `src/components/`, `src/dev/gallery/`, i18n, neue Abhängigkeit `@react-native-community/slider` (neuer Development Build), Bild-Assets für den Slider-Daumen, `CLAUDE.md`.
+P6 baut den oberen Teil der Homepage nach dem Hi-Fi-Design (`.claude/design/homepage/Gewichtslinie strukturieren/BilanzScreen.dc.html`). Oben stehen der Titel „Bilanz“, die Segment-Auswahl 7 T · 30 T · 60 T · 90 T · Alles · Eigener mit Datumsbereich-Picker und ein Untertitel mit den Daten des Zeitraums. Darunter folgt der Hero: Einzelwert oder Spanne, der Satz „mehr/weniger gegessen als verbraucht“, Ø pro Tag und Fett-Äquivalent. Die aufklappbare Karte „Messfehler einrechnen“ hat zwei Slider mit markiertem Normbereich. Beim Ziehen rechnet der Hero live mit, nur auf den Periodensummen und ohne HealthKit-Abfrage. Zeitraum und Toleranz landen im `SettingsStore` aus P5. Betroffen: `src/core/format.ts`, `src/core/period-balance.ts`, `src/core/settings.ts`, `src/features/balance/`, `src/components/`, `src/dev/gallery/`, i18n, `CLAUDE.md`.
 
 ### Ausgangslage: Anforderungen (wörtlich)
 
@@ -57,9 +57,9 @@ P6 baut den oberen Teil der Homepage nach dem Hi-Fi-Design (`.claude/design/home
 | 3 | Satz bei gerundeter Bilanz 0: „so viel gegessen wie verbraucht“ / „ate as much as you burned“ | „±0 kcal, mehr gegessen als verbraucht“ (Design: B ≥ 0) wäre falsch — Julius 2026-10-24 | Wie Design |
 | 4 | Rundung: Einzelwert auf 10 kcal (wie bisher, `roundKcal`), Spanne auf 50 kcal (neu `roundRangeKcal`), Ø pro Tag auf ganze kcal, Fett auf 0,1 kg. Ø und Fett kommen aus den ungerundeten Werten | Spanne ist ohnehin grob, 50 wie im Design; Golden: +7.000 / +2.650 bis +19.350, Ø +233, Fett +0,9 bzw. +0,3 bis +2,5 — Julius 2026-10-24 | Überall 10; überall 50 |
 | 5 | Spanne über 0 → dritter Satz „je nach Messfehler Plus oder Minus“ / „plus or minus, depending on measurement error“. Entscheidend sind die gerundeten Grenzen: min ≥ 0 → mehr, max < 0 → weniger, sonst der dritte Satz | Wie im Design — Julius 2026-10-24 | Satz nach der Mitte der Spanne |
-| 6 | Slider: `@react-native-community/slider` (nativer `UISlider`), Schritt 1, `minimumValue` 0, `maximumValue` aus `TOLERANCE_LIMITS`. Neuer Development Build nötig | Nativer Slider, VoiceOver „anpassbar“ vom System — Julius 2026-10-24 | Eigener Slider mit `PanResponder` (empfohlen, ohne Abhängigkeit); Gesture Handler + Reanimated |
-| 7 | Daumen als `thumbImage`, je Farbschema ein Bild (hell: Fläche #FFFFFF, Rand #0B0B0B; dunkel: Fläche #000000, Rand #F4F4F4; 24 pt, Rand 2 pt, ohne Schatten) in @1x/@2x/@3x. Die Bilder erzeugt ein Skript aus den Tokens, damit V2 sie neu erzeugen kann | Sieht aus wie das Design; Farben stecken dann in Bildern — Julius 2026-10-24 | iOS-Standarddaumen; doch eigener Slider |
-| 8 | Normbereich als Konstante `TOLERANCE_NORM = { foodPercent: { min: 5, max: 20 }, burnPercent: { min: 10, max: 30 } }` in `src/core/settings.ts`. Das Band liegt als View hinter dem Slider, Position aus `min / max` des Sliders | Wie `TOLERANCE_LIMITS` eine Stelle; die Erklärseite „Wie wird gerechnet?“ kann es mitnutzen | Zahlen nur in den Texten |
+| 6 | Slider: eigener Slider aus Views (`MarkedSlider`) mit Responder-Props an der Spur, ganze Schritte, Spur 2 pt, Normbereich-Band 8 pt, Füllung 4 pt, Daumen 24 pt mit 2-pt-Ring, alles aus den Tokens. Während des Ziehens sperrt er Pager und Seiten-Scroll (`ScrollLockContext`) | Zuerst `@react-native-community/slider` gewählt (Julius 2026-10-24). Umgesetzt zeigte sich: Unter der neuen Architektur ohne Bridge lädt er `thumbImage` nicht (`[RCTBridge currentBridge]` ist `nil`), und VoiceOver brauchte ohnehin eine eigene Hülle. Daher eigener Slider — Julius 2026-10-24 | Nativer Slider mit gefülltem Punkt; Ring als Overlay; Patch der Bibliothek |
+| 7 | ~~Daumen als `thumbImage` je Farbschema (PNG per Skript aus den Tokens)~~ Entfällt mit Key Decision 6: Der Daumen ist eine View in Hintergrundfarbe mit 2-pt-Ring in Vordergrundfarbe, V2-Farbwahl ohne Bilder | Bild lud nicht (siehe 6) — Julius 2026-10-24 | iOS-Standarddaumen |
+| 8 | Normbereich als Konstante `TOLERANCE_NORM = { foodPercent: { min: 5, max: 20 }, burnPercent: { min: 10, max: 30 } }` in `src/core/settings.ts`. Das Band liegt als View hinter dem Daumen, Position aus `min / max` mit demselben Einzug (12 pt) wie Spur und Daumen | Wie `TOLERANCE_LIMITS` eine Stelle; die Erklärseite „Wie wird gerechnet?“ kann es mitnutzen | Zahlen nur in den Texten |
 | 9 | Live-Rechnung: Beim Ziehen hält eine gemeinsame Eltern-Komponente von Hero und Karte einen Entwurf `draftTolerance` im lokalen State. Der Hero rechnet daraus mit der neuen reinen Funktion `toleranceRange(sums, tolerance)` nur aus `foodKcal`, `restingKcal + activeKcal` und `countedDays`. Erst `onSlidingComplete` schreibt per `updateSettings({ tolerance })` in den Store; dann baut `buildReport` den Report einmal neu | Abnahme „ruckelt nicht“: pro Schritt weder `buildReport` (Chart, Linien, Analyse) noch ein Schreiben in die App-Group-UserDefaults. Der Ladeschlüssel enthält die Toleranz schon nicht (P5, Key Decision 9) | Jeden Schritt in den Store schreiben; Report pro Schritt neu bauen |
 | 10 | `periodBalance` berechnet seine Spanne über dieselbe Funktion `toleranceRange`, damit Ziehen und gespeicherter Wert nie auseinanderlaufen | Eine Formel `Bmin = A(1 − tA) − V`, `Bmax = A(1 + tA) − V(1 − tV)` | Formel doppelt |
 | 11 | Ø pro Tag teilt durch die gezählten Tage (`countedDays`, wie der Kern heute), nicht durch die Kalendertage wie das Design (`nD`) | Tage ohne Grundumsatz zählen nicht zur Bilanz; ihr Ø wäre sonst zu klein. Golden und Design-Daten: beide 30 | Kalendertage wie Design |
@@ -82,7 +82,7 @@ P6 baut den oberen Teil der Homepage nach dem Hi-Fi-Design (`.claude/design/home
 | M2 — Hero | Hero-Modell mit Satz und VoiceOver-Labels, Komponente, Texte | 3 | 4 | 0 | M1 |
 | M3 — Zeitraum und Seitenaufbau | Segmente, Untertitel, Layout der Bilanz-Seite, Seitenpunkte | 3 | 7 | 0 | M2 |
 | M4 — Datumsbereich-Picker | Kalender-Logik mit Tests, Sheet, „Eigener“ | 3 | 3 | 0 | M3 |
-| M5 — Toleranz-Karte mit Slidern | Slider-Abhängigkeit, Daumen-Bilder, Slider mit Normbereich, Karte, Live-Rechnung | 5 | 5 | 0 | M2, M3 |
+| M5 — Toleranz-Karte mit Slidern | Eigener Slider mit Normbereich, Scroll-Sperre, Karte, Live-Rechnung | 5 | 6 | 0 | M2, M3 |
 | M6 — Galerie, Abnahme, Doku | 1c/1m-Vorgaben in der Galerie, Screenshots, Gerätetest, CLAUDE.md | 0 | 5 | 0 | M4, M5 |
 
 ```
@@ -474,7 +474,7 @@ Keine App-Kürzel (Touch-App). VoiceOver: Sheet modal, „Abbrechen“ zuerst er
 
 ---
 
-### Milestone 5 — Toleranz-Karte mit Slidern
+### ✅ Milestone 5 — Toleranz-Karte mit Slidern
 
 > Die Karte „Messfehler einrechnen“ klappt auf, die zwei nativen Slider zeigen den Normbereich, und der Hero rechnet beim Ziehen live nur aus den Periodensummen.
 
@@ -484,10 +484,9 @@ Keine App-Kürzel (Touch-App). VoiceOver: Sheet modal, „Abbrechen“ zuerst er
 
 | Color | File | Action |
 |-------|------|--------|
-| 🟠 | `package.json`, `package-lock.json` | `npx expo install @react-native-community/slider` |
-| 🟢 | `scripts/make-slider-thumbs.swift` | Erzeugt die Daumen-PNGs aus den Token-Werten (CoreGraphics) |
-| 🟢 | `assets/images/slider-thumb-{light,dark}{,@2x,@3x}.png` | Daumen 24 pt, Rand 2 pt, ohne Schatten |
-| 🟢 | `src/components/marked-slider.tsx` | `MarkedSlider`: Label, Wert, Slider, Normbereich-Band, zwei Nebentexte |
+| 🟢 | `src/components/marked-slider.tsx` | `MarkedSlider` aus Views: Label, Wert, Spur, Normbereich-Band, Füllung, Daumen, zwei Nebentexte; VoiceOver „anpassbar“ ±1 |
+| 🟢 | `src/hooks/scroll-lock.ts` | `ScrollLockContext`: Slider sperrt beim Ziehen die Scroll-Views drumherum |
+| 🟠 | `src/features/balance/components/home-screen.tsx` | Scroll-Sperre für Pager und Bilanz-Seite; `toleranceOpen` durchreichen |
 | 🟢 | `src/features/balance/components/tolerance-card.tsx` | Kopf mit Zusammenfassung und Chevron, offen zwei `MarkedSlider` |
 | 🟢 | `src/features/balance/components/hero-section.tsx` | Hält `draftTolerance` und offen/zu; rendert `BalanceHero` und `ToleranceCard` |
 | 🟠 | `src/features/balance/hero.ts` | `toleranceSummary(tolerance, t)`; `heroModel` nimmt die Spanne aus `toleranceRange` |
@@ -497,10 +496,10 @@ Keine App-Kürzel (Touch-App). VoiceOver: Sheet modal, „Abbrechen“ zuerst er
 
 #### To-Dos
 
-- ✅ Install `@react-native-community/slider` with `npx expo install` (version from Expo SDK 57), check New Architecture support in its README, rebuild the development build (`npx expo run:ios`); note the new dependency’s license in the dependency list _(5.2.0, MIT, Fabric-Komponente; Development Build mit `npx expo run:ios --no-bundler` neu gebaut. Mit `.env.local` heißt der Build `com.scully98.calorieweightbalancer.dev`)_
-- ✅ Create `scripts/make-slider-thumbs.swift`: draws a 24 pt circle, fill = background token, 2 pt stroke = foreground token, transparent outside, for light and dark at 1×/2×/3×; reads the hex values from `src/theme/colors.ts` via arguments; generate the six PNGs into `assets/images/` _(`swift scripts/make-slider-thumbs.swift 0B0B0B FFFFFF F4F4F4 000000`)_
-- ✅ Create `MarkedSlider` (`label`, `value`, `max`, `norm: { min, max }`, `valueText`, `captions: [left, right]`, `onChange`, `onComplete`, `accessibilityLabel`): header row label `body` + value `bodyStrong` (wraps at large type); 34 pt slider area with a `separator` band 8 pt high behind it from `norm.min / max` to the end; native `Slider` with `step={1}`, `minimumTrackTintColor` foreground, `maximumTrackTintColor` separator, `thumbImage` per `useColorScheme()`; captions `footnote` muted _(in `src/components/marked-slider.tsx`; Wert 0 wird als `Number.EPSILON` übergeben, weil der JS-Wrapper 0 als „kein Wert“ behandelt)_
-- 🔲 Align the band with the native track: the thumb center runs from half the thumb width to width minus that; position the band with the same inset (12 pt) and check it on the device at 0, 5 and 20 % (Open Question 4)
+- ✅ ~~Install `@react-native-community/slider`~~ _(installiert, gebaut und wieder entfernt: lädt unter der neuen Architektur kein `thumbImage`, Key Decision 6)_
+- ✅ ~~Create `scripts/make-slider-thumbs.swift` and the six PNGs~~ _(entfallen mit dem eigenen Slider)_
+- ✅ Create `MarkedSlider` _(eigener Slider: Responder-Props an der Spur (`locationX`, die Teile darüber `pointerEvents="none"`), Tipp springt, `onChange` pro Schritt, `onComplete` beim Loslassen; sperrt währenddessen Pager und Seite über `ScrollLockContext`)_
+- ✅ Align the band with the track _(gleicher Einzug 12 pt für Spur, Band, Füllung und Daumen; im Simulator bei 5 % und 10 % beginnt das Band unter der Daumenmitte)_
 - ✅ Create `ToleranceCard` (`tolerance`, `open`, `onToggle`, `onChange`, `onComplete`): border 1,5 pt foreground, radius 14; header `Pressable` min 48 pt with „Messfehler einrechnen“, summary muted right-aligned, chevron rotating; `accessibilityRole="button"`, `accessibilityState={{ expanded: open }}`, label „Messfehler einrechnen, aus“ / „…, Nahrung plus minus 5 Prozent, Verbrauch minus 10 Prozent“; open body: explanation `secondary` muted, slider „Nahrung ±“ (max 20, norm 5–20, captions „Tracking-Einträge sind ungenau“ / „typisch 5–20 %“), slider „Verbrauch −“ (max 30, norm 10–30, captions „Uhren überschätzen eher, nur nach unten“ / „typisch 10–30 %“); values „{n} %“ or „aus“ at 0; norm numbers from `TOLERANCE_NORM`
 - ✅ Create `HeroSection` (`balance`, `initialOpen?`): `const [draft, setDraft] = useState<Tolerance>()`, shown tolerance = `draft ?? settings.tolerance`; `onChange` sets the draft only; `onComplete` → `updateSettings({ tolerance })`, then clears the draft; `heroModel` gets the shown tolerance and computes the range via `toleranceRange` from `balance.foodKcal`, `restingKcal + activeKcal`, `countedDays` (Key Decision 9)
 - ✅ Keep `useBalance` and `buildReport` out of the drag path: `HeroSection` is the only component whose state changes while dragging; `HomeScreen`, the pager and `BalancePage` must not re-render per step (check with React DevTools „Highlight updates“ or a temporary render counter) _(Entwurf liegt nur in `HeroSection`; `HomeScreen`/`BalancePage` lesen die Toleranz nicht mehr. Messung mit Render-Zähler am Gerät steht noch aus (M6))_
@@ -508,15 +507,14 @@ Keine App-Kürzel (Touch-App). VoiceOver: Sheet modal, „Abbrechen“ zuerst er
 - ✅ Test: `heroModel` with a draft 5/10 on the golden balance stored at 0/0 equals `heroModel` with stored 5/10 (same texts and labels) _(schon in M2)_
 - ✅ Accessibility: each slider `accessibilityLabel` „Toleranz Nahrung“ / „Toleranz Verbrauch“, `accessibilityValue` text „5 Prozent“ / „aus“; check that a VoiceOver swipe up/down changes by 1 % (Open Question 1); the hero label updates after each step _(Der Slider reicht unter Fabric keine VoiceOver-Aktionen weiter, UISlider springt 10 % des Bereichs. Deshalb ist eine Hülle um den Slider das „anpassbare“ Element mit `increment`/`decrement` ±1, gespeichert sofort; Prüfung am Gerät in M6)_
 - ✅ Add texts DE: `tolerance.title` „Messfehler einrechnen“, `.off` „aus“, `.summary` „Nahrung ±{{food}} % · Verbrauch −{{burn}} %“, `.summaryFood` „Nahrung ±{{food}} %“, `.summaryBurn` „Verbrauch −{{burn}} %“, `.explain` „Rechnet die Bilanz als Spanne statt als Einzelwert. 0 % heißt aus.“, `.food` „Nahrung ±“, `.foodHint` „Tracking-Einträge sind ungenau“, `.burn` „Verbrauch −“, `.burnHint` „Uhren überschätzen eher, nur nach unten“, `.typical` „typisch {{min}}–{{max}} %“, `.percent` „{{value}} %“, a11y „Toleranz Nahrung“, „Toleranz Verbrauch“, „{{value}} Prozent“. EN: „Include measurement error“, „off“, „Food ±{{food}} % · Burn −{{burn}} %“, „Shows the balance as a range instead of a single value. 0 % means off.“, „Food ±“, „Tracking entries are imprecise“, „Burn −“, „Watches tend to overestimate, downwards only“, „typically {{min}}–{{max}} %“, „Food tolerance“, „Burn tolerance“, „{{value}} percent“
-- 🔲 Check in the simulator: 1a → open card, drag food to 5 and burn to 10 → hero shows „+2.650 bis +19.350 kcal“ during the drag; release; close and reopen the gallery entry → the value comes from the entry’s store; dark mode (1b) shows the dark thumb
+- ✅ Check in the simulator: 1a → open card, drag food to 5 and burn to 10 → hero shows „+2.650 bis +19.350 kcal“ during the drag; release; close and reopen the gallery entry → the value comes from the entry’s store; dark mode (1b) shows the dark thumb _(1c per Deep Link: Karte offen, Slider 5 %/10 %, Kopf bricht sauber um, Hero als Spanne. Ziehen selbst geht im Simulator ohne Tap-Werkzeug nicht, offen für Julius am iPhone (M6). Die Spanne zeigt +2.750 bis +19.000 statt der Golden-Zahlen, weil das Galerie-Szenario einen Null-Tag hat, der nach CLAUDE.md aus den Toleranzsummen bleibt; der Einzelwert +7.000 stimmt)_
 - ✅ Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
-- 🔲 Commit (`feat: add tolerance sliders that update the hero live`)
+- ✅ Commit (`feat: add tolerance sliders that update the hero live`, dann `fix: draw the tolerance slider in views`)
 
 #### Notes / Constraints
 
-> - `UISlider` zeichnet seine Spur selbst (etwa 4 pt hoch, ohne `trackImage`); das Design hat eine 2-pt-Grundspur und 4-pt-Füllung. Die Grundspur wird damit etwas dicker als im Design; das ist beim Vergleich von 1c hinzunehmen (Concern 7).
-> - Farb-Literale stehen nur in `colors.ts` und im Skript-Aufruf; die PNGs sind erzeugte Dateien. V2 (Farbwahl) muss die Bilder neu erzeugen oder auf einen eigenen Daumen wechseln.
-> - `onSlidingComplete` feuert auch nach einem Tipp auf die Spur; ein Tipp ist damit ein Schritt mit sofortigem Speichern.
+> - Der eigene Slider zeichnet Spur 2 pt, Band 8 pt, Füllung 4 pt und Daumen 24 pt wie im Design; keine Abweichung mehr in 1c.
+> - Ein Tipp auf die Spur ist ein Schritt mit sofortigem Speichern (`onComplete` beim Loslassen).
 
 #### 📐 Wireframe — ToleranceCard (offen, 1c)
 
@@ -548,8 +546,7 @@ HeroSection
         ├── AppText — explain
         ├── MarkedSlider — food
         │   ├── HeaderRow (AppText label, AppText value)
-        │   ├── NormBand (View)
-        │   ├── Slider (@react-native-community/slider)
+        │   ├── Track, NormBand, Fill, Thumb (Views, Responder an der Spur)
         │   └── CaptionRow (AppText, AppText)
         └── MarkedSlider — burn
 
@@ -605,7 +602,7 @@ Keine App-Kürzel (Touch-App).
 | 1 | ❓ Ändert VoiceOver den nativen Slider pro Wischen um genau 1 % (Schritt 1) oder um 10 % des Bereichs (UISlider-Standard)? Falls 10 %: reicht das, oder soll ein eigener `accessibilityActions`-Handler (increment/decrement ±1) her? | Julius / M5 | Beantwortet: pro Wischen genau 1 % — Julius 2026-10-24. Falls der native Slider 10 % springt, eigener `accessibilityActions`-Handler (M5) |
 | 2 | ❓ Untergrenze im Picker, wenn Health keinen ersten Datenpunkt liefert (keine Nahrung je, oder Abfrage schlägt fehl): heute − 365 Tage? | Julius | Beantwortet: heute − 365 Tage — Julius 2026-10-24 |
 | 3 | ❓ Woche im Kalender auf Englisch auch ab Montag (wie ISO-Wochen im Chart) oder ab Sonntag (US-üblich)? | Julius | Beantwortet: alle Wochen ab Montag, beide Sprachen — Julius 2026-10-24 |
-| 4 | ❓ Passt das Normbereich-Band hinter dem nativen Slider pixelgenau zur Spur (Einzug des Daumens)? | M5, am Gerät | Keine Entscheidung nötig; Einzug in M5 im Simulator prüfen und ausgleichen |
+| 4 | ❓ Passt das Normbereich-Band hinter dem Slider genau zur Spur? | M5 | Erledigt: eigener Slider mit gleichem Einzug, im Simulator geprüft |
 | 5 | ❓ Zusammenfassung im Kartenkopf, wenn nur eine Seite aktiv ist: nur die aktive Seite („Nahrung ±5 %“) oder beide („Nahrung ±5 % · Verbrauch −0 %“)? Das Design zeigt nur „aus“ oder beide | Julius | M5 zeigt nur die aktive Seite |
 
 ## Concerns & Decisions Log
@@ -618,7 +615,7 @@ Keine App-Kürzel (Touch-App).
 | 4 | ⚠️ Concern | Rundung uneinheitlich: App 10 kcal, Design-Einzelwert ungerundet, Design-Spanne 50 kcal | Einzelwert 10, Spanne 50, Ø ganze kcal, Fett 0,1 kg (Key Decision 4) — Julius 2026-10-24 |
 | 5 | 💡 Alternative | Die Anforderung nennt nur „mehr/weniger gegessen“; eine Spanne über 0 passt zu keinem der beiden | Dritter Satz aus dem Design (Key Decision 5) — Julius 2026-10-24 |
 | 6 | 💡 Alternative | Eigener Slider mit `PanResponder` käme ohne Abhängigkeit, ohne neuen nativen Build und ohne Bilder aus | Nativer `@react-native-community/slider` (Key Decision 6) — Julius 2026-10-24 |
-| 7 | ⚠️ Concern | Der native Slider zeichnet Daumen und Spur selbst: Daumen nur als Bild (Farben im PNG, V2-Farbwahl braucht neue Bilder), Spur ohne `trackImage` etwa 4 pt statt 2 pt | Daumen als `thumbImage` je Farbschema, per Skript aus den Tokens (Key Decision 7) — Julius 2026-10-24; Spurdicke als bekannte Abweichung in 1c |
+| 7 | ⚠️ Concern | Der native Slider zeichnet Daumen und Spur selbst: Daumen nur als Bild (Farben im PNG, V2-Farbwahl braucht neue Bilder), Spur ohne `trackImage` etwa 4 pt statt 2 pt | Daumen als `thumbImage` je Farbschema, per Skript aus den Tokens (Key Decision 7) — Julius 2026-10-24; Spurdicke als bekannte Abweichung in 1c. Überholt durch Concern 16 |
 | 8 | ⚠️ Concern | Ausgegraute Segmente im leeren Zustand (1f) halten auf einem leeren Zeitraum fest | Segmente bleiben bedienbar (Key Decision 17) — Julius 2026-10-24 |
 | 9 | ⚠️ Concern | Heute baut jede Toleranzänderung den ganzen Report neu (Chart, Linien, Analyse) und schreibt in die App Group; pro Slider-Schritt würde das ruckeln | Entwurf im lokalen State, Hero nur über `toleranceRange`, Speichern beim Loslassen (Key Decision 9) |
 | 10 | 💡 Alternative | iOS hat keinen Bereichs-Kalender; zwei native Datumsfelder wären weniger Code | Eigener Kalender wie 1m (Key Decision 13) — Julius 2026-10-24 |
@@ -627,3 +624,5 @@ Keine App-Kürzel (Touch-App).
 | 13 | ⚠️ Concern | Mit Titel und Segmenten in der scrollenden Bilanz-Seite passt die feste Kopfzeile mit Seitenpunkten über dem Pager nicht mehr zum Design | Seitenpunkte neben dem Titel jeder Seite, Kopfzeile entfällt (Key Decision 16) |
 | 14 | ⚠️ Concern | Das Projekt hat keine Komponenten-Tests (kein React Native Testing Library); „sieht aus wie Design“ und „ruckelt nicht“ sind so nicht automatisch prüfbar | Logik in reinen, getesteten Funktionen (`heroModel`, `toleranceRange`, `periodSubtitle`, `date-range`); Optik per Galerie-Screenshot, Flüssigkeit am iPhone (M6) |
 | 15 | ⚠️ Concern | Die Galerie-Badge „UI-Vorgabe folgt mit der Homepage“ hängt an `tolerance` und `picker` | Vorgaben durchreichen, Badge nur noch für Sheet, Tooltip, Abgleich-Teil (M6) |
+| 16 | ⚠️ Concern | Umsetzung M5: `@react-native-community/slider` 5.2.0 lädt `thumbImage` unter der neuen Architektur nicht (`RCTBridge currentBridge` ist `nil`), iOS zeigt seinen Standard-Daumen mit Schatten. VoiceOver brauchte ohnehin eine eigene Hülle (UISlider springt 10 % des Bereichs) | Eigener Slider aus Views, Abhängigkeit, Skript und PNGs entfernt (Key Decision 6) — Julius 2026-10-24 |
+| 17 | ⚠️ Concern | Ein eigener Slider in Pager und ScrollView: die native ScrollView würde das waagerechte Ziehen übernehmen | Slider sperrt beim Ziehen Pager und Seite (`ScrollLockContext`); am iPhone prüfen (M6) |
