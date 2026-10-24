@@ -48,6 +48,43 @@ function divide(range: KcalRange, by: number): KcalRange {
   return { min: range.min / by, max: range.max / by };
 }
 
+// What the tolerance needs from a period; a slider recomputes the range from
+// these sums alone, without the days.
+export type PeriodSums = {
+  foodKcal: number;
+  // Resting + active.
+  burnKcal: number;
+  countedDays: number;
+};
+
+export type ToleranceRange = Pick<
+  PeriodBalance,
+  'range' | 'avgRange' | 'fatRange'
+>;
+
+// Bmin = A(1 − tA) − V, Bmax = A(1 + tA) − V(1 − tV): food ± tA, burn only
+// downwards by tV. At 0 % both ends are the balance.
+export function toleranceRange(
+  { foodKcal, burnKcal, countedDays }: PeriodSums,
+  tolerance: Settings['tolerance'],
+): ToleranceRange {
+  const kcal = foodKcal - burnKcal;
+  const tA = tolerance.foodPercent / 100;
+  const tV = tolerance.burnPercent / 100;
+  const range =
+    tA === 0 && tV === 0
+      ? { min: kcal, max: kcal }
+      : {
+          min: foodKcal * (1 - tA) - burnKcal,
+          max: foodKcal * (1 + tA) - burnKcal * (1 - tV),
+        };
+  return {
+    range,
+    avgRange: divide(range, countedDays || 1),
+    fatRange: divide(range, KCAL_PER_KG_FAT),
+  };
+}
+
 // Sums the days of a period. The tolerance applies to the period sums, not
 // per day: food ± tA, burn only downwards by tV. Zero days add B = 0 and stay
 // out of the sums, so the tolerance only widens real entries.
@@ -85,17 +122,7 @@ export function periodBalance(
     if (day.activeMissing) daysWithoutActive += 1;
   }
 
-  const burn = restingKcal + activeKcal;
-  const kcal = foodKcal - burn;
-  const tA = tolerance.foodPercent / 100;
-  const tV = tolerance.burnPercent / 100;
-  const range =
-    tA === 0 && tV === 0
-      ? { min: kcal, max: kcal }
-      : {
-          min: foodKcal * (1 - tA) - burn,
-          max: foodKcal * (1 + tA) - burn * (1 - tV),
-        };
+  const kcal = foodKcal - (restingKcal + activeKcal);
   const perDay = countedDays || 1;
 
   return {
@@ -114,8 +141,9 @@ export function periodBalance(
     kcal,
     avgKcal: kcal / perDay,
     fatKg: fatKgFromKcal(kcal),
-    range,
-    avgRange: divide(range, perDay),
-    fatRange: divide(range, KCAL_PER_KG_FAT),
+    ...toleranceRange(
+      { foodKcal, burnKcal: restingKcal + activeKcal, countedDays },
+      tolerance,
+    ),
   };
 }

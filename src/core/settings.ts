@@ -24,3 +24,12 @@ export const TOLERANCE_LIMITS: Settings['tolerance'] = {
   foodPercent: 20,
   burnPercent: 30,
 };
+
+// Usual measurement error, marked on each slider.
+export const TOLERANCE_NORM: Record<
+  keyof Settings['tolerance'],
+  { min: number; max: number }
+> = {
+  foodPercent: { min: 5, max: 20 },
+  burnPercent: { min: 10, max: 30 },
+};

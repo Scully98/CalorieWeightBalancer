@@ -1,5 +1,9 @@
 import type { DayBalance, DayFlag } from '../day-balance';
-import { fatKgFromKcal, periodBalance } from '../period-balance';
+import {
+  fatKgFromKcal,
+  periodBalance,
+  toleranceRange,
+} from '../period-balance';
 
 const OFF = { foodPercent: 0, burnPercent: 0 };
 
@@ -171,5 +175,37 @@ describe('periodBalance', () => {
       range: { min: 0, max: 0 },
       avgRange: { min: 0, max: 0 },
     });
+  });
+});
+
+describe('toleranceRange', () => {
+  const days = [day(), zeroDay(), day({ food: 2100 }), day({ active: 400 })];
+
+  it.each([
+    [0, 0],
+    [5, 10],
+    [20, 0],
+    [0, 30],
+  ])('gives the range of periodBalance at %i/%i %%', (food, burn) => {
+    const tolerance = { foodPercent: food, burnPercent: burn };
+    const balance = periodBalance(days, tolerance);
+    const sums = {
+      foodKcal: balance.foodKcal,
+      burnKcal: balance.restingKcal + balance.activeKcal,
+      countedDays: balance.countedDays,
+    };
+    expect(toleranceRange(sums, tolerance)).toEqual({
+      range: balance.range,
+      avgRange: balance.avgRange,
+      fatRange: balance.fatRange,
+    });
+  });
+
+  it('lowers only the burn: min keeps the full burn', () => {
+    const { range } = toleranceRange(
+      { foodKcal: 2000, burnKcal: 2500, countedDays: 1 },
+      { foodPercent: 0, burnPercent: 20 },
+    );
+    expect(range).toEqual({ min: -500, max: 0 });
   });
 });

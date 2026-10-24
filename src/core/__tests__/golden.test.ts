@@ -8,7 +8,13 @@ import {
 } from '../__fixtures__/golden-30';
 import { analyzeBalance } from '../analysis';
 import { dayBalances } from '../day-balance';
-import { formatKcal, formatNumber, formatSignedKg } from '../format';
+import {
+  formatKcal,
+  formatNumber,
+  formatSignedKg,
+  roundKcal,
+  roundRangeKcal,
+} from '../format';
 import { periodBalance } from '../period-balance';
 
 const LOCALE = 'de-DE';
@@ -34,7 +40,9 @@ describe('golden test case', () => {
     expect(balance.kcal).toBe(EXPECTED.kcal);
     expect(balance.avgKcal).toBeCloseTo(EXPECTED.avgKcal);
     expect(balance.fatKg).toBeCloseTo(EXPECTED.fatKg);
-    expect(formatKcal(balance.kcal, LOCALE)).toBe(EXPECTED.formatted.kcal);
+    expect(formatKcal(roundKcal(balance.kcal), LOCALE)).toBe(
+      EXPECTED.formatted.kcal,
+    );
     expect(formatKcal(Math.round(balance.avgKcal), LOCALE)).toBe(
       EXPECTED.formatted.avgKcal,
     );
@@ -44,15 +52,20 @@ describe('golden test case', () => {
   });
 
   it('gives the range with tolerance', () => {
-    const { range, fatRange } = golden();
+    const { range, avgRange, fatRange } = golden();
     expect(range.min).toBeCloseTo(EXPECTED.range.min);
     expect(range.max).toBeCloseTo(EXPECTED.range.max);
-    expect(formatKcal(Math.round(range.min), LOCALE)).toBe(
+    // The hero shows the ends rounded to 50 kcal.
+    expect(formatKcal(roundRangeKcal(range.min), LOCALE)).toBe(
       EXPECTED.formatted.range.min,
     );
-    expect(formatKcal(Math.round(range.max), LOCALE)).toBe(
+    expect(formatKcal(roundRangeKcal(range.max), LOCALE)).toBe(
       EXPECTED.formatted.range.max,
     );
+    expect(avgRange.min).toBeCloseTo(2650 / 30);
+    expect(avgRange.max).toBeCloseTo(645);
+    expect(formatKcal(Math.round(avgRange.min), LOCALE)).toBe('+88');
+    expect(formatKcal(Math.round(avgRange.max), LOCALE)).toBe('+645');
     expect(formatSignedKg(fatRange.min, LOCALE)).toBe(
       EXPECTED.formatted.fatRange.min,
     );
