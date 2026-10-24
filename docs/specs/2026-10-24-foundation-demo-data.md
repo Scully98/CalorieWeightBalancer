@@ -1,6 +1,6 @@
 # Fundament, Datenmodell und Zustandsgalerie (P0 + P1)
 
-Stand 2026-10-24. In Arbeit auf Branch `feature/home-page-base`.
+Stand 2026-10-24. Umgesetzt auf Branch `feature/home-page-base` (M1–M9, CI grün). Offen nur die Prüfungen am iPhone, die im Simulator ohne Tippen bzw. ohne Health-Daten nicht gingen (M4, M7).
 
 ## Overview
 
