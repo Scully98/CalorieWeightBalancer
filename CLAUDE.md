@@ -70,7 +70,7 @@ Drei Screens (Bilanz, Analyse-Chart, Einstellungen) plus Widget.
 Nicht in V1: Farbwahl, Widget-Konfiguration, Zyklus, Zielkalorien, iPad, Schreiben nach HealthKit.
 
 ## Design
-Schwarz auf weiß, Dark Mode invertiert, keine Akzentfarbe. Plus/Minus über Vorzeichen, Balkenrichtung und Beschriftung, nicht Rot/Grün. Systemschrift mit Dynamic Type. Farben von Anfang an über wenige Tokens (Vordergrund, Hintergrund, Akzent, Plus, Minus), damit V2 sie für App und Widget wählbar machen kann.
+Schwarz auf weiß, Dark Mode invertiert, keine Akzentfarbe. Plus/Minus über Vorzeichen, Balkenrichtung und Beschriftung, nicht Rot/Grün. Systemschrift mit Dynamic Type. Farben nur über sechs Tokens in `src/theme/colors.ts` (Vordergrund, Hintergrund, Nebentext, Akzent, Plus, Minus; Werte laut Design: hell #0B0B0B / #FFFFFF / #6B6B6B, dunkel #F4F4F4 / #000000 / #949494, Akzent, Plus und Minus = Vordergrund), damit V2 sie für App und Widget wählbar machen kann. Farb-Literale außerhalb der Token-Datei verbietet ESLint.
 
 ## Plan
 0 Vorab (Name, Nebentätigkeit, Developer Account) · 1 Repo/Expo/EAS/CI · 2 Design-Grundlagen, zweisprachig · 3 Intro inkl. Datenschutzsatz und HealthKit-Anfrage · 4 HealthKit · 5 Rechenkern · 6 Bilanz-Screen und Einstellungen · 7 Chart · 8 Analyse · 9 Widget · 10 TestFlight · 11 Store (Datenschutzerklärung und Impressum z. B. auf GitHub Pages, Label, Screenshots) · 12 Einreichen · 13 V2 (Farben, Widget-Konfiguration, empirischer Erhaltungsbedarf, Zyklus-Band, „Wie lange bis ausgeglichen“).

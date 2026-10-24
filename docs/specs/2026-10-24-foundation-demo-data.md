@@ -85,7 +85,7 @@ Abnahmekriterien → Milestones:
 
 ---
 
-### Milestone 1 — Farb-Tokens & Lint-Regel
+### ✅ Milestone 1 — Farb-Tokens & Lint-Regel
 
 > Die Tokens bekommen die Design-Werte, und Farb-Literale außerhalb der Token-Datei werden zum Lint-Fehler. Danach kann nichts mehr an den Tokens vorbei.
 
@@ -101,14 +101,14 @@ Abnahmekriterien → Milestones:
 
 #### To-Dos
 
-- 🔲 Update light tokens: `foreground #0B0B0B`, `background #FFFFFF`, `muted #6B6B6B`, `accent`/`plus`/`minus` = `#0B0B0B`
-- 🔲 Update dark tokens: `foreground #F4F4F4`, `background #000000`, `muted #949494`, `accent`/`plus`/`minus` = `#F4F4F4`
-- 🔲 Add `withAlpha(color, alpha)` to `src/theme/colors.ts` and a derived `separator` value (`muted` at 35 %) returned by `useColors()` next to the tokens, without adding a seventh token
-- 🔲 Add `no-restricted-syntax` rules for `src/**/*.{ts,tsx}` except `src/theme/colors.ts`: hex literals (`#rgb`, `#rgba`, `#rrggbb`, `#rrggbbaa`), `rgb()/rgba()/hsl()/hsla()` strings, hex or `rgb(` inside template literals, and named colors as values of style or prop keys ending in `color`/`Color` (string literal other than `transparent`), with the message „Use a color token from src/theme/colors.ts.“
-- 🔲 Verify the rule: add a temporary `color: '#FF0000'`, `rgba(0,0,0,.5)` and `tintColor="red"` in a component, run `npm run lint`, expect 3 errors, then remove them
-- 🔲 Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
-- 🔲 Update CLAUDE.md design section (6 tokens, values from the design)
-- 🔲 Commit (`feat: apply design color tokens and forbid color literals`)
+- ✅ Update light tokens: `foreground #0B0B0B`, `background #FFFFFF`, `muted #6B6B6B`, `accent`/`plus`/`minus` = `#0B0B0B`
+- ✅ Update dark tokens: `foreground #F4F4F4`, `background #000000`, `muted #949494`, `accent`/`plus`/`minus` = `#F4F4F4`
+- ✅ Add `withAlpha(color, alpha)` to `src/theme/colors.ts` and a derived `separator` value (`muted` at 35 %) returned by `useColors()` next to the tokens, without adding a seventh token _(`ThemeColors` = Tokens + `separator`; `useColors()` liefert `ThemeColors`; Test in `src/theme/__tests__/colors.test.ts`)_
+- ✅ Add `no-restricted-syntax` rules for `src/**/*.{ts,tsx}` except `src/theme/colors.ts`: hex literals (`#rgb`, `#rgba`, `#rrggbb`, `#rrggbbaa`), `rgb()/rgba()/hsl()/hsla()` strings, hex or `rgb(` inside template literals, and named colors as values of style or prop keys ending in `color`/`Color` (string literal other than `transparent`), with the message „Use a color token from src/theme/colors.ts.“ _(Tests der Token-Datei (`src/theme/__tests__/**`) ebenfalls ausgenommen, sie prüfen Hex-Werte)_
+- ✅ Verify the rule: add a temporary `color: '#FF0000'`, `rgba(0,0,0,.5)` and `tintColor="red"` in a component, run `npm run lint`, expect 3 errors, then remove them _(Probe mit Hex, `rgba()`, Hex im Template-String, `color: red` und JSX `color=red`: alle gemeldet, `transparent` nicht)_
+- ✅ Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
+- ✅ Update CLAUDE.md design section (6 tokens, values from the design)
+- ✅ Commit (`feat: apply design color tokens and forbid color literals`)
 
 #### Notes / Constraints
 
