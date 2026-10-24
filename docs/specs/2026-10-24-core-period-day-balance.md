@@ -140,7 +140,7 @@ Abnahmekriterien → Milestones:
 
 ---
 
-### Milestone 2 — Ruheenergie pro Tag
+### ✅ Milestone 2 — Ruheenergie pro Tag
 
 > Für jeden Tag steht fest, woher R kommt und wie hoch er ist, inklusive Mifflin-St Jeor mit dem Gewicht an/vor dem Tag und dem Alter am Tag.
 
@@ -155,22 +155,22 @@ Abnahmekriterien → Milestones:
 
 #### To-Dos
 
-- 🔲 Create `RestingProfile` (sketch below): height, sex, date of birth or entered age with date, profile weight; all optional
-- 🔲 Create `ageOn(profile, day)`: date of birth → `ageInYears(dateOfBirth, day)`; else entered age → `currentAge(ageYears, ageRecordedOn, day)`; else `undefined`
-- 🔲 Create `weightsByDay(records, weightBeforeKg, profileWeightKg)` → weight per record index: last `weightKg` on or before the day (starting with `weightBeforeKg` from before the period), else the first `weightKg` after the day, else `profileWeightKg`, else `undefined`. One pass forward and one backward, O(n)
-- 🔲 Create `dayResting(record, weightKg, profile, day)` → `{ kcal?: number; source: RestingSource }`:
+- ✅ reate `RestingProfile` (sketch below): height, sex, date of birth or entered age with date, profile weight; all optional
+- ✅ reate `ageOn(profile, day)`: date of birth → `ageInYears(dateOfBirth, day)`; else entered age → `currentAge(ageYears, ageRecordedOn, day)`; else `undefined`
+- ✅ reate `weightsByDay(records, weightBeforeKg, profileWeightKg)` → weight per record index: last `weightKg` on or before the day (starting with `weightBeforeKg` from before the period), else the first `weightKg` after the day, else `profileWeightKg`, else `undefined`. One pass forward and one backward, O(n) _(Lücken in den Messungen werden in einem Vorwärts- und einem Rückwärtsdurchlauf gefüllt)_
+- ✅ reate `dayResting(record, weightKg, profile, day)` → `{ kcal?: number; source: RestingSource }`:
   - `source`: the source supplies an estimate (`restingEstimated` and `resting` set, demo) → its own value
   - `measured`: `resting` set and coverage ≥ 20/24 (or no coverage given)
   - `scaled`: `resting` set and 6/24 ≤ coverage < 20/24 → `resting / coverage`
   - `formula`: no `resting` or coverage < 6/24, and weight, height, age and sex known → `estimateRestingEnergy` with that day's weight and age
   - `missing`: otherwise, `kcal` undefined
-- 🔲 Export `isEstimatedResting(source)`: true for `source` and `formula`, false for `measured` and `scaled` (Key Decision 4)
-- 🔲 Test each source; boundaries exactly at 6/24 and 20/24
-- 🔲 Test weight lookup: measurement on the day itself wins; value from before the period; no earlier value → first later one; no measurement at all → profile weight; nothing → `undefined` → `missing`
-- 🔲 Test age on the day: birthday inside the period changes the result by 5 kcal from that day on; entered age with `ageRecordedOn` one year back is one year higher
-- 🔲 Test `sex: 'unspecified'` uses −78 (existing `SEX_CONSTANT`)
-- 🔲 Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
-- 🔲 Commit (`feat: estimate resting energy per day with weight and age of the day`)
+- ✅ xport `isEstimatedResting(source)`: true for `source` and `formula`, false for `measured` and `scaled` (Key Decision 4)
+- ✅ est each source; boundaries exactly at 6/24 and 20/24
+- ✅ est weight lookup: measurement on the day itself wins; value from before the period; no earlier value → first later one; no measurement at all → profile weight; nothing → `undefined` → `missing` _(Geburtstag am 10.10.: 33 → 34 Jahre, Differenz 5 kcal; eingegebenes Alter mit `ageRecordedOn` 2025-10-01 ergibt ab 01.10.2026 35)_
+- ✅ est age on the day: birthday inside the period changes the result by 5 kcal from that day on; entered age with `ageRecordedOn` one year back is one year higher
+- ✅ est `sex: 'unspecified'` uses −78 (existing `SEX_CONSTANT`)
+- ✅ un `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
+- ✅ ommit (`feat: estimate resting energy per day with weight and age of the day`)
 
 ```ts
 // src/core/resting.ts
