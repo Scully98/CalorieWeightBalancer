@@ -329,7 +329,7 @@ Die App hat keine Tastaturkürzel: reine Touch-App fürs iPhone, keine Web-Versi
 
 ---
 
-### Milestone 5 — CI
+### ✅ Milestone 5 — CI
 
 > GitHub Actions prüft jeden Push und Pull Request mit lint, typecheck und test; damit greift die Farbregel auch im CI.
 
@@ -343,16 +343,16 @@ Die App hat keine Tastaturkürzel: reine Touch-App fürs iPhone, keine Web-Versi
 
 #### To-Dos
 
-- 🔲 Create `.github/workflows/ci.yml`: triggers `push` and `pull_request`; steps `actions/checkout`, `actions/setup-node` (Node LTS, npm cache), `npm ci`, write `expo-env.d.ts`, `npm run lint`, `npm run typecheck`, `npm test`
-- 🔲 Write `expo-env.d.ts` in CI before `typecheck` (`/// <reference types="expo/types" />`); the file is gitignored and only created by `expo start`
-- 🔲 Push the branch and confirm the workflow is green on GitHub
-- 🔲 Confirm a deliberate color literal makes the workflow fail (temporary commit, then revert)
-- 🔲 Commit (`ci: run lint, typecheck and tests on GitHub Actions`)
+- ✅ Create `.github/workflows/ci.yml`: triggers `push` and `pull_request`; steps `actions/checkout`, `actions/setup-node` (Node LTS, npm cache), `npm ci`, write `expo-env.d.ts`, `npm run lint`, `npm run typecheck`, `npm test`
+- ✅ Write `expo-env.d.ts` in CI before `typecheck` (`/// <reference types="expo/types" />`); the file is gitignored and only created by `expo start`
+- ✅ Push the branch and confirm the workflow is green on GitHub _(Run 40100525871 grün, vorher alle Schritte in frischem Clone ohne `.expo/` geprüft)_
+- 🔲 ~~Confirm a deliberate color literal makes the workflow fail (temporary commit, then revert)~~ _(descoped: Regel lokal in M1 belegt, CI ruft denselben `npm run lint`; kein roter Commit in der Historie)_
+- ✅ Commit (`ci: run lint, typecheck and tests on GitHub Actions`)
 
 #### Notes / Constraints
 
 > - Kein EAS-Build im CI; das bleibt manuell (kostet Build-Minuten).
-> - Typed Routes: Ohne generierte `.expo/types` fällt `Href` auf `string` zurück. Scheitert `typecheck` im CI daran, vor dem Typecheck `npx expo customize tsconfig.json` o. Ä. prüfen und das Ergebnis hier nachtragen.
+> - Typed Routes: Ohne generierte `.expo/types` fällt `Href` auf `string` zurück. Geprüft: `typecheck` läuft im frischen Clone ohne `.expo/` grün, keine Zusatzschritte nötig.
 
 #### 🔀 Inbound Flow — CLI: GitHub Actions ci.yml
 
