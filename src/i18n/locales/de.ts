@@ -16,7 +16,8 @@ export const de = {
     placeholder: 'Hier kommen Zeitraum, Messfehler und Null-Tage hin.',
   },
   home: {
-    period: 'Letzte 30 Tage, ohne heute',
+    period_one: 'Letzter Tag, ohne heute',
+    period_other: 'Letzte {{count}} Tage, ohne heute',
     loading: 'Rechne …',
     kcal: '{{value}} kcal',
     sign: 'Plus = mehr gegessen als verbraucht',
@@ -27,8 +28,10 @@ export const de = {
     daysWithoutResting_one: '{{count}} Tag ohne Grundumsatz nicht mitgerechnet',
     daysWithoutResting_other:
       '{{count}} Tage ohne Grundumsatz nicht mitgerechnet',
-    empty:
-      'Keine Nahrungsdaten in den letzten 30 Tagen. Synchronisiert dein Tracker mit Apple Health?',
+    empty_one:
+      'Keine Nahrungsdaten am letzten Tag. Synchronisiert dein Tracker mit Apple Health?',
+    empty_other:
+      'Keine Nahrungsdaten in den letzten {{count}} Tagen. Synchronisiert dein Tracker mit Apple Health?',
     checkPermissions: 'Berechtigungen prüfen',
   },
   data: {
@@ -59,7 +62,8 @@ export const de = {
     activeZero_other: 'an {{count}} Tagen ohne Wert, mit 0 gerechnet',
     rounded: 'Gerundet auf 10 kcal',
     arrivingTitle: 'Was ankommt',
-    arrivingBody: 'Letzte 30 Tage, Quelle des neuesten Eintrags.',
+    arrivingBody_one: 'Letzter Tag, Quelle des neuesten Eintrags.',
+    arrivingBody_other: 'Letzte {{count}} Tage, Quelle des neuesten Eintrags.',
     rows: {
       food: 'Nahrung',
       resting: 'Ruheenergie',

@@ -18,7 +18,8 @@ export const en: typeof de = {
     placeholder: 'Period, measurement error and zero days will live here.',
   },
   home: {
-    period: 'Last 30 days, excluding today',
+    period_one: 'Last day, excluding today',
+    period_other: 'Last {{count}} days, excluding today',
     loading: 'Calculating …',
     kcal: '{{value}} kcal',
     sign: 'Plus = ate more than you burned',
@@ -28,8 +29,10 @@ export const en: typeof de = {
     daysWithoutFood_other: '{{count}} days without an entry counted as neutral',
     daysWithoutResting_one: '{{count}} day without resting energy left out',
     daysWithoutResting_other: '{{count}} days without resting energy left out',
-    empty:
-      'No food data in the last 30 days. Does your tracker sync with Apple Health?',
+    empty_one:
+      'No food data on the last day. Does your tracker sync with Apple Health?',
+    empty_other:
+      'No food data in the last {{count}} days. Does your tracker sync with Apple Health?',
     checkPermissions: 'Check permissions',
   },
   data: {
@@ -59,7 +62,8 @@ export const en: typeof de = {
     activeZero_other: 'no value on {{count}} days, counted as 0',
     rounded: 'Rounded to 10 kcal',
     arrivingTitle: 'What arrives',
-    arrivingBody: 'Last 30 days, source of the newest entry.',
+    arrivingBody_one: 'Last day, source of the newest entry.',
+    arrivingBody_other: 'Last {{count}} days, source of the newest entry.',
     rows: {
       food: 'Food',
       resting: 'Resting energy',

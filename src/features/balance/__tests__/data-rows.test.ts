@@ -112,8 +112,8 @@ describe('buildDataRows', () => {
       t,
     );
     expect(rows.map((row) => [row.key, row.status, row.detail])).toEqual([
-      ['food', 'found', '2 von 30 Tagen'],
-      ['resting', 'found', 'Apple Watch · 3 von 30 Tagen'],
+      ['food', 'found', '2 von 3 Tagen'],
+      ['resting', 'found', 'Apple Watch · 3 von 3 Tagen'],
       ['active', 'missing', 'keine Daten · Zugriff prüfen'],
     ]);
   });

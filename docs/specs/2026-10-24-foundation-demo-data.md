@@ -463,7 +463,7 @@ export type Settings = {
 
 ---
 
-### Milestone 7 — HealthSource
+### ✅ Milestone 7 — HealthSource
 
 > Ein Interface trennt Datenquelle und App. `HealthKitSource` liefert die bestehenden Energiewerte als `DayRecord[]`, `useBalance` liest nur noch darüber und bekommt den Zeitraum als Parameter.
 
@@ -484,21 +484,21 @@ export type Settings = {
 | 🟠 | `src/features/balance/components/balance-page.tsx` | Zeitraum-Text mit Tagesanzahl |
 | 🟠 | `src/i18n/locales/de.ts` | `home.period`, `home.empty`, `data.arrivingBody` mit `{{count}}` |
 | 🟠 | `src/i18n/locales/en.ts` | Dieselben Schlüssel |
-| 🟠 | `src/app/_layout.tsx` | `HealthSourceProvider` um den Stack |
+| 🟠 | `src/app/(tabs)/index.tsx` | Zeitraum an `useBalance`, `days` an beide Seiten _(statt `_layout.tsx`: Provider im Root unnötig)_ |
 
 #### To-Dos
 
-- 🔲 Create `HealthSource` (sketch below)
-- 🔲 Update `queryDailyEnergy` to return `DayRecord[]` with `date` (YYYY-MM-DD, local); `scan.ts` keeps working unchanged
-- 🔲 Create `healthKitSource`: `days` → `queryDailyEnergy`; `profile` → `readHealthProfile`; `latestSources` → `latest()` for food, resting, active; `firstDataDate` → first food sample (as in `scanHealthData`). Weight, body fat and lean mass stay `undefined` until step 4/8
-- 🔲 Create `HealthSourceProvider` and `useHealthSource()`; wrap the root stack in `src/app/_layout.tsx`
-- 🔲 Update `useBalance(period = { kind: 'days', days: 30 })`: resolve via `resolvePeriod`, load through the source, keep the `BalanceReport` shape so both pages stay unchanged
-- 🔲 Make the loader depend on source and period (new load when either changes)
-- 🔲 Replace fixed „30“ in `home.period`, `home.empty` and `data.arrivingBody` with `{{count}}` plural keys (DE/EN)
-- 🔲 Test `healthKitSource` with the existing `fake-statistics` fixture: dates, sums, coverage, missing days
-- 🔲 Check on the device or simulator that the Bilanz tab shows the same numbers as before the change
-- 🔲 Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
-- 🔲 Commit (`refactor: read Health data through a HealthSource interface`)
+- ✅ Create `HealthSource` (sketch below)
+- ✅ Update `queryDailyEnergy` to return `DayRecord[]` with `date` (YYYY-MM-DD, local); `scan.ts` keeps working unchanged
+- ✅ Create `healthKitSource`: `days` → `queryDailyEnergy`; `profile` → `readHealthProfile`; `latestSources` → `latest()` for food, resting, active; `firstDataDate` → first food sample (as in `scanHealthData`). Weight, body fat and lean mass stay `undefined` until step 4/8
+- ✅ Create `HealthSourceProvider` and `useHealthSource()`; wrap the root stack in `src/app/_layout.tsx` _(kein Wrapper im Root nötig: der Default-Wert des Contexts ist `healthKitSource`; `_layout.tsx` bleibt unverändert)_
+- ✅ Update `useBalance(period = { kind: 'days', days: 30 })`: resolve via `resolvePeriod`, load through the source, keep the `BalanceReport` shape so both pages stay unchanged _(Seiten bekommen `days` (Tage des Zeitraums) als Prop; `EnergyKey` lebt jetzt in `health/source.ts`)_
+- ✅ Make the loader depend on source and period (new load when either changes) _(`useCallback` auf Quelle und `JSON.stringify(period)`, damit ein neues Objekt mit gleichem Inhalt nicht neu lädt)_
+- ✅ Replace fixed „30“ in `home.period`, `home.empty` and `data.arrivingBody` with `{{count}}` plural keys (DE/EN) _(plus `data.daysOf` mit `report.balance.days`; `data-rows`-Test erwartet jetzt „von 3 Tagen“ (Fixture hat 3 Tage))_
+- ✅ Test `healthKitSource` with the existing `fake-statistics` fixture: dates, sums, coverage, missing days
+- ✅ Check on the device or simulator that the Bilanz tab shows the same numbers as before the change _(Simulator ohne Health-Daten: gleiche Texte wie vorher (leerer Zustand, „Letzte 30 Tage“). Vergleich mit echten Zahlen offen für Julius am iPhone)_
+- ✅ Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
+- ✅ Commit (`refactor: read Health data through a HealthSource interface`)
 
 ```ts
 // src/health/source.ts

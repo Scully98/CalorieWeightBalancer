@@ -1,4 +1,5 @@
 import type { SourceRevision } from '@kingstinct/react-native-healthkit';
+import { useCallback } from 'react';
 
 import {
   estimateFromInputs,
@@ -11,18 +12,17 @@ import {
   type DayEnergy,
   type PeriodBreakdown,
 } from '@/core/balance';
-import { queryDailyEnergy } from '@/health/daily-energy';
-import { QUANTITY } from '@/health/read-types';
-import { latest, readHealthProfile } from '@/health/scan';
+import { resolvePeriod, type Period } from '@/core/period';
+import { DEFAULT_SETTINGS } from '@/core/settings';
+import type { EnergyKey, HealthSource } from '@/health/source';
+import { useHealthSource } from '@/health/source-context';
 import {
   useForegroundRefresh,
   type LoadState,
 } from '@/hooks/use-foreground-refresh';
 import { getProfile } from '@/storage/settings';
 
-export const BALANCE_DAYS = 30;
-
-export type EnergyKey = 'food' | 'resting' | 'active';
+export type { EnergyKey } from '@/health/source';
 
 export const ENERGY_KEYS: readonly EnergyKey[] = ['food', 'resting', 'active'];
 
@@ -48,20 +48,19 @@ function countDays(days: readonly DayEnergy[], key: EnergyKey): number {
   return days.filter((day) => day[key] !== undefined).length;
 }
 
-// The last BALANCE_DAYS complete days; today is still running and left out.
-async function loadBalance(): Promise<BalanceReport> {
-  const now = new Date();
-  const start = new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate() - BALANCE_DAYS,
-  );
-  const [days, profile, food, resting, active] = await Promise.all([
-    queryDailyEnergy(start, BALANCE_DAYS),
-    readHealthProfile(),
-    latest(QUANTITY.food),
-    latest(QUANTITY.resting),
-    latest(QUANTITY.active),
+// Complete days of the period; today is still running and left out.
+async function loadBalance(
+  source: HealthSource,
+  period: Period,
+  now: Date,
+): Promise<BalanceReport> {
+  const firstDataDate =
+    period.kind === 'all' ? await source.firstDataDate() : undefined;
+  const { start, days: count } = resolvePeriod(period, now, { firstDataDate });
+  const [days, profile, sources] = await Promise.all([
+    source.days(start, count),
+    source.profile(),
+    source.latestSources(),
   ]);
 
   const typical = typicalResting(days);
@@ -84,14 +83,19 @@ async function loadBalance(): Promise<BalanceReport> {
       resting: countDays(days, 'resting'),
       active: countDays(days, 'active'),
     },
-    sources: {
-      food: food.source,
-      resting: resting.source,
-      active: active.source,
-    },
+    sources,
   };
 }
 
-export function useBalance(): BalanceState {
-  return useForegroundRefresh(loadBalance);
+export function useBalance(
+  period: Period = DEFAULT_SETTINGS.period,
+): BalanceState {
+  const source = useHealthSource();
+  // A new period object with the same content must not trigger a reload.
+  const periodKey = JSON.stringify(period);
+  const load = useCallback(
+    () => loadBalance(source, JSON.parse(periodKey) as Period, new Date()),
+    [source, periodKey],
+  );
+  return useForegroundRefresh(load);
 }

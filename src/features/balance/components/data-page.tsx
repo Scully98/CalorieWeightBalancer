@@ -82,7 +82,7 @@ function Report({ report }: { report: BalanceReport }) {
         <Headline
           level="h3"
           title={t('data.arrivingTitle')}
-          subline={t('data.arrivingBody')}
+          subline={t('data.arrivingBody', { count: report.balance.days })}
         />
         {buildDataRows(report, t).map((row) => (
           <StatusRow
@@ -118,12 +118,24 @@ function Report({ report }: { report: BalanceReport }) {
 }
 
 // Second page: what arrives from Health and how the balance adds up.
-export function DataPage({ state }: { state: BalanceState }) {
+export function DataPage({
+  state,
+  days,
+}: {
+  state: BalanceState;
+  // Days of the period; undefined while a period like "all" is loading.
+  days?: number;
+}) {
   const { t } = useTranslation();
 
   return (
     <ScrollView contentContainerStyle={styles.content}>
-      <Headline title={t('data.title')} subline={t('home.period')} />
+      <Headline
+        title={t('data.title')}
+        subline={
+          days === undefined ? undefined : t('home.period', { count: days })
+        }
+      />
       {state.status === 'done' ? (
         <Report report={state.value} />
       ) : state.status === 'error' ? (

@@ -2,7 +2,6 @@ import type { TFunction } from 'i18next';
 
 import type { FallbackInputs } from './resting-fallback';
 import {
-  BALANCE_DAYS,
   ENERGY_KEYS,
   type BalanceReport,
   type EnergyKey,
@@ -132,7 +131,7 @@ export function buildDataRows(report: BalanceReport, t: TFunction): DataRow[] {
     const detail = found
       ? [
           sourceLabel(report.sources[key]),
-          t('data.daysOf', { count, days: BALANCE_DAYS }),
+          t('data.daysOf', { count, days: report.balance.days }),
         ]
           .filter(Boolean)
           .join(' · ')

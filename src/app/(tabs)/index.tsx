@@ -12,6 +12,7 @@ import { PageIndicator } from '@/components/page-indicator';
 import { BalancePage } from '@/features/balance/components/balance-page';
 import { DataPage } from '@/features/balance/components/data-page';
 import { useBalance } from '@/features/balance/use-balance';
+import { DEFAULT_SETTINGS } from '@/core/settings';
 import { space } from '@/theme/spacing';
 import { useColors } from '@/theme/use-colors';
 
@@ -23,7 +24,14 @@ export default function HomeScreen() {
   const colors = useColors();
   const { t } = useTranslation();
   const { width } = useWindowDimensions();
-  const state = useBalance();
+  const period = DEFAULT_SETTINGS.period;
+  const state = useBalance(period);
+  const days =
+    state.status === 'done'
+      ? state.value.balance.days
+      : period.kind === 'days'
+        ? period.days
+        : undefined;
   const pager = useRef<ScrollView>(null);
   const [page, setPage] = useState(0);
 
@@ -58,10 +66,14 @@ export default function HomeScreen() {
         style={styles.flex}
       >
         <View style={{ width }}>
-          <BalancePage state={state} onShowData={() => showPage(1)} />
+          <BalancePage
+            state={state}
+            days={days}
+            onShowData={() => showPage(1)}
+          />
         </View>
         <View style={{ width }}>
-          <DataPage state={state} />
+          <DataPage state={state} days={days} />
         </View>
       </ScrollView>
     </SafeAreaView>

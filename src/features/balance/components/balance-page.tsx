@@ -14,10 +14,11 @@ import { space } from '@/theme/spacing';
 type BalanceSummaryProps = {
   // Without a balance (failed load) the empty state is shown.
   balance?: PeriodBalance;
+  days?: number;
   onShowData: () => void;
 };
 
-function BalanceSummary({ balance, onShowData }: BalanceSummaryProps) {
+function BalanceSummary({ balance, days, onShowData }: BalanceSummaryProps) {
   const { t } = useTranslation();
   const locale = formatLocale();
 
@@ -27,7 +28,9 @@ function BalanceSummary({ balance, onShowData }: BalanceSummaryProps) {
   if (!balance || balance.daysWithoutFood === balance.days) {
     return (
       <>
-        <AppText style={styles.center}>{t('home.empty')}</AppText>
+        <AppText style={styles.center}>
+          {t('home.empty', { count: balance?.days ?? days ?? 0 })}
+        </AppText>
         <View style={styles.group}>
           <Button
             variant="secondary"
@@ -81,21 +84,29 @@ function BalanceSummary({ balance, onShowData }: BalanceSummaryProps) {
 
 type BalancePageProps = {
   state: BalanceState;
+  // Days of the period; undefined while a period like "all" is loading.
+  days?: number;
   onShowData: () => void;
 };
 
-export function BalancePage({ state, onShowData }: BalancePageProps) {
+export function BalancePage({ state, days, onShowData }: BalancePageProps) {
   const { t } = useTranslation();
 
   return (
     <ScrollView contentContainerStyle={styles.content}>
-      <AppText variant="bodyStrong" style={styles.center}>
-        {t('home.period')}
-      </AppText>
+      {days === undefined ? null : (
+        <AppText variant="bodyStrong" style={styles.center}>
+          {t('home.period', { count: days })}
+        </AppText>
+      )}
       {state.status === 'done' ? (
-        <BalanceSummary balance={state.value.balance} onShowData={onShowData} />
+        <BalanceSummary
+          balance={state.value.balance}
+          days={days}
+          onShowData={onShowData}
+        />
       ) : state.status === 'error' ? (
-        <BalanceSummary onShowData={onShowData} />
+        <BalanceSummary days={days} onShowData={onShowData} />
       ) : (
         <AppText variant="secondary" tone="muted" style={styles.center}>
           {t('home.loading')}
