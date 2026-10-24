@@ -1,4 +1,5 @@
 export type ColorTokens = {
+  // Text, lines and card borders.
   foreground: string;
   background: string;
   // Secondary text, dashed lines and disabled states.
@@ -8,24 +9,40 @@ export type ColorTokens = {
   minus: string;
 };
 
+// Values computed from the tokens, not tokens of their own.
+export type ThemeColors = ColorTokens & {
+  // Grid lines and separators: muted at 35 %.
+  separator: string;
+};
+
 // V1 has no accent color: plus and minus are told apart by sign, bar direction
 // and labels. The tokens exist so V2 can make them user-selectable.
 const light: ColorTokens = {
-  foreground: '#000000',
+  foreground: '#0B0B0B',
   background: '#FFFFFF',
-  muted: '#6E6E6E',
-  accent: '#000000',
-  plus: '#000000',
-  minus: '#000000',
+  muted: '#6B6B6B',
+  accent: '#0B0B0B',
+  plus: '#0B0B0B',
+  minus: '#0B0B0B',
 };
 
 const dark: ColorTokens = {
-  foreground: '#FFFFFF',
+  foreground: '#F4F4F4',
   background: '#000000',
-  muted: '#A0A0A0',
-  accent: '#FFFFFF',
-  plus: '#FFFFFF',
-  minus: '#FFFFFF',
+  muted: '#949494',
+  accent: '#F4F4F4',
+  plus: '#F4F4F4',
+  minus: '#F4F4F4',
 };
 
-export const colors = { light, dark };
+// "#RRGGBB" plus alpha 0–1 → "#RRGGBBAA".
+export function withAlpha(color: string, alpha: number): string {
+  const byte = Math.round(Math.min(1, Math.max(0, alpha)) * 255);
+  return `${color.slice(0, 7)}${byte.toString(16).padStart(2, '0').toUpperCase()}`;
+}
+
+function theme(tokens: ColorTokens): ThemeColors {
+  return { ...tokens, separator: withAlpha(tokens.muted, 0.35) };
+}
+
+export const colors = { light: theme(light), dark: theme(dark) };

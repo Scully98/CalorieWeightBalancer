@@ -12,7 +12,7 @@ import { StyleSheet, useColorScheme, View } from 'react-native';
 import { AppText } from '@/components/app-text';
 import { Button } from '@/components/button';
 import '@/i18n';
-import { useIntroCompleted } from '@/storage/settings';
+import { useIntroCompleted } from '@/storage/settings-context';
 import { space } from '@/theme/spacing';
 import { useColors } from '@/theme/use-colors';
 
@@ -44,7 +44,15 @@ export default function RootLayout() {
     <ThemeProvider value={theme}>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Protected guard={introCompleted}>
-          <Stack.Screen name="index" />
+          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="settings/resting-estimate" />
+          <Stack.Screen name="settings/calculation" />
+        </Stack.Protected>
+        {/* Development only; the routes are empty in release builds. */}
+        <Stack.Protected guard={__DEV__ && introCompleted}>
+          <Stack.Screen name="dev/gallery" />
+          <Stack.Screen name="dev/[entry]" />
+          <Stack.Screen name="dev/day-values" />
         </Stack.Protected>
         <Stack.Protected guard={!introCompleted}>
           <Stack.Screen name="intro" />

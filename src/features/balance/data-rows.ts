@@ -1,17 +1,28 @@
 import type { TFunction } from 'i18next';
 
-import type { FallbackInputs } from './resting-fallback';
+import type { EstimateKey, EstimateSummary } from './resting-fallback';
 import {
-  BALANCE_DAYS,
-  ENERGY_KEYS,
+  DATA_KEYS,
   type BalanceReport,
+  type DataKey,
   type EnergyKey,
-  type RestingFallback,
 } from './use-balance';
 import type { Status } from '@/components/status-row';
-import type { PeriodBreakdown } from '@/core/balance';
+import type { PeriodBalance } from '@/core/period-balance';
 import { formatNumber, formatSigned, roundKcal } from '@/core/format';
 import { sourceLabel } from '@/features/intro/found-rows';
+
+// Header of both pages; undefined while a period like "all" is loading.
+export function periodText(
+  days: number | undefined,
+  includeToday: boolean,
+  t: TFunction,
+): string | undefined {
+  if (days === undefined) return undefined;
+  return t(includeToday ? 'home.periodWithToday' : 'home.period', {
+    count: days,
+  });
+}
 
 export type CalcLine = {
   key: EnergyKey | 'total';
@@ -21,7 +32,7 @@ export type CalcLine = {
 };
 
 export type DataRow = {
-  key: EnergyKey;
+  key: DataKey;
   status: Status;
   label: string;
   detail: string;
@@ -29,33 +40,34 @@ export type DataRow = {
 };
 
 export type EstimateLine = {
-  key: keyof FallbackInputs;
+  key: EstimateKey;
   label: string;
   detail: string;
 };
 
+// Days in the food, resting and active sums. Zero days count in the balance
+// with B = 0 but stay out of the sums.
+export function summedDays(balance: PeriodBalance): number {
+  return balance.countedDays - balance.maintenanceDays;
+}
+
 // Food − resting − active = balance, with the same rounding as the balance
 // page, so the total matches the big number there.
 export function buildCalcLines(
-  balance: PeriodBreakdown,
-  fallback: RestingFallback | undefined,
+  balance: PeriodBalance,
   t: TFunction,
   locale: string,
 ): CalcLine[] {
   const kcal = (value: number) =>
     t('home.kcal', { value: formatNumber(roundKcal(value), locale) });
+  const summed = summedDays(balance);
   const avg = (value: number) =>
-    formatNumber(roundKcal(value / balance.countedDays), locale);
+    formatNumber(roundKcal(value / summed), locale);
 
   const resting = [t('data.avg', { value: avg(balance.restingKcal) })];
-  if (balance.restingFallbackDays > 0) {
+  if (balance.restingEstimatedDays > 0) {
     resting.push(
-      t(
-        fallback?.kind === 'typical'
-          ? 'data.restingTypical'
-          : 'data.restingEstimate',
-        { count: balance.restingFallbackDays },
-      ),
+      t('data.restingEstimate', { count: balance.restingEstimatedDays }),
     );
   }
   if (balance.restingScaledDays > 0) {
@@ -64,13 +76,10 @@ export function buildCalcLines(
 
   // Switched-off active energy looks like 0 kcal, so it is named explicitly.
   const active =
-    balance.daysWithoutActive === balance.countedDays
+    balance.daysWithoutActive === summed
       ? [t('data.activeMissing')]
       : [t('data.avg', { value: avg(balance.activeKcal) })];
-  if (
-    balance.daysWithoutActive > 0 &&
-    balance.daysWithoutActive < balance.countedDays
-  ) {
+  if (balance.daysWithoutActive > 0 && balance.daysWithoutActive < summed) {
     active.push(t('data.activeZero', { count: balance.daysWithoutActive }));
   }
 
@@ -81,7 +90,7 @@ export function buildCalcLines(
       value: kcal(balance.foodKcal),
       detail: t('data.avgDays', {
         value: avg(balance.foodKcal),
-        count: balance.countedDays,
+        count: summed,
       }),
     },
     {
@@ -106,41 +115,40 @@ export function buildCalcLines(
   ];
 }
 
-export function buildCalcNotes(
-  balance: PeriodBreakdown,
-  t: TFunction,
-): string[] {
+export function buildCalcNotes(balance: PeriodBalance, t: TFunction): string[] {
   const notes: string[] = [];
-  if (balance.daysWithoutFood > 0) {
-    notes.push(t('home.daysWithoutFood', { count: balance.daysWithoutFood }));
+  if (balance.maintenanceDays > 0) {
+    notes.push(t('home.daysWithoutFood', { count: balance.maintenanceDays }));
   }
-  if (balance.daysWithoutResting > 0) {
-    notes.push(
-      t('home.daysWithoutResting', { count: balance.daysWithoutResting }),
-    );
+  if (balance.excludedDays > 0) {
+    notes.push(t('home.daysWithoutResting', { count: balance.excludedDays }));
   }
   notes.push(t('data.rounded'));
   return notes;
 }
 
+// Without a scale no measurement is normal, but denied access looks the same.
+function missingText(key: DataKey, report: BalanceReport) {
+  if (key === 'weight' || key === 'bodyFat') return 'data.noMeasurements';
+  return key === 'resting' && report.estimate
+    ? 'data.missingEstimate'
+    : 'data.missing';
+}
+
 // Which values arrive from Health over the period, and from where.
 export function buildDataRows(report: BalanceReport, t: TFunction): DataRow[] {
-  return ENERGY_KEYS.map((key) => {
+  return DATA_KEYS.map((key) => {
     const count = report.daysWithData[key];
     const found = count > 0;
     const label = t(`data.rows.${key}`);
     const detail = found
       ? [
           sourceLabel(report.sources[key]),
-          t('data.daysOf', { count, days: BALANCE_DAYS }),
+          t('data.daysOf', { count, days: report.balance.days }),
         ]
           .filter(Boolean)
           .join(' · ')
-      : t(
-          key === 'resting' && report.fallback?.kind === 'estimate'
-            ? 'data.missingEstimate'
-            : 'data.missing',
-        );
+      : t(missingText(key, report));
     const status = found ? 'found' : 'missing';
     return {
       key,
@@ -158,7 +166,7 @@ export function buildDataRows(report: BalanceReport, t: TFunction): DataRow[] {
 
 // The inputs behind the resting energy estimate and where each comes from.
 export function buildEstimateLines(
-  inputs: FallbackInputs,
+  inputs: EstimateSummary,
   t: TFunction,
   locale: string,
 ): EstimateLine[] {
@@ -176,7 +184,7 @@ export function buildEstimateLines(
   return [
     {
       key: 'weightKg',
-      label: t('intro.found.bmr.weight'),
+      label: t('data.estimateWeight'),
       detail: sourced(
         `${formatNumber(inputs.weightKg.value, locale, 1)} kg`,
         inputs.weightKg.fromHealth,
@@ -201,7 +209,7 @@ export function buildEstimateLines(
     {
       key: 'sex',
       label: t('intro.found.bmr.sex'),
-      detail: sourced(sexLabels[inputs.sex.shown], inputs.sex.fromHealth),
+      detail: sourced(sexLabels[inputs.sex.value], inputs.sex.fromHealth),
     },
   ];
 }

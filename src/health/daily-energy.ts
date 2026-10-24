@@ -2,7 +2,8 @@ import { queryStatisticsCollectionForQuantity } from '@kingstinct/react-native-h
 
 import { QUANTITY } from './read-types';
 import { safe } from './safe';
-import type { DayEnergy } from '@/core/balance';
+import { addDays } from '@/core/dates';
+import { toDateKey, type DayRecord } from '@/core/day-record';
 
 const ENERGY = {
   food: QUANTITY.food,
@@ -16,10 +17,6 @@ const HOUR_MS = 60 * 60 * 1000;
 
 function dayKey(date: Date): string {
   return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
-}
-
-function addDays(date: Date, days: number): Date {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate() + days);
 }
 
 // kcal sums per bucket; statistics queries deduplicate iPhone and Watch.
@@ -74,11 +71,11 @@ async function restingHours(
   return hours;
 }
 
-// One entry per calendar day, starting at the local midnight `start`.
+// One record per calendar day, starting at the local midnight `start`.
 export async function queryDailyEnergy(
   start: Date,
   days: number,
-): Promise<DayEnergy[]> {
+): Promise<DayRecord[]> {
   const end = addDays(start, days);
   const [food, resting, active, hours] = await Promise.all([
     dailySums('food', start, end),
@@ -94,6 +91,7 @@ export async function queryDailyEnergy(
     const hoursInDay = (addDays(day, 1).getTime() - day.getTime()) / HOUR_MS;
     const restingHoursOfDay = hours.get(key);
     return {
+      date: toDateKey(day),
       food: food.get(key),
       resting: resting.get(key),
       active: active.get(key),

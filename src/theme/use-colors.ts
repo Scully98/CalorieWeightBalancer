@@ -1,7 +1,7 @@
 import { useColorScheme } from 'react-native';
 
-import { colors, type ColorTokens } from './colors';
+import { colors, type ThemeColors } from './colors';
 
-export function useColors(): ColorTokens {
+export function useColors(): ThemeColors {
   return useColorScheme() === 'dark' ? colors.dark : colors.light;
 }

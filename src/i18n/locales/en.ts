@@ -9,8 +9,82 @@ export const en: typeof de = {
     permissionsPath:
       'In Health: profile picture → Apps → Kcalwaage. There you see every value and can switch it on or off.',
   },
+  tabs: {
+    balance: 'Balance',
+    settings: 'Settings',
+  },
+  settings: {
+    title: 'Settings',
+    calculation: 'Calculation',
+    zeroDays: 'Empty days = maintenance',
+    zeroDaysDetail:
+      'Days without food entries count as 0 instead of a full deficit.',
+    includeToday: 'Include today',
+    includeTodayDetail:
+      "The day isn't over; your burn keeps rising until midnight.",
+    data: 'Data',
+    restingEstimate: 'Resting energy estimate',
+    restingMissing: 'missing',
+    healthPermissions: 'Health permissions',
+    info: 'Info',
+    language: 'Language',
+    languageName: 'English',
+    calculationPage: 'How is it calculated?',
+    privacy: 'Privacy',
+    imprint: 'Imprint',
+    footer: 'Not medical advice · v{{version}}',
+    back: '‹ Settings',
+    estimate: {
+      body: 'For days without measured resting energy, the app estimates it with Mifflin-St Jeor. Health values come first; you can only enter what Health lacks.',
+      cardTitle: 'Your values',
+      cardBody:
+        'Stored only on your iPhone. A changed weight or age applies from today.',
+      allFromHealth:
+        'Everything comes from Health. The estimate only applies to days without measured resting energy.',
+      loading: 'Reading Health …',
+      save: 'Save',
+    },
+  },
+  calculation: {
+    title: 'How is it calculated?',
+    balance: {
+      title: 'Balance',
+      body: 'Per day: food minus burn (resting + active energy). Plus means you ate more than you burned. The days of the period are added up.',
+    },
+    zeroDays: {
+      title: 'Days without entries',
+      body: 'With “Empty days = maintenance” on, a day without food entries counts as 0 instead of a full deficit. The number of such days is shown below the balance. Days with less than {{lowFood}} % of the burn count as unusually little food.',
+    },
+    today: {
+      title: 'Today',
+      body: 'The running day doesn’t count by default, because food and burn are still missing. “Include today” adds it.',
+    },
+    tolerance: {
+      title: 'Measurement error',
+      body: 'Labels and watches are imprecise. With tolerance the balance shows a range: food ± up to {{food}} %, burn only downwards up to {{burn}} %, applied to the sums of the period.',
+    },
+    fat: {
+      title: 'Body fat',
+      body: 'Balance ÷ {{kcalPerKg}} kcal per kg of fat tissue. This is theoretical: early in a diet mostly water and glycogen change.',
+    },
+    resting: {
+      title: 'Estimated resting energy',
+      body: 'Without resting energy (no watch), the app estimates it with Mifflin-St Jeor from weight, height, age and sex. These days are marked as “estimated”.',
+    },
+    analysis: {
+      title: 'Comparison with the scale',
+      body: 'From the change in fat and lean mass ({{fat}} and {{lean}} kcal per kg, Hall 2008) and your food, the app estimates your actual burn. From {{days}} days and {{measurements}} measurements; start and end as a {{trend}}-day trend.',
+    },
+    medical: {
+      title: 'Not medical advice',
+      body: 'The app calculates with your Health data and does not replace a doctor.',
+    },
+  },
   home: {
-    period: 'Last 30 days, excluding today',
+    period_one: 'Last day, excluding today',
+    period_other: 'Last {{count}} days, excluding today',
+    periodWithToday_one: 'Today',
+    periodWithToday_other: 'Last {{count}} days, including today',
     loading: 'Calculating …',
     kcal: '{{value}} kcal',
     sign: 'Plus = ate more than you burned',
@@ -20,8 +94,10 @@ export const en: typeof de = {
     daysWithoutFood_other: '{{count}} days without an entry counted as neutral',
     daysWithoutResting_one: '{{count}} day without resting energy left out',
     daysWithoutResting_other: '{{count}} days without resting energy left out',
-    empty:
-      'No food data in the last 30 days. Does your tracker sync with Apple Health?',
+    empty_one:
+      'No food data on the last day. Does your tracker sync with Apple Health?',
+    empty_other:
+      'No food data in the last {{count}} days. Does your tracker sync with Apple Health?',
     checkPermissions: 'Check permissions',
   },
   data: {
@@ -42,8 +118,6 @@ export const en: typeof de = {
     avg: 'avg. {{value}} kcal per day',
     restingEstimate_one: 'estimated on {{count}} day',
     restingEstimate_other: 'estimated on {{count}} days',
-    restingTypical_one: 'filled in with your median on {{count}} day',
-    restingTypical_other: 'filled in with your median on {{count}} days',
     restingScaled_one: '{{count}} partial day scaled up',
     restingScaled_other: '{{count}} partial days scaled up',
     activeMissing: 'missing, counted as 0',
@@ -51,18 +125,23 @@ export const en: typeof de = {
     activeZero_other: 'no value on {{count}} days, counted as 0',
     rounded: 'Rounded to 10 kcal',
     arrivingTitle: 'What arrives',
-    arrivingBody: 'Last 30 days, source of the newest entry.',
+    arrivingBody_one: 'Last day, source of the newest entry.',
+    arrivingBody_other: 'Last {{count}} days, source of the newest entry.',
     rows: {
       food: 'Food',
       resting: 'Resting energy',
       active: 'Active energy',
+      weight: 'Weight',
+      bodyFat: 'Body fat',
     },
     daysOf: '{{count}} of {{days}} days',
     missing: 'no data · check access',
     missingEstimate: 'no data → estimated',
+    noMeasurements: 'no measurements · check access',
     estimateTitle: 'Estimated resting energy',
     estimateBody:
-      'For days without measured resting energy, after Mifflin-St Jeor from these details.',
+      'For days without measured resting energy, after Mifflin-St Jeor. Weight and age apply on each day; shown are the values of the last estimated day.',
+    estimateWeight: 'Weight (last measurement)',
     fromInput: '{{value}} · your entry',
     openHealth: 'Open Health',
   },

@@ -8,12 +8,13 @@ import { Divider } from '@/components/divider';
 import { Headline } from '@/components/headline';
 import { InfoRow } from '@/components/info-row';
 import { StatusRow } from '@/components/status-row';
-import { formatApproxKcal } from '@/core/format';
+import { formatNumber, roundKcal } from '@/core/format';
 import {
   buildCalcLines,
   buildCalcNotes,
   buildDataRows,
   buildEstimateLines,
+  summedDays,
   type CalcLine,
 } from '@/features/balance/data-rows';
 import type {
@@ -53,15 +54,15 @@ function CalcRow({ line }: { line: CalcLine }) {
 function Report({ report }: { report: BalanceReport }) {
   const { t } = useTranslation();
   const locale = formatLocale();
-  const { balance, fallback } = report;
-  const lines = buildCalcLines(balance, fallback, t, locale);
+  const { balance, estimate } = report;
+  const lines = buildCalcLines(balance, t, locale);
   const total = lines[lines.length - 1];
 
   return (
     <>
       <Card>
         <Headline level="h3" title={t('data.calcTitle')} />
-        {balance.countedDays === 0 ? (
+        {summedDays(balance) === 0 ? (
           <AppText>{t('data.noCalc')}</AppText>
         ) : (
           <>
@@ -82,7 +83,7 @@ function Report({ report }: { report: BalanceReport }) {
         <Headline
           level="h3"
           title={t('data.arrivingTitle')}
-          subline={t('data.arrivingBody')}
+          subline={t('data.arrivingBody', { count: report.balance.days })}
         />
         {buildDataRows(report, t).map((row) => (
           <StatusRow
@@ -94,7 +95,7 @@ function Report({ report }: { report: BalanceReport }) {
           />
         ))}
       </View>
-      {fallback?.kind === 'estimate' ? (
+      {estimate ? (
         <Card>
           <Headline
             level="h3"
@@ -102,14 +103,17 @@ function Report({ report }: { report: BalanceReport }) {
             subline={t('data.estimateBody')}
           />
           <View>
-            {buildEstimateLines(fallback.inputs, t, locale).map((line) => (
+            {buildEstimateLines(estimate, t, locale).map((line) => (
               <InfoRow key={line.key} label={line.label} detail={line.detail} />
             ))}
           </View>
           <Divider />
           <InfoRow
             label={t('intro.found.bmr.result')}
-            detail={formatApproxKcal(fallback.kcal, locale)}
+            detail={t('data.avgDays', {
+              value: formatNumber(roundKcal(estimate.avgKcal), locale),
+              count: estimate.days,
+            })}
           />
         </Card>
       ) : null}
@@ -118,13 +122,20 @@ function Report({ report }: { report: BalanceReport }) {
 }
 
 // Second page: what arrives from Health and how the balance adds up.
-export function DataPage({ state }: { state: BalanceState }) {
+export function DataPage({
+  state,
+  periodLabel,
+}: {
+  state: BalanceState;
+  // Undefined while a period like "all" is loading.
+  periodLabel?: string;
+}) {
   const { t } = useTranslation();
 
   return (
     <ScrollView contentContainerStyle={styles.content}>
-      <Headline title={t('data.title')} subline={t('home.period')} />
-      {state.status === 'done' ? (
+      <Headline title={t('data.title')} subline={periodLabel} />
+      {state.status === 'done' || state.status === 'empty' ? (
         <Report report={state.value} />
       ) : state.status === 'error' ? (
         <AppText>{t('data.error')}</AppText>
@@ -169,7 +180,6 @@ const styles = StyleSheet.create({
   calcValue: {
     marginLeft: 'auto',
     textAlign: 'right',
-    fontVariant: ['tabular-nums'],
   },
   health: {
     gap: space.s,

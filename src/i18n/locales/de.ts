@@ -7,8 +7,82 @@ export const de = {
     permissionsPath:
       'In Health: Profilbild → Apps → Kcalwaage. Dort siehst du alle Werte und kannst sie an- und ausschalten.',
   },
+  tabs: {
+    balance: 'Bilanz',
+    settings: 'Einstellungen',
+  },
+  settings: {
+    title: 'Einstellungen',
+    calculation: 'Berechnung',
+    zeroDays: 'Null-Tage = Erhaltung',
+    zeroDaysDetail:
+      'Tage ohne Nahrungseintrag zählen mit Bilanz 0 statt mit vollem Defizit.',
+    includeToday: 'Heute einrechnen',
+    includeTodayDetail:
+      'Der Tag läuft noch, der Verbrauch steigt bis Mitternacht.',
+    data: 'Daten',
+    restingEstimate: 'Grundumsatz-Schätzung',
+    restingMissing: 'fehlt',
+    healthPermissions: 'Health-Berechtigungen',
+    info: 'Info',
+    language: 'Sprache',
+    languageName: 'Deutsch',
+    calculationPage: 'Wie wird gerechnet?',
+    privacy: 'Datenschutz',
+    imprint: 'Impressum',
+    footer: 'Keine medizinische Beratung · v{{version}}',
+    back: '‹ Einstellungen',
+    estimate: {
+      body: 'Für Tage ohne gemessene Ruheenergie schätzt die App den Grundumsatz nach Mifflin-St Jeor. Werte aus Health gehen vor; eintragen kannst du nur, was Health nicht liefert.',
+      cardTitle: 'Deine Werte',
+      cardBody:
+        'Gespeichert nur auf deinem iPhone. Ein geändertes Gewicht oder Alter gilt ab heute.',
+      allFromHealth:
+        'Alles kommt aus Health. Die Schätzung gilt nur für Tage ohne gemessene Ruheenergie.',
+      loading: 'Lese Health …',
+      save: 'Sichern',
+    },
+  },
+  calculation: {
+    title: 'Wie wird gerechnet?',
+    balance: {
+      title: 'Bilanz',
+      body: 'Pro Tag: Nahrung minus Verbrauch (Ruheenergie + Aktivenergie). Plus heißt mehr gegessen als verbraucht. Die Tage des Zeitraums werden zusammengezählt.',
+    },
+    zeroDays: {
+      title: 'Tage ohne Eintrag',
+      body: 'Ist „Null-Tage = Erhaltung“ an, zählt ein Tag ohne Nahrungseintrag mit 0 statt mit vollem Defizit. Wie viele Tage das betrifft, steht unter der Bilanz. Tage mit weniger als {{lowFood}} % des Verbrauchs gelten als auffällig wenig Nahrung.',
+    },
+    today: {
+      title: 'Heute',
+      body: 'Der laufende Tag zählt standardmäßig nicht, weil Essen und Verbrauch noch fehlen. „Heute einrechnen“ nimmt ihn mit.',
+    },
+    tolerance: {
+      title: 'Messfehler',
+      body: 'Etiketten und Uhren schätzen ungenau. Mit Toleranz zeigt die Bilanz eine Spanne: Nahrung ± bis {{food}} %, Verbrauch nur nach unten bis {{burn}} %, angewendet auf die Summen des Zeitraums.',
+    },
+    fat: {
+      title: 'Körperfett',
+      body: 'Bilanz ÷ {{kcalPerKg}} kcal pro kg Fettgewebe. Das ist theoretisch: Am Anfang einer Diät ändern sich vor allem Wasser und Glykogen.',
+    },
+    resting: {
+      title: 'Grundumsatz geschätzt',
+      body: 'Fehlt die Ruheenergie (keine Watch), schätzt die App sie nach Mifflin-St Jeor aus Gewicht, Größe, Alter und Geschlecht. Diese Tage sind als „geschätzt“ markiert.',
+    },
+    analysis: {
+      title: 'Abgleich mit der Waage',
+      body: 'Aus der Veränderung von Fett- und Magermasse ({{fat}} bzw. {{lean}} kcal pro kg, Hall 2008) und deiner Nahrung schätzt die App deinen tatsächlichen Verbrauch. Ab {{days}} Tagen und {{measurements}} Messungen; Start und Ende als {{trend}}-Tage-Trend.',
+    },
+    medical: {
+      title: 'Keine medizinische Beratung',
+      body: 'Die App rechnet mit deinen Health-Daten und ersetzt keinen Arzt.',
+    },
+  },
   home: {
-    period: 'Letzte 30 Tage, ohne heute',
+    period_one: 'Letzter Tag, ohne heute',
+    period_other: 'Letzte {{count}} Tage, ohne heute',
+    periodWithToday_one: 'Heute',
+    periodWithToday_other: 'Letzte {{count}} Tage, inkl. heute',
     loading: 'Rechne …',
     kcal: '{{value}} kcal',
     sign: 'Plus = mehr gegessen als verbraucht',
@@ -19,8 +93,10 @@ export const de = {
     daysWithoutResting_one: '{{count}} Tag ohne Grundumsatz nicht mitgerechnet',
     daysWithoutResting_other:
       '{{count}} Tage ohne Grundumsatz nicht mitgerechnet',
-    empty:
-      'Keine Nahrungsdaten in den letzten 30 Tagen. Synchronisiert dein Tracker mit Apple Health?',
+    empty_one:
+      'Keine Nahrungsdaten am letzten Tag. Synchronisiert dein Tracker mit Apple Health?',
+    empty_other:
+      'Keine Nahrungsdaten in den letzten {{count}} Tagen. Synchronisiert dein Tracker mit Apple Health?',
     checkPermissions: 'Berechtigungen prüfen',
   },
   data: {
@@ -42,8 +118,6 @@ export const de = {
     avg: 'Ø {{value}} kcal pro Tag',
     restingEstimate_one: 'an {{count}} Tag geschätzt',
     restingEstimate_other: 'an {{count}} Tagen geschätzt',
-    restingTypical_one: 'an {{count}} Tag mit deinem Median ergänzt',
-    restingTypical_other: 'an {{count}} Tagen mit deinem Median ergänzt',
     restingScaled_one: '{{count}} Teiltag hochgerechnet',
     restingScaled_other: '{{count}} Teiltage hochgerechnet',
     activeMissing: 'fehlt, mit 0 gerechnet',
@@ -51,18 +125,23 @@ export const de = {
     activeZero_other: 'an {{count}} Tagen ohne Wert, mit 0 gerechnet',
     rounded: 'Gerundet auf 10 kcal',
     arrivingTitle: 'Was ankommt',
-    arrivingBody: 'Letzte 30 Tage, Quelle des neuesten Eintrags.',
+    arrivingBody_one: 'Letzter Tag, Quelle des neuesten Eintrags.',
+    arrivingBody_other: 'Letzte {{count}} Tage, Quelle des neuesten Eintrags.',
     rows: {
       food: 'Nahrung',
       resting: 'Ruheenergie',
       active: 'Aktivenergie',
+      weight: 'Gewicht',
+      bodyFat: 'Körperfett',
     },
     daysOf: '{{count}} von {{days}} Tagen',
     missing: 'keine Daten · Zugriff prüfen',
     missingEstimate: 'keine Daten → geschätzt',
+    noMeasurements: 'keine Messungen · Zugriff prüfen',
     estimateTitle: 'Geschätzte Ruheenergie',
     estimateBody:
-      'Für Tage ohne gemessene Ruheenergie, nach Mifflin-St Jeor aus diesen Angaben.',
+      'Für Tage ohne gemessene Ruheenergie, nach Mifflin-St Jeor. Gewicht und Alter gelten am jeweiligen Tag, hier die Werte des letzten geschätzten Tags.',
+    estimateWeight: 'Gewicht (letzte Messung)',
     fromInput: '{{value}} · deine Angabe',
     openHealth: 'Health öffnen',
   },

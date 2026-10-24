@@ -22,6 +22,22 @@ export function formatSigned(
   return `${value < 0 ? MINUS : '+'}${magnitude}`;
 }
 
+// Whole kcal with explicit sign, e.g. "+7.000". Callers round if needed.
+export function formatKcal(value: number, locale: string): string {
+  return formatSigned(value, locale);
+}
+
+// Mass is kept in kg everywhere; only these functions know the unit, so a
+// later switch to lb stays in one place.
+export function formatKg(value: number, locale: string): string {
+  return formatNumber(value, locale, 1);
+}
+
+// With explicit sign, e.g. "+0,9" for a fat equivalent.
+export function formatSignedKg(value: number, locale: string): string {
+  return formatSigned(value, locale, 1);
+}
+
 // Energy is shown rounded to 10 kcal to avoid false precision.
 export function roundKcal(value: number): number {
   return Math.round(value / 10) * 10;
