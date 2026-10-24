@@ -1,6 +1,6 @@
 # Rechenkern II: Chart-Serien und Abgleich (P3)
 
-Stand 2026-10-24. Umgesetzt auf Branch `feature/home-page-base` (M1–M6). Offen für Julius: Gewicht aus der Waagen-App am iPhone prüfen (M5). Voraussetzung P2 (`docs/specs/2026-10-24-core-period-day-balance.md`) ist umgesetzt.
+Stand 2026-10-24. Umgesetzt auf Branch `feature/home-page-base` (M1–M6, CI-Run 40116252891 grün). Offen für Julius: Gewicht aus der Waagen-App am iPhone prüfen (M5). Voraussetzung P2 (`docs/specs/2026-10-24-core-period-day-balance.md`) ist umgesetzt.
 
 ## Overview
 
