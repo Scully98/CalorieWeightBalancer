@@ -169,7 +169,6 @@ const styles = StyleSheet.create({
   calcValue: {
     marginLeft: 'auto',
     textAlign: 'right',
-    fontVariant: ['tabular-nums'],
   },
   health: {
     gap: space.s,

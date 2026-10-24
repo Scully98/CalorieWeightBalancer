@@ -142,7 +142,7 @@ sequenceDiagram
 
 ---
 
-### Milestone 2 — Typografie
+### ✅ Milestone 2 — Typografie
 
 > Alle Text-Varianten nutzen SF Pro (Systemschrift), Tabellenziffern und Dynamic Type; die Größen aus dem Design kommen dazu.
 
@@ -157,14 +157,14 @@ sequenceDiagram
 
 #### To-Dos
 
-- 🔲 Add `tabular-nums` to every variant (the design sets `font-variant-numeric: tabular-nums` on the whole screen)
-- 🔲 Add `largeTitle` (iOS Large Title: 34/41, weight 700; design: title „Bilanz“ 34 px bold)
-- 🔲 Add `hero` (68, weight 600; design: big balance number)
-- 🔲 Add `footnote` (iOS Footnote 13/18) and `caption2` (iOS Caption 2 11/13; chart labels in the design use 10–11 px)
-- 🔲 Cap `largeTitle` at 2 and `hero` at 1.5 in `MAX_FONT_SCALE`, like `screenTitle` and `numberLarge`
-- 🔲 Keep the system font: no `fontFamily` anywhere (React Native uses SF Pro Text/Display on iOS)
-- 🔲 Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
-- 🔲 Commit (`feat: add tabular figures and design text styles`)
+- ✅ Add `tabular-nums` to every variant (the design sets `font-variant-numeric: tabular-nums` on the whole screen) _(als gemeinsame Konstante; doppelte Angabe in `data-page.tsx` entfernt)_
+- ✅ Add `largeTitle` (iOS Large Title: 34/41, weight 700; design: title „Bilanz“ 34 px bold)
+- ✅ Add `hero` (68, weight 600; design: big balance number)
+- ✅ Add `footnote` (iOS Footnote 13/18) and `caption2` (iOS Caption 2 11/13; chart labels in the design use 10–11 px)
+- ✅ Cap `largeTitle` at 2 and `hero` at 1.5 in `MAX_FONT_SCALE`, like `screenTitle` and `numberLarge`
+- ✅ Keep the system font: no `fontFamily` anywhere (React Native uses SF Pro Text/Display on iOS) _(Grep: kein `fontFamily` in `src/`)_
+- ✅ Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
+- ✅ Commit (`feat: add tabular figures and design text styles`)
 
 #### Notes / Constraints
 
