@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Modal, Pressable, StyleSheet, View } from 'react-native';
+import { Modal, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import {
@@ -233,7 +233,7 @@ export function DateRangeSheet({
           <AppText
             variant="sectionTitle"
             accessibilityRole="header"
-            style={styles.flex}
+            style={styles.title}
           >
             {t('picker.title')}
           </AppText>
@@ -241,53 +241,60 @@ export function DateRangeSheet({
             <AppText>{t('picker.cancel')}</AppText>
           </Pressable>
         </View>
-        <View style={styles.fields}>
-          {field('from')}
-          {field('to')}
-        </View>
-        <View style={styles.calendar}>
-          <View style={styles.monthRow}>
-            {arrow(-1, month.canGoBack)}
-            <AppText variant="bodyStrong" accessibilityRole="header">
-              {monthTitle(shown.year, shown.month, t)}
-            </AppText>
-            {arrow(1, month.canGoForward)}
+        {/* At accessibility text sizes the calendar is taller than the screen. */}
+        <ScrollView
+          bounces={false}
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContent}
+        >
+          <View style={styles.fields}>
+            {field('from')}
+            {field('to')}
           </View>
-          <View
-            style={styles.week}
-            importantForAccessibility="no-hide-descendants"
-            accessibilityElementsHidden
-          >
-            {t('date.weekdaysShort')
-              .split(' ')
-              .map((weekday) => (
-                <AppText
-                  key={weekday}
-                  variant="caption"
-                  tone="muted"
-                  style={styles.weekday}
-                >
-                  {weekday}
-                </AppText>
+          <View style={styles.calendar}>
+            <View style={styles.monthRow}>
+              {arrow(-1, month.canGoBack)}
+              <AppText variant="bodyStrong" accessibilityRole="header">
+                {monthTitle(shown.year, shown.month, t)}
+              </AppText>
+              {arrow(1, month.canGoForward)}
+            </View>
+            <View
+              style={styles.week}
+              importantForAccessibility="no-hide-descendants"
+              accessibilityElementsHidden
+            >
+              {t('date.weekdaysShort')
+                .split(' ')
+                .map((weekday) => (
+                  <AppText
+                    key={weekday}
+                    variant="caption"
+                    tone="muted"
+                    style={styles.weekday}
+                  >
+                    {weekday}
+                  </AppText>
+                ))}
+            </View>
+            <View style={styles.grid}>
+              {Array.from({ length: month.blanks }, (_, index) => (
+                <View key={`blank-${index}`} style={styles.cell} />
               ))}
+              {month.cells.map(dayCell)}
+            </View>
           </View>
-          <View style={styles.grid}>
-            {Array.from({ length: month.blanks }, (_, index) => (
-              <View key={`blank-${index}`} style={styles.cell} />
-            ))}
-            {month.cells.map(dayCell)}
+          <View style={styles.summary}>
+            <AppText variant="bodyStrong">{summary.days}</AppText>
+            <AppText variant="footnote" tone="muted">
+              {summary.caption}
+            </AppText>
           </View>
-        </View>
-        <View style={styles.summary}>
-          <AppText variant="bodyStrong">{summary.days}</AppText>
-          <AppText variant="footnote" tone="muted">
-            {summary.caption}
-          </AppText>
-        </View>
-        <Button
-          label={t('picker.apply')}
-          onPress={() => onApply(selection.from, selection.to)}
-        />
+          <Button
+            label={t('picker.apply')}
+            onPress={() => onApply(selection.from, selection.to)}
+          />
+        </ScrollView>
       </View>
     </Modal>
   );
@@ -297,9 +304,6 @@ export function DateRangeSheet({
 const CELL = '14.28%';
 
 const styles = StyleSheet.create({
-  flex: {
-    flex: 1,
-  },
   sheet: {
     position: 'absolute',
     left: 0,
@@ -307,8 +311,16 @@ const styles = StyleSheet.create({
     bottom: 0,
     borderTopLeftRadius: 14,
     borderTopRightRadius: 14,
+    maxHeight: '92%',
     paddingTop: 6,
     paddingHorizontal: 20,
+    gap: space.l,
+  },
+  scroll: {
+    flexGrow: 0,
+    flexShrink: 1,
+  },
+  scrollContent: {
     gap: space.l,
   },
   grabber: {
@@ -318,10 +330,17 @@ const styles = StyleSheet.create({
     opacity: 0.5,
     alignSelf: 'center',
   },
+  // At large text sizes „Abbrechen“ moves below the title.
   header: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     alignItems: 'flex-start',
+    justifyContent: 'space-between',
     gap: space.m,
+  },
+  title: {
+    flexGrow: 1,
+    flexBasis: '60%',
   },
   fields: {
     flexDirection: 'row',

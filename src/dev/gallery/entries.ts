@@ -1,7 +1,7 @@
 import type { ScenarioId } from '@/dev/demo/scenarios';
 
-// What the screen should show besides the data. The new home screen reads
-// these later; until then only `colorScheme` and the hint take effect.
+// What the screen should show besides the data. Tolerance and picker are
+// passed to the home screen; sheet, tooltip and part follow with their parts.
 export type GalleryUi = {
   colorScheme?: 'dark';
   tolerance?: { foodPercent: number; burnPercent: number; open: boolean };
@@ -95,7 +95,5 @@ export const GALLERY_ENTRIES: readonly GalleryEntry[] = [
 // Presets the current balance screen can't show yet.
 export function hasPendingUi(entry: GalleryEntry): boolean {
   const ui = entry.ui ?? {};
-  return Boolean(
-    ui.tolerance || ui.sheet || ui.tooltip || ui.picker || ui.part,
-  );
+  return Boolean(ui.sheet || ui.tooltip || ui.part);
 }

@@ -1,6 +1,6 @@
 # Homepage oben: Zeitraum, Hero, Toleranz (P6)
 
-Stand 2026-10-24. In Arbeit auf Branch `feature/home-page-base`. Voraussetzung P2 und P5 sind umgesetzt (Branch `feature/home-page-base`).
+Stand 2026-10-24. Umgesetzt auf Branch `feature/home-page-base` (M1–M6). Offen für Julius am iPhone: Segmente und Picker antippen, Slider im Pager ziehen (ruckelt nicht, Seite scrollt nicht mit), VoiceOver. Voraussetzung P2 und P5 sind umgesetzt (Branch `feature/home-page-base`).
 
 ## Overview
 
@@ -556,7 +556,7 @@ Keine App-Kürzel (Touch-App). VoiceOver: Kopf der Karte als Button mit „ausge
 
 ---
 
-### Milestone 6 — Galerie, Abnahme, Doku
+### ✅ Milestone 6 — Galerie, Abnahme, Doku
 
 > Die Galerie zeigt 1c und 1m mit ihren Vorgaben; Screenshots, Gerätetest und VoiceOver belegen die vier Abnahmekriterien.
 
@@ -574,16 +574,16 @@ Keine App-Kürzel (Touch-App). VoiceOver: Kopf der Karte als Button mit „ausge
 
 #### To-Dos
 
-- 🔲 Gallery: seed the entry’s memory store with `ui.tolerance` (food/burn) next to the period; pass `initialUi.toleranceOpen` from `ui.tolerance.open`; convert `ui.picker` (`fromDaysAgo`, `toDaysAgo`) to date keys relative to today and pass it as `initialUi.picker` (sheet open, „Bis“ active)
-- 🔲 Remove `tolerance` and `picker` from `hasPendingUi`
-- 🔲 Screenshot gallery 1a, 1c and 1m in the simulator (iPhone 16/17, light) and compare the top part with the design side by side; list visible differences in this spec (expected: native slider track, Concern 7)
-- 🔲 Check 1b (dark), 1f (empty, tappable segments) and 1i (AX1: segments in two rows, hero wraps, picker usable)
-- 🔲 Check „±0“: test from M1/M2 green; optional demo check with a balance that rounds to 0 is covered by the hero test
-- 🔲 On Julius’ iPhone (open for Julius): drag both sliders fast in 90 T and „Alles“; the hero follows without stutter and no loading text appears; the balance below stays
-- 🔲 VoiceOver on the device: hero reads „plus 7.000 Kilokalorien, mehr gegessen als verbraucht“ in 1a; with 5/10 „plus 2.650 bis plus 19.350 Kilokalorien, …“; segments, card header, sliders and picker cells read as in M3–M5
-- 🔲 Update `CLAUDE.md`: Design „Vorzeichen immer, auch ±0“; Rechenmodell „Anzeige: Einzelwert auf 10 kcal, Spanne auf 50 kcal“; Stack „Slider: `@react-native-community/slider`, Daumen als Bild je Farbschema (`scripts/make-slider-thumbs.swift`)“
-- 🔲 Run `npm run lint`, `npm run typecheck`, `npm test`, `npm run check:release-bundle`; all exit 0
-- 🔲 Commit (`feat: show tolerance and picker presets in the gallery`, then `docs: record homepage top decisions`)
+- ✅ Gallery: seed the entry’s memory store with `ui.tolerance` (food/burn) next to the period; pass `initialUi.toleranceOpen` from `ui.tolerance.open`; convert `ui.picker` (`fromDaysAgo`, `toDaysAgo`) to date keys relative to today and pass it as `initialUi.picker` (sheet open, „Bis“ active) _(Picker-Vorgabe schon in M4, Toleranz in den Galerie-Store und `toleranceOpen` hier)_
+- ✅ Remove `tolerance` and `picker` from `hasPendingUi` _(Badge nur noch für Sheet, Tooltip, Abgleich-Teil)_
+- ✅ Screenshot gallery 1a, 1c and 1m in the simulator (iPhone 16/17, light) and compare the top part with the design side by side; list visible differences in this spec (expected: native slider track, Concern 7) _(iPhone 16 Pro, hell, per Deep Link `com.scully98.calorieweightbalancer.dev://dev/<id>`: 1a, 1c, 1m wie im Design. Bekannte Unterschiede: Spanne in 1c +2.750 bis +19.000 (Null-Tag bleibt aus den Toleranzsummen, CLAUDE.md), Titel „Messfehler einrechnen“ und Zusammenfassung brechen zweizeilig um)_
+- ✅ Check 1b (dark), 1f (empty, tappable segments) and 1i (AX1: segments in two rows, hero wraps, picker usable) _(1b dunkel richtig; 1f Segmente bedienbar (M3); AX-XL: Segmente zweizeilig, Hero bricht um. Picker war bei AX höher als der Bildschirm → Sheet höchstens 92 % hoch, Inhalt scrollt, „Abbrechen“ rutscht unter den Titel. Nach einem Wechsel der Schriftgröße App neu starten (P5 Concern 11))_
+- ✅ Check „±0“: test from M1/M2 green; optional demo check with a balance that rounds to 0 is covered by the hero test _(`format.test.ts` und `hero.test.ts` grün)_
+- 🔲 On Julius’ iPhone (open for Julius): drag both sliders fast in 90 T and „Alles“; the hero follows without stutter and no loading text appears; the balance below stays _(offen für Julius; dazu: Segmente antippen (7 T lädt neu), „Eigener“ → Tage tippen → „Übernehmen“, Slider im Pager ziehen, ohne dass die Seite wegscrollt)_
+- 🔲 VoiceOver on the device: hero reads „plus 7.000 Kilokalorien, mehr gegessen als verbraucht“ in 1a; with 5/10 „plus 2.650 bis plus 19.350 Kilokalorien, …“; segments, card header, sliders and picker cells read as in M3–M5 _(offen für Julius; Labels sind getestet (`hero.test.ts`), Slider ±1 % pro Wischen über die eigene Hülle)_
+- ✅ Update `CLAUDE.md`: Design „Vorzeichen immer, auch ±0“; Rechenmodell „Anzeige: Einzelwert auf 10 kcal, Spanne auf 50 kcal“; Stack „Slider: `@react-native-community/slider`, Daumen als Bild je Farbschema (`scripts/make-slider-thumbs.swift`)“ _(dazu Stack-Zeile zum eigenen Slider)_
+- ✅ Run `npm run lint`, `npm run typecheck`, `npm test`, `npm run check:release-bundle`; all exit 0 _(alle grün; Release-Bundle ohne Demo-Code)_
+- ✅ Commit (`feat: show tolerance and picker presets in the gallery`, then `docs: record homepage top decisions`) _(`feat: show tolerance and picker presets in the gallery` inkl. Sheet-Fix bei großer Schrift)_
 
 #### Notes / Constraints
 
@@ -626,3 +626,4 @@ Keine App-Kürzel (Touch-App).
 | 15 | ⚠️ Concern | Die Galerie-Badge „UI-Vorgabe folgt mit der Homepage“ hängt an `tolerance` und `picker` | Vorgaben durchreichen, Badge nur noch für Sheet, Tooltip, Abgleich-Teil (M6) |
 | 16 | ⚠️ Concern | Umsetzung M5: `@react-native-community/slider` 5.2.0 lädt `thumbImage` unter der neuen Architektur nicht (`RCTBridge currentBridge` ist `nil`), iOS zeigt seinen Standard-Daumen mit Schatten. VoiceOver brauchte ohnehin eine eigene Hülle (UISlider springt 10 % des Bereichs) | Eigener Slider aus Views, Abhängigkeit, Skript und PNGs entfernt (Key Decision 6) — Julius 2026-10-24 |
 | 17 | ⚠️ Concern | Ein eigener Slider in Pager und ScrollView: die native ScrollView würde das waagerechte Ziehen übernehmen | Slider sperrt beim Ziehen Pager und Seite (`ScrollLockContext`); am iPhone prüfen (M6) |
+| 18 | ⚠️ Concern | Bei Bedienungshilfen-Schriftgrößen war das Picker-Sheet höher als der Bildschirm; Titel und „Abbrechen“ lagen außerhalb | Sheet höchstens 92 % hoch, Inhalt scrollt, Kopf bricht um (M6) |

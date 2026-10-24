@@ -24,6 +24,7 @@ Fragen, die die App beantwortet: Bin ich diesen Monat im Plus oder Minus? Wie la
 - React Native mit Expo, Development Build (kein Expo Go), Build/Upload über EAS, TypeScript.
 - HealthKit: `@kingstinct/react-native-healthkit`.
 - Charts: `react-native-gifted-charts` oder `victory-native`.
+- Toleranz-Slider: eigener Slider aus Views (`src/components/marked-slider.tsx`), Farben aus den Tokens. `@react-native-community/slider` lädt unter der neuen Architektur ohne Bridge kein Daumen-Bild.
 - Widget: SwiftUI-WidgetKit-Extension via `@bacons/apple-targets` (Ordner `targets/widget/`). Kein Flutter.
 - Die App rechnet und schreibt einen fertigen JSON-Datensatz (Zeitraum, Bilanz, Spanne, Fett in g, Zeitstempel) in die App-Group-`UserDefaults`, dann `WidgetCenter.reloadAllTimelines()` über ein kleines natives Modul. Das Widget fragt HealthKit nicht selbst ab (Daten bei gesperrtem Gerät verschlüsselt).
 - Hintergrund-Update per HealthKit Observer/Background Delivery; Fallback: Widget zeigt letzten Stand mit Uhrzeit.
@@ -56,6 +57,7 @@ Fragen, die die App beantwortet: Bin ich diesen Monat im Plus oder Minus? Wie la
 - Toleranzen standardmäßig aus (0 %). Slider auf der Homepage in ganzen Prozent, Nahrung 0–20 %, Verbrauch 0–30 %, 0 = aus; der Normbereich (Nahrung 5–20 %, Verbrauch 10–30 %) ist am Slider nur markiert. Angewendet auf Zeitraumsummen, nicht pro Tag:
   `Bmin = A(1 − tA) − V`, `Bmax = A(1 + tA) − V(1 − tV)` mit V = R + K. Verbrauch nur nach unten korrigiert.
 - Körperfett: Bilanz ÷ 7.700 kcal/kg Fettgewebe, beschriftet als „theoretisch“.
+- Anzeige: Einzelwert auf 10 kcal, Spannen-Enden auf 50 kcal, Ø pro Tag auf ganze kcal, kg auf 0,1. Beim Ziehen der Slider rechnet der Hero nur aus den Periodensummen (`toleranceRange`), gespeichert wird beim Loslassen.
 - Analyse Bilanz vs. Messung: `E ≈ 9400·ΔFettmasse + 1800·ΔMagermasse` (Hall 2008), Start/Ende als 7-Tage-Trend (Mittel der Messungen von Tag i−6 bis i, ohne Messung bis 34 Tage zurück erweitert; dieselben Werte wie die Chart-Linien). Fett = Gewicht × KFA, Magermasse = `leanBodyMass` oder Gewicht × (1 − KFA). Tatsächlicher Verbrauch = (Σ Nahrung − E) ÷ gezählte Tage, Null-Tage mit Nahrung = Verbrauch; Tracker = Σ Verbrauch ÷ Tage.
 - Zustände der Abgleich-Karte: `insufficient` unter 21 Tagen oder unter 6 Tagen mit Gewicht (Karte ausgegraut mit „Bisher: …“), `weightOnly` unter 6 Tagen mit KFA (nur Gewicht gegen „Bilanz, wenn alles Fett wäre“), `ok` bei |E − Bilanz| ≤ max(10 % der Bilanz, 400 kcal), sonst `deviation` (Waage zeigt weniger/mehr; Hinweis Magermasse ab +0,05 kg).
 - Rechenkern als reines TypeScript-Modul mit Unit-Tests, unabhängig von HealthKit (`src/core/`, Abdeckung ≥ 90 %). Er rechnet ungerundet, gerundet wird erst in der Anzeige.
@@ -95,7 +97,7 @@ Drei Screens (Bilanz, Analyse-Chart, Einstellungen) plus Widget.
 Nicht in V1: Farbwahl, Widget-Konfiguration, Zyklus, Zielkalorien, iPad, Schreiben nach HealthKit.
 
 ## Design
-Schwarz auf weiß, Dark Mode invertiert, keine Akzentfarbe. Plus/Minus über Vorzeichen, Balkenrichtung und Beschriftung, nicht Rot/Grün. Systemschrift mit Dynamic Type. Farben nur über sechs Tokens in `src/theme/colors.ts` (Vordergrund, Hintergrund, Nebentext, Akzent, Plus, Minus; Werte laut Design: hell #0B0B0B / #FFFFFF / #6B6B6B, dunkel #F4F4F4 / #000000 / #949494, Akzent, Plus und Minus = Vordergrund), damit V2 sie für App und Widget wählbar machen kann. Farb-Literale außerhalb der Token-Datei verbietet ESLint.
+Schwarz auf weiß, Dark Mode invertiert, keine Akzentfarbe. Plus/Minus über Vorzeichen, Balkenrichtung und Beschriftung, nicht Rot/Grün. Das Vorzeichen steht immer da, auch bei 0 („±0 kcal“, `formatSigned`). Systemschrift mit Dynamic Type. Farben nur über sechs Tokens in `src/theme/colors.ts` (Vordergrund, Hintergrund, Nebentext, Akzent, Plus, Minus; Werte laut Design: hell #0B0B0B / #FFFFFF / #6B6B6B, dunkel #F4F4F4 / #000000 / #949494, Akzent, Plus und Minus = Vordergrund), damit V2 sie für App und Widget wählbar machen kann. Farb-Literale außerhalb der Token-Datei verbietet ESLint.
 
 ## Plan
 0 Vorab (Name, Nebentätigkeit, Developer Account) · 1 Repo/Expo/EAS/CI · 2 Design-Grundlagen, zweisprachig · 3 Intro inkl. Datenschutzsatz und HealthKit-Anfrage · 4 HealthKit · 5 Rechenkern · 6 Bilanz-Screen und Einstellungen · 7 Chart · 8 Analyse · 9 Widget · 10 TestFlight · 11 Store (Datenschutzerklärung und Impressum z. B. auf GitHub Pages, Label, Screenshots) · 12 Einreichen · 13 V2 (Farben, Widget-Konfiguration, empirischer Erhaltungsbedarf, Zyklus-Band, „Wie lange bis ausgeglichen“).

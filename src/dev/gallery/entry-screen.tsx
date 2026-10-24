@@ -50,8 +50,18 @@ export function EntryScreen() {
   // ones.
   const [store] = useState(() => {
     const memory = createSettingsStore(createMemoryStore());
-    if (entry)
-      memory.updateSettings({ period: buildScenario(entry.scenario).period });
+    if (entry) {
+      const tolerance = entry.ui?.tolerance;
+      memory.updateSettings({
+        period: buildScenario(entry.scenario).period,
+        ...(tolerance && {
+          tolerance: {
+            foodPercent: tolerance.foodPercent,
+            burnPercent: tolerance.burnPercent,
+          },
+        }),
+      });
+    }
     return memory;
   });
   const colorScheme = entry?.ui?.colorScheme;
