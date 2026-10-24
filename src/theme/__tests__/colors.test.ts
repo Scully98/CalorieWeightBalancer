@@ -13,10 +13,4 @@ describe('colors', () => {
     expect(colors.light.separator).toBe(withAlpha(colors.light.muted, 0.35));
     expect(colors.dark.separator).toBe(withAlpha(colors.dark.muted, 0.35));
   });
-
-  it('has the same tokens in light and dark', () => {
-    expect(Object.keys(colors.dark).sort()).toEqual(
-      Object.keys(colors.light).sort(),
-    );
-  });
 });

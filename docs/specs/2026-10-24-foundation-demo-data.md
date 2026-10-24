@@ -568,7 +568,7 @@ sequenceDiagram
 | 🟢 | `src/dev/demo/generate.ts` | Port von `gen()` aus `BilanzScreen.dc.html`, Optionen je Szenario |
 | 🟢 | `src/dev/demo/scenarios.ts` | 7 Szenarien mit ID, Namen DE, Serie, Zeitraum |
 | 🟢 | `src/dev/demo/demo-source.ts` | `createDemoSource(scenarioId, now)` implementiert `HealthSource` |
-| 🟢 | `src/dev/demo/__tests__/scenarios.test.ts` | Determinismus, Eckwerte, Snapshot |
+| 🟢 | `src/dev/demo/__tests__/scenarios.test.ts` | Determinismus, Eckwerte |
 
 #### To-Dos
 
@@ -584,7 +584,7 @@ sequenceDiagram
 - ✅ Test determinism: building any scenario twice gives equal values; values (without dates) are equal for two different `now` dates _(Test mockt `@kingstinct/react-native-healthkit` wie die übrigen Health-Tests (wegen `BiologicalSex`))_
 - ✅ Test design key figures for `normal30`: Σ (resting + active) over the last 30 days = 80.100 kcal; `periodBreakdown` gives +7.000 kcal; 24 of 30 days complete (3 estimated, 2 low, 1 without food)
 - ✅ Test `short7`: 7 days, 4 weight measurements; `empty`: no values at all
-- ✅ Add a Jest snapshot of all scenario values (without dates) so any change to the numbers is visible in review _(eine Zeile pro Tag, Kommazahlen gerundet (860 Zeilen statt 4.750))_
+- ✅ Add a Jest snapshot of all scenario values (without dates) so any change to the numbers is visible in review _(eine Zeile pro Tag, Kommazahlen gerundet (860 Zeilen statt 4.750))_ — _später entfernt (PR-Review 2026-10-24): testete nur Demo-Code, ersetzt durch den Eckwerte-Test_
 - ✅ Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
 - ✅ Commit (`feat: add demo Health source with fixed scenarios`)
 
