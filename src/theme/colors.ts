@@ -1,6 +1,8 @@
 export type ColorTokens = {
   foreground: string;
   background: string;
+  // Secondary text, dashed lines and disabled states.
+  muted: string;
   accent: string;
   plus: string;
   minus: string;
@@ -11,6 +13,7 @@ export type ColorTokens = {
 const light: ColorTokens = {
   foreground: '#000000',
   background: '#FFFFFF',
+  muted: '#6E6E6E',
   accent: '#000000',
   plus: '#000000',
   minus: '#000000',
@@ -19,6 +22,7 @@ const light: ColorTokens = {
 const dark: ColorTokens = {
   foreground: '#FFFFFF',
   background: '#000000',
+  muted: '#A0A0A0',
   accent: '#FFFFFF',
   plus: '#FFFFFF',
   minus: '#FFFFFF',

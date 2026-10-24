@@ -33,8 +33,27 @@ Prerequisites: Node.js LTS (tested with 22.16.0) and npm. Local builds need macO
 
    Expo Go is not supported; the app only runs in its development build.
 
+### iPhone with a free Apple ID
+
+Without a paid developer account, Xcode signs with a Personal Team. Profiles expire after 7 days, and App Groups are not available, so the widget won't get data.
+
+1. Add your Apple ID in Xcode → Settings → Accounts.
+2. On the iPhone, turn on Settings → Privacy & Security → Developer Mode, connect it via USB and trust the Mac.
+3. Put your Personal Team ID (the OU field of your "Apple Development" certificate) into `.env.local`, which is git-ignored and read by the Expo CLI. This drops the App Group entitlement and uses the bundle ID `com.scully98.calorieweightbalancer.dev`:
+
+   ```sh
+   echo "APPLE_PERSONAL_TEAM_ID=XXXXXXXXXX" > .env.local
+   npx expo prebuild --clean
+   npx expo run:ios --device
+   ```
+
+   If the first build fails with `errSecInternalComponent`, build once from Xcode (`ios/Kcalwaage.xcworkspace`, ⌘R) and choose "Always Allow" when macOS asks for keychain access.
+
+4. On the iPhone, trust the developer certificate under Settings → General → VPN & Device Management.
+
 Checks:
 
 - `npm run lint`: ESLint
 - `npm run format`: Prettier (writes changes)
 - `npm run typecheck`: TypeScript
+- `npm test`: Jest unit tests
