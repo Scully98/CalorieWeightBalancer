@@ -1,7 +1,12 @@
 import type { TFunction } from 'i18next';
 
 import type { EstimateKey, EstimateSummary } from './resting-fallback';
-import { ENERGY_KEYS, type BalanceReport, type EnergyKey } from './use-balance';
+import {
+  DATA_KEYS,
+  type BalanceReport,
+  type DataKey,
+  type EnergyKey,
+} from './use-balance';
 import type { Status } from '@/components/status-row';
 import type { PeriodBalance } from '@/core/period-balance';
 import { formatNumber, formatSigned, roundKcal } from '@/core/format';
@@ -15,7 +20,7 @@ export type CalcLine = {
 };
 
 export type DataRow = {
-  key: EnergyKey;
+  key: DataKey;
   status: Status;
   label: string;
   detail: string;
@@ -110,9 +115,17 @@ export function buildCalcNotes(balance: PeriodBalance, t: TFunction): string[] {
   return notes;
 }
 
+// Without a scale no measurement is normal, but denied access looks the same.
+function missingText(key: DataKey, report: BalanceReport) {
+  if (key === 'weight' || key === 'bodyFat') return 'data.noMeasurements';
+  return key === 'resting' && report.estimate
+    ? 'data.missingEstimate'
+    : 'data.missing';
+}
+
 // Which values arrive from Health over the period, and from where.
 export function buildDataRows(report: BalanceReport, t: TFunction): DataRow[] {
-  return ENERGY_KEYS.map((key) => {
+  return DATA_KEYS.map((key) => {
     const count = report.daysWithData[key];
     const found = count > 0;
     const label = t(`data.rows.${key}`);
@@ -123,11 +136,7 @@ export function buildDataRows(report: BalanceReport, t: TFunction): DataRow[] {
         ]
           .filter(Boolean)
           .join(' · ')
-      : t(
-          key === 'resting' && report.estimate
-            ? 'data.missingEstimate'
-            : 'data.missing',
-        );
+      : t(missingText(key, report));
     const status = found ? 'found' : 'missing';
     return {
       key,

@@ -18,8 +18,17 @@ const yazio = {
   productType: 'iPhone17,1',
 };
 
+const scale = {
+  source: { name: 'Withings', bundleIdentifier: 'com.withings.wiScaleNG' },
+  operatingSystemVersion: '26.0',
+  productType: 'iPhone17,1',
+};
+
 const watch = {
-  source: { name: 'Apple Watch', bundleIdentifier: 'com.apple.health' },
+  source: {
+    name: 'Apple Watch',
+    bundleIdentifier: 'com.apple.health.4D5E6F70',
+  },
   operatingSystemVersion: '26.0',
   productType: 'Watch7,1',
 };
@@ -59,8 +68,20 @@ export function createDemoSource(id: ScenarioId, now: Date): HealthSource {
 
     async latestSources() {
       if (empty)
-        return { food: undefined, resting: undefined, active: undefined };
-      return { food: yazio, resting: watch, active: watch };
+        return {
+          food: undefined,
+          resting: undefined,
+          active: undefined,
+          weight: undefined,
+          bodyFat: undefined,
+        };
+      return {
+        food: yazio,
+        resting: watch,
+        active: watch,
+        weight: scale,
+        bodyFat: id === 'noBodyFat30' ? undefined : scale,
+      };
     },
 
     async firstDataDate() {

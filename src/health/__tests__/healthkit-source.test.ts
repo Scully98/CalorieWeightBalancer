@@ -1,12 +1,19 @@
-import { queryQuantitySamples } from '@kingstinct/react-native-healthkit';
+import {
+  getMostRecentQuantitySample,
+  queryQuantitySamples,
+} from '@kingstinct/react-native-healthkit';
 
 import { healthKitSource } from '../healthkit-source';
 
+import { QUANTITY } from '../read-types';
+
 jest.mock('@kingstinct/react-native-healthkit', () => ({
   queryQuantitySamples: jest.fn(),
+  getMostRecentQuantitySample: jest.fn(),
 }));
 
 const samples = jest.mocked(queryQuantitySamples);
+const mostRecent = jest.mocked(getMostRecentQuantitySample);
 
 describe('healthKitSource.firstDataDate', () => {
   it('returns the date of the oldest food sample', async () => {
@@ -43,5 +50,29 @@ describe('healthKitSource.weightBefore', () => {
     expect(await healthKitSource.weightBefore(new Date())).toBeUndefined();
     samples.mockResolvedValueOnce([]);
     expect(await healthKitSource.weightBefore(new Date())).toBeUndefined();
+  });
+});
+
+describe('healthKitSource.latestSources', () => {
+  const revision = (name: string) => ({
+    source: { name, bundleIdentifier: `test.${name}` },
+    productType: 'iPhone15,2',
+  });
+
+  it('takes lean mass as body fat source without body fat samples', async () => {
+    mostRecent.mockImplementation((async (identifier: string) =>
+      identifier === QUANTITY.bodyFat
+        ? undefined
+        : {
+            sourceRevision: revision(
+              identifier === QUANTITY.leanMass ? 'Lean scale' : 'Other',
+            ),
+            startDate: new Date(2026, 9, 23),
+            quantity: 1,
+          }) as unknown as typeof getMostRecentQuantitySample);
+
+    const sources = await healthKitSource.latestSources();
+    expect(sources.bodyFat?.source.name).toBe('Lean scale');
+    expect(sources.weight?.source.name).toBe('Other');
   });
 });

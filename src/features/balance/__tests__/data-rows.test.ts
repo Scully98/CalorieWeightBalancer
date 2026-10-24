@@ -26,9 +26,18 @@ i18n.init({
 const t = i18n.t;
 
 const watch = {
-  source: { name: "Julius' Watch", bundleIdentifier: 'com.apple.health' },
+  source: {
+    name: "Julius' Watch",
+    bundleIdentifier: 'com.apple.health.4D5E6F70',
+  },
   operatingSystemVersion: '11.0',
   productType: 'Watch6,1',
+};
+
+const scale = {
+  source: { name: 'Withings', bundleIdentifier: 'com.withings.wiScaleNG' },
+  operatingSystemVersion: '26.0',
+  productType: 'iPhone17,1',
 };
 
 // Resting energy after Mifflin-St Jeor: 10 × 70 + 6.25 × 160 − 5 × 40 + 5
@@ -64,8 +73,14 @@ function report(overrides: Partial<BalanceReport> = {}): BalanceReport {
       lines: { points: [], hasWeight: false, hasFat: false },
     },
     analysis: { state: 'insufficient', days: 3, measurements: 0 },
-    daysWithData: { food: 2, resting: 3, active: 2 },
-    sources: { food: undefined, resting: watch, active: watch },
+    daysWithData: { food: 2, resting: 3, active: 2, weight: 2, bodyFat: 0 },
+    sources: {
+      food: undefined,
+      resting: watch,
+      active: watch,
+      weight: scale,
+      bodyFat: undefined,
+    },
     ...overrides,
   };
 }
@@ -133,20 +148,38 @@ describe('buildCalcNotes', () => {
 describe('buildDataRows', () => {
   it('shows source and days with data, or what is missing', () => {
     const rows = buildDataRows(
-      report({ daysWithData: { food: 2, resting: 3, active: 0 } }),
+      report({
+        daysWithData: {
+          food: 2,
+          resting: 3,
+          active: 0,
+          weight: 2,
+          bodyFat: 0,
+        },
+      }),
       t,
     );
     expect(rows.map((row) => [row.key, row.status, row.detail])).toEqual([
       ['food', 'found', '2 von 3 Tagen'],
       ['resting', 'found', 'Apple Watch · 3 von 3 Tagen'],
       ['active', 'missing', 'keine Daten · Zugriff prüfen'],
+      ['weight', 'found', 'Withings · 2 von 3 Tagen'],
+      ['bodyFat', 'missing', 'keine Messungen · Zugriff prüfen'],
     ]);
+    expect(rows[3].label).toBe('Gewicht');
+    expect(rows[4].label).toBe('Körperfett');
   });
 
   it('says when missing resting energy is estimated', () => {
     const rows = buildDataRows(
       report({
-        daysWithData: { food: 2, resting: 0, active: 2 },
+        daysWithData: {
+          food: 2,
+          resting: 0,
+          active: 2,
+          weight: 0,
+          bodyFat: 0,
+        },
         estimate: { days: 1, avgKcal: 1505 } as BalanceReport['estimate'],
       }),
       t,

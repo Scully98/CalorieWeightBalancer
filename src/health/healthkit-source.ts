@@ -26,15 +26,22 @@ export const healthKitSource: HealthSource = {
   profile: readHealthProfile,
 
   async latestSources() {
-    const [food, resting, active] = await Promise.all([
-      latest(QUANTITY.food),
-      latest(QUANTITY.resting),
-      latest(QUANTITY.active),
-    ]);
+    const [food, resting, active, weight, bodyFat, leanMass] =
+      await Promise.all([
+        latest(QUANTITY.food),
+        latest(QUANTITY.resting),
+        latest(QUANTITY.active),
+        latest(QUANTITY.weight),
+        latest(QUANTITY.bodyFat),
+        latest(QUANTITY.leanMass),
+      ]);
     return {
       food: food.source,
       resting: resting.source,
       active: active.source,
+      weight: weight.source,
+      // Some scales only write lean mass; it counts for body fat too.
+      bodyFat: bodyFat.source ?? leanMass.source,
     };
   },
 

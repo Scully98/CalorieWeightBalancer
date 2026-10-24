@@ -66,10 +66,13 @@ export const de = {
       food: 'Nahrung',
       resting: 'Ruheenergie',
       active: 'Aktivenergie',
+      weight: 'Gewicht',
+      bodyFat: 'Körperfett',
     },
     daysOf: '{{count}} von {{days}} Tagen',
     missing: 'keine Daten · Zugriff prüfen',
     missingEstimate: 'keine Daten → geschätzt',
+    noMeasurements: 'keine Messungen · Zugriff prüfen',
     estimateTitle: 'Geschätzte Ruheenergie',
     estimateBody:
       'Für Tage ohne gemessene Ruheenergie, nach Mifflin-St Jeor. Gewicht und Alter gelten am jeweiligen Tag, hier die Werte des letzten geschätzten Tags.',

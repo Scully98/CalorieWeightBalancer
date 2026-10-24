@@ -131,4 +131,16 @@ describe('demo scenarios through the balance load', () => {
       STORED_NORMAL30,
     );
   });
+
+  it('list weight and body fat under arriving data', async () => {
+    const normal = await load('normal30');
+    expect(normal.daysWithData.weight).toBeGreaterThan(0);
+    expect(normal.daysWithData.bodyFat).toBe(normal.daysWithData.weight);
+    expect(normal.sources.weight?.source.name).toBe('Withings');
+
+    const noBodyFat = await load('noBodyFat30');
+    expect(noBodyFat.daysWithData.weight).toBeGreaterThan(0);
+    expect(noBodyFat.daysWithData.bodyFat).toBe(0);
+    expect(noBodyFat.sources.bodyFat).toBeUndefined();
+  });
 });

@@ -66,10 +66,13 @@ export const en: typeof de = {
       food: 'Food',
       resting: 'Resting energy',
       active: 'Active energy',
+      weight: 'Weight',
+      bodyFat: 'Body fat',
     },
     daysOf: '{{count}} of {{days}} days',
     missing: 'no data · check access',
     missingEstimate: 'no data → estimated',
+    noMeasurements: 'no measurements · check access',
     estimateTitle: 'Estimated resting energy',
     estimateBody:
       'For days without measured resting energy, after Mifflin-St Jeor. Weight and age apply on each day; shown are the values of the last estimated day.',

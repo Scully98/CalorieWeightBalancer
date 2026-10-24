@@ -17,9 +17,13 @@ const t = i18n.t;
 
 const now = new Date(2026, 9, 15, 12);
 
-function source(name: string, productType?: string): SourceRevision {
+function source(
+  name: string,
+  productType?: string,
+  bundleIdentifier = `test.${name}`,
+): SourceRevision {
   return {
-    source: { name, bundleIdentifier: `test.${name}` },
+    source: { name, bundleIdentifier },
     operatingSystemVersion: '18.3',
     productType,
   };
@@ -42,15 +46,25 @@ function details(scan: HealthScan): Record<string, string> {
 
 describe('sourceLabel', () => {
   it('names Apple devices by type, not by personal name', () => {
-    expect(sourceLabel(source("Julius' iPhone", 'iPhone15,2'))).toBe('iPhone');
-    expect(sourceLabel(source("Julius' Watch", 'Watch6,1'))).toBe(
-      'Apple Watch',
-    );
+    expect(
+      sourceLabel(
+        source("Julius' iPhone", 'iPhone15,2', 'com.apple.health.9F3A1C2B'),
+      ),
+    ).toBe('iPhone');
+    expect(
+      sourceLabel(
+        source("Julius' Watch", 'Watch6,1', 'com.apple.health.4D5E6F70'),
+      ),
+    ).toBe('Apple Watch');
   });
 
   it('uses the source name for apps and manual entries', () => {
-    expect(sourceLabel(source('YAZIO'))).toBe('YAZIO');
-    expect(sourceLabel(source('Health'))).toBe('Health');
+    // Apps run on the iPhone, so their samples carry its product type too.
+    expect(sourceLabel(source('YAZIO', 'iPhone15,2'))).toBe('YAZIO');
+    expect(sourceLabel(source('Withings', 'iPhone15,2'))).toBe('Withings');
+    expect(
+      sourceLabel(source('Health', 'iPhone15,2', 'com.apple.Health')),
+    ).toBe('Health');
   });
 });
 

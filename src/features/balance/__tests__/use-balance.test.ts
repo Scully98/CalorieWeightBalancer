@@ -23,7 +23,13 @@ const nothing: HealthSource = {
     return { biologicalSex: 0 };
   },
   async latestSources() {
-    return { food: undefined, resting: undefined, active: undefined };
+    return {
+      food: undefined,
+      resting: undefined,
+      active: undefined,
+      weight: undefined,
+      bodyFat: undefined,
+    };
   },
   async firstDataDate() {
     return undefined;

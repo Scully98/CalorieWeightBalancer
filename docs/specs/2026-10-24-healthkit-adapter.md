@@ -1,6 +1,6 @@
 # HealthKit-Adapter (P4)
 
-Stand 2026-10-24. In Umsetzung auf Branch `feature/home-page-base`. Voraussetzung P1 ist umgesetzt; P2 und P3 auch.
+Stand 2026-10-24. Umgesetzt auf Branch `feature/home-page-base` (M1–M4, M6). Offen für Julius: M5 (3 Stichtage am iPhone) und ein Blick auf die Daten-Seite am iPhone. Voraussetzung P1 ist umgesetzt; P2 und P3 auch.
 
 ## Overview
 
@@ -57,7 +57,7 @@ P4 schließt den HealthKit-Adapter ab. Das meiste steht schon: `HealthKitSource`
 | M3 — Zustand empty | `empty` in `useBalance`, Bilanz- und Daten-Seite lesen ihn | 1 | 4 | 0 | — |
 | M4 — Dev-Screen Tageswerte | Liste der Tageswerte, Route-Stub, Link, Release-Check | 4 | 3 | 0 | — |
 | M5 — Prüfung am iPhone | 3 Stichtage gegen die Health-App, Watch + iPhone | 0 | 1 | 0 | M4 |
-| M6 — Waagen-Zeilen auf der Daten-Seite | „Gewicht“ und „Körperfett“ unter „Was ankommt“ | 0 | 11 | 0 | — |
+| M6 — Waagen-Zeilen auf der Daten-Seite | „Gewicht“ und „Körperfett“ unter „Was ankommt“ | 0 | 13 | 0 | — |
 
 ```
 🟢 Add   🟠 Change   🔴 Delete
@@ -283,7 +283,7 @@ Keine App-Kürzel (Touch-App, Dev-Screen). Es gelten die Entwickler-Kürzel aus 
 
 ---
 
-### Milestone 6 — Waagen-Zeilen auf der Daten-Seite
+### ✅ Milestone 6 — Waagen-Zeilen auf der Daten-Seite
 
 > „Was ankommt“ zeigt neben Nahrung, Ruhe- und Aktivenergie auch Gewicht und Körperfett mit Quelle und Anzahl der Tage, für alle Nutzer.
 
@@ -308,22 +308,25 @@ Keine App-Kürzel (Touch-App, Dev-Screen). Es gelten die Entwickler-Kürzel aus 
 | 🟠 | `src/i18n/locales/en.ts` | „Weight“, „Body fat“, „no measurements · check access“ |
 | 🟠 | `docs/specs/2026-10-21-data-page.md` | Satz „Gewicht und Körperfett fehlen bewusst“ ersetzen; Punkt 2 um die zwei Zeilen ergänzen |
 | 🟠 | `src/dev/demo/__tests__/scenarios.test.ts` | `normal30`: Gewicht/Körperfett an den Messtagen gezählt; `noBodyFat30`: Körperfett fehlt |
+| 🟠 | `src/features/intro/found-rows.ts` | 🆕 `sourceLabel`: Gerätetyp nur für Apples Geräte-Quellen (`com.apple.health.<id>`), sonst App-Name |
+| 🟠 | `src/features/intro/__tests__/found-rows.test.ts` | 🆕 Apps mit iPhone-Gerätekennung behalten ihren Namen; Handeinträge heißen „Health“ |
 
 #### To-Dos
 
-- 🔲 Add `DataKey` to `src/health/source.ts` and widen `latestSources()` to `Record<DataKey, SourceRevision | undefined>`; keep `EnergyKey` for the calculation lines
-- 🔲 Update `healthKitSource.latestSources`: `weight` = `latest(QUANTITY.weight).source`; `bodyFat` = `latest(QUANTITY.bodyFat).source`, else `latest(QUANTITY.leanMass).source` (Key Decision 11)
-- 🔲 Update `createDemoSource.latestSources`: scale source for `weight` and `bodyFat` (`noBodyFat30`: no `bodyFat` source; `empty`: none)
-- 🔲 Add `DATA_KEYS = ['food', 'resting', 'active', 'weight', 'bodyFat']` in `use-balance.ts`; `daysWithData.weight` = period days with `weightKg`, `daysWithData.bodyFat` = period days with `bodyFatFraction` or `leanMassKg`
-- 🔲 Update `buildDataRows` to map over `DATA_KEYS`; found → „{Quelle} · X von N Tagen“ like today; missing → `data.noMeasurements` for `weight`/`bodyFat`, unchanged texts for energy; status icons and accessibility label as for the other rows
-- 🔲 Add the i18n keys DE/EN
-- 🔲 Test `buildDataRows`: five rows in order; weight found with source and „14 von 30 Tagen“; body fat missing → „keine Messungen · Zugriff prüfen“, status `missing`
-- 🔲 Test `healthKitSource.latestSources`: body fat source falls back to lean mass when there is no body fat sample (result only, no mock-call assertions)
-- 🔲 Test the scenarios: `normal30` counts weight and body fat on its measurement days; `noBodyFat30` has weight but no body fat
-- 🔲 Update `docs/specs/2026-10-21-data-page.md` (section „Inhalt“, point 2, and the sentence about weight and body fat)
-- 🔲 Check in the simulator: gallery 1a shows five rows under „Was ankommt“ (swipe not possible in the simulator → check page 2 via a test of `buildDataRows` with the `normal30` report, like P2 M5); Julius checks the page on the iPhone
-- 🔲 Run `npm run lint`, `npm run typecheck`, `npm run test:coverage`, `npm run check:release-bundle`; all exit 0
-- 🔲 Commit (`feat: show weight and body fat under arriving data`)
+- ✅ Add `DataKey` to `src/health/source.ts` and widen `latestSources()` to `Record<DataKey, SourceRevision | undefined>`; keep `EnergyKey` for the calculation lines
+- ✅ Update `healthKitSource.latestSources`: `weight` = `latest(QUANTITY.weight).source`; `bodyFat` = `latest(QUANTITY.bodyFat).source`, else `latest(QUANTITY.leanMass).source` (Key Decision 11)
+- ✅ Update `createDemoSource.latestSources`: scale source for `weight` and `bodyFat` (`noBodyFat30`: no `bodyFat` source; `empty`: none)
+- ✅ Add `DATA_KEYS = ['food', 'resting', 'active', 'weight', 'bodyFat']` in `use-balance.ts`; `daysWithData.weight` = period days with `weightKg`, `daysWithData.bodyFat` = period days with `bodyFatFraction` or `leanMassKg` _(`DATA_KEYS` und `HAS_VALUE` je Zeile; `daysWithData` über alle fünf)_
+- ✅ Update `buildDataRows` to map over `DATA_KEYS`; found → „{Quelle} · X von N Tagen“ like today; missing → `data.noMeasurements` for `weight`/`bodyFat`, unchanged texts for energy; status icons and accessibility label as for the other rows _(`missingText(key, report)`)_
+- ✅ 🆕 Fix `sourceLabel`: apps like Yazio or Withings run on the iPhone, so their samples carry the iPhone's product type and showed as „iPhone“; device type only for `com.apple.health.<id>` bundles, manual entries (`com.apple.Health`) stay „Health“
+- ✅ Add the i18n keys DE/EN
+- ✅ Test `buildDataRows`: five rows in order; weight found with source and „14 von 30 Tagen“; body fat missing → „keine Messungen · Zugriff prüfen“, status `missing`
+- ✅ Test `healthKitSource.latestSources`: body fat source falls back to lean mass when there is no body fat sample (result only, no mock-call assertions) _(Ergebnis-Test ohne Mock-Aufruf-Prüfung)_
+- ✅ Test the scenarios: `normal30` counts weight and body fat on its measurement days; `noBodyFat30` has weight but no body fat
+- ✅ Update `docs/specs/2026-10-21-data-page.md` (section „Inhalt“, point 2, and the sentence about weight and body fat)
+- ✅ Check in the simulator: gallery 1a shows five rows under „Was ankommt“ (swipe not possible in the simulator → check page 2 via a test of `buildDataRows` with the `normal30` report, like P2 M5); Julius checks the page on the iPhone _(Wegwerf-Test mit dem `normal30`-Report: „Gewicht: Withings · 19 von 30 Tagen“, „Körperfett: Withings · 19 von 30 Tagen“; `noBodyFat30`: „Körperfett: keine Messungen · Zugriff prüfen“. Ansicht am iPhone offen für Julius)_
+- ✅ Run `npm run lint`, `npm run typecheck`, `npm run test:coverage`, `npm run check:release-bundle`; all exit 0 _(dazu `check:release-bundle`)_
+- ✅ Commit (`feat: show weight and body fat under arriving data`)
 
 #### Notes / Constraints
 
@@ -385,3 +388,4 @@ Keine neuen Kürzel: reine Touch-App fürs iPhone (siehe P0/P1-Spec, M4).
 | 6 | ⚠️ Concern | ESLint behält pro Datei nur die letzte Konfiguration einer Regel; ein zweiter `no-restricted-imports`-Block würde die `@/dev/*`-Sperre aufheben | Ein Block mit beiden Sperren für `src/**`, ein späterer nur mit `@/dev/*` für die zwei erlaubten Dateien (M2) |
 | 7 | 💡 Alternative | Gewicht und Körperfett als Zeilen auf der Daten-Seite („Was ankommt“), damit man im Alltag sieht, ob die Waage synchronisiert | Aufgenommen als M6 (Key Decisions 10, 11) — Julius 2026-10-24 |
 | 8 | ⚠️ Concern | `docs/specs/2026-10-21-data-page.md` sagt „Gewicht und Körperfett fehlen bewusst: Sie gehen noch nicht in die Bilanz ein und kommen mit dem Analyse-Screen.“ | Seit P3 gehen sie in die Analyse ein; der Satz wird in M6 ersetzt |
+| 9 | ⚠️ Concern | `sourceLabel` (Intro, seit der Intro-Spec) zeigt für Apps wie Yazio oder Withings „iPhone“, weil HealthKit bei App-Einträgen die Gerätekennung des iPhones mitgibt; die neue Zeile hätte „iPhone · 14 von 30 Tagen“ gezeigt | Behoben in M6: Gerätetyp nur für Apples Geräte-Quellen (`com.apple.health.<id>`); betrifft auch die Intro-Übersicht und die Nahrungs-Zeile (jetzt „Yazio“ statt „iPhone“) |

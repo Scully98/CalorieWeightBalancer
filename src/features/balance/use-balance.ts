@@ -16,7 +16,7 @@ import { chartLines, type ChartLines } from '@/core/lines';
 import { resolvePeriod } from '@/core/period';
 import { periodBalance, type PeriodBalance } from '@/core/period-balance';
 import { DEFAULT_SETTINGS, type Settings } from '@/core/settings';
-import type { EnergyKey, HealthSource } from '@/health/source';
+import type { DataKey, HealthSource } from '@/health/source';
 import { useHealthSource } from '@/health/source-context';
 import {
   useForegroundRefresh,
@@ -24,9 +24,16 @@ import {
 } from '@/hooks/use-foreground-refresh';
 import { getProfile } from '@/storage/settings';
 
-export type { EnergyKey } from '@/health/source';
+export type { DataKey, EnergyKey } from '@/health/source';
 
-export const ENERGY_KEYS: readonly EnergyKey[] = ['food', 'resting', 'active'];
+// Rows under „Was ankommt“, in order.
+export const DATA_KEYS: readonly DataKey[] = [
+  'food',
+  'resting',
+  'active',
+  'weight',
+  'bodyFat',
+];
 
 // Everything both pages show, from one load so their numbers always match.
 export type BalanceReport = {
@@ -37,9 +44,9 @@ export type BalanceReport = {
   chart: { buckets: ChartBucket[]; lines: ChartLines };
   analysis: Analysis;
   // Days of the period with any Health value, per type.
-  daysWithData: Record<EnergyKey, number>;
+  daysWithData: Record<DataKey, number>;
   // Source of the most recent sample, per type.
-  sources: Record<EnergyKey, SourceRevision | undefined>;
+  sources: Record<DataKey, SourceRevision | undefined>;
 };
 
 // `empty`: no day of the period has a food entry. iOS reports denied read
@@ -61,9 +68,16 @@ export function toBalanceState(state: LoadState<BalanceReport>): BalanceState {
 // reach back as far as on any other day.
 const LEAD_IN_DAYS = TREND_MAX_LOOKBACK_DAYS;
 
-function countDays(days: readonly DayRecord[], key: EnergyKey): number {
-  return days.filter((day) => day[key] !== undefined).length;
-}
+// Days with a value per row; body fat also counts lean mass, which some
+// scales write instead.
+const HAS_VALUE: Record<DataKey, (day: DayRecord) => boolean> = {
+  food: (day) => day.food !== undefined,
+  resting: (day) => day.resting !== undefined,
+  active: (day) => day.active !== undefined,
+  weight: (day) => day.weightKg !== undefined,
+  bodyFat: (day) =>
+    day.bodyFatFraction !== undefined || day.leanMassKg !== undefined,
+};
 
 // Exported for the scenario tests.
 export async function loadBalance(
@@ -127,11 +141,9 @@ export async function loadBalance(
       lines: chartLines(history, days, LEAD_IN_DAYS),
     },
     analysis: analyzeBalance(history, days, LEAD_IN_DAYS),
-    daysWithData: {
-      food: countDays(records, 'food'),
-      resting: countDays(records, 'resting'),
-      active: countDays(records, 'active'),
-    },
+    daysWithData: Object.fromEntries(
+      DATA_KEYS.map((key) => [key, records.filter(HAS_VALUE[key]).length]),
+    ) as Record<DataKey, number>,
     sources,
   };
 }
