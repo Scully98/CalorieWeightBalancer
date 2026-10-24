@@ -778,7 +778,7 @@ Keine App-Kürzel (Touch-App, Dev-Screen). Es gelten die Entwickler-Kürzel aus 
 | 2 | ❓ Bedeutung von „Ruhe geschätzt“ in `DayRecord`: wie vorgeschlagen „die Quelle liefert eine Schätzung“ (nur Demo setzt es, HealthKit nie), oder soll der Kern das Feld beim Rechnen setzen? | Julius | Semantik von `DayRecord` (M6), Demo-Zahlen (M8) |
 | 3 | ✅ ~~kg mit Vorzeichen?~~ Ja: `formatSignedKg` — Julius 2026-10-24 | Julius | erledigt |
 | 4 | ✅ ~~Zahlenformat nach Region oder fest?~~ Nach Region — Julius 2026-10-24 | Julius | erledigt |
-| 5 | ❓ Toleranz-UI: Schieber ab 0 % (Design) oder Schalter mit Normbereich 5–20 % / 10–30 % (CLAUDE.md)? | Julius | Betrifft erst Schritt 6, nicht P0/P1 |
+| 5 | ✅ ~~Toleranz-UI: Schieber ab 0 % (Design) oder Schalter mit Normbereich 5–20 % / 10–30 % (CLAUDE.md)?~~ Schieber ab 0 %, Normbereich nur markiert — Julius 2026-10-24, siehe `docs/specs/2026-10-24-settings-store.md` (Key Decision 6) | Julius | erledigt |
 | 6 | ❓ lb statt kg: als Einstellung, automatisch nach Region (z. B. en-US → lb) oder beides (Region als Vorgabe, Einstellung überschreibt)? | Julius | Betrifft erst die Einstellungen (V2); P0 hält die Einheit in den Format-Funktionen |
 
 ## Concerns & Decisions Log

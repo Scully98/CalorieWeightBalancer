@@ -16,7 +16,7 @@ Fragen, die die App beantwortet: Bin ich diesen Monat im Plus oder Minus? Wie la
 ## Rahmenbedingungen
 - Alles lokal: kein Backend, keine Accounts, kein Tracking, keine Analytics. Datenschutz-Label „Keine Daten erfasst“.
 - Einzige Datenquelle Apple HealthKit, nur Leserechte. Essen/Gewicht kommen aus MyFitnessPal, Yazio, Waage-App usw. per Health-Sync.
-- Einstellungen lokal in einer App Group (Widget liest mit).
+- Einstellungen lokal in einer App Group (Widget liest mit), über `SettingsStore` in `src/storage/` (Interface `KeyValueStore`, Tests mit In-Memory-Variante). Keys nur `introCompleted`, `profile.v1` (eingetragene Körperdaten), `settings.v1` (Zeitraum, Null-Tage, heute, Toleranz); nie Health-Werte. In die App Group schreibt nur `src/storage/app-group.ts` (ESLint).
 - V1: nur iPhone, Deutsch und Englisch.
 - Apple: Developer Program 99 USD/Jahr (Individual-Account), Richtlinie 5.1.3 (Health-Daten nicht für Werbung, nicht in iCloud), Datenschutz-URL Pflicht, Hinweis „Keine medizinische Beratung“, genug Funktionsumfang nach 4.2.
 
@@ -53,7 +53,7 @@ Fragen, die die App beantwortet: Bin ich diesen Monat im Plus oder Minus? Wie la
 - Null-Tage-Schalter: Tag ohne Nahrungseintrag zählt mit B = 0 statt vollem Defizit; Anzahl betroffener Tage anzeigen. Null-Tage bleiben aus den Summen A und V, die Toleranz rechnet nur mit echten Einträgen.
 - Datenqualität je Tag (mehrere Flags möglich, „X von N vollständig“ = Tage ohne Flag): Grundumsatz geschätzt, ohne Nahrung, auffällig wenig Nahrung (A < 50 % von R + K), ohne Grundumsatz (auch Mifflin nicht möglich, Tag zählt nicht). Fehlende Aktivenergie zählt als K = 0 und ist kein Flag.
 - Heutiger Tag: standardmäßig nicht in der Bilanz (im Chart markiert), per Schalter zuschaltbar.
-- Toleranzen standardmäßig aus; eingeschaltet wählt der Nutzer im Normbereich (Nahrung 5–20 %, Verbrauch 10–30 %, vorausgewählt der untere Rand). Angewendet auf Zeitraumsummen, nicht pro Tag:
+- Toleranzen standardmäßig aus (0 %). Slider auf der Homepage in ganzen Prozent, Nahrung 0–20 %, Verbrauch 0–30 %, 0 = aus; der Normbereich (Nahrung 5–20 %, Verbrauch 10–30 %) ist am Slider nur markiert. Angewendet auf Zeitraumsummen, nicht pro Tag:
   `Bmin = A(1 − tA) − V`, `Bmax = A(1 + tA) − V(1 − tV)` mit V = R + K. Verbrauch nur nach unten korrigiert.
 - Körperfett: Bilanz ÷ 7.700 kcal/kg Fettgewebe, beschriftet als „theoretisch“.
 - Analyse Bilanz vs. Messung: `E ≈ 9400·ΔFettmasse + 1800·ΔMagermasse` (Hall 2008), Start/Ende als 7-Tage-Trend (Mittel der Messungen von Tag i−6 bis i, ohne Messung bis 34 Tage zurück erweitert; dieselben Werte wie die Chart-Linien). Fett = Gewicht × KFA, Magermasse = `leanBodyMass` oder Gewicht × (1 − KFA). Tatsächlicher Verbrauch = (Σ Nahrung − E) ÷ gezählte Tage, Null-Tage mit Nahrung = Verbrauch; Tracker = Σ Verbrauch ÷ Tage.

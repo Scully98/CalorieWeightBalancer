@@ -1,6 +1,6 @@
 # Einstellungen und Settings-Store (P5)
 
-Stand 2026-10-24. In Umsetzung auf Branch `feature/home-page-base`. Voraussetzung P0 und P1 sind umgesetzt; P2–P4 auch. Branch: weiter auf `feature/home-page-base` (wie P2–P4), sofern Julius nichts anderes sagt.
+Stand 2026-10-24. Umgesetzt auf Branch `feature/home-page-base` (M1–M7). Offen für Julius am iPhone: Schalter umlegen und sehen, dass die Bilanz sofort folgt; Grundumsatz-Werte ändern und sichern; Links und „Sprache“ antippen. Voraussetzung P0 und P1 sind umgesetzt; P2–P4 auch.
 
 ## Overview
 
@@ -443,7 +443,7 @@ Keine App-Kürzel (Touch-App).
 
 ---
 
-### Milestone 7 — Doku und Prüfung
+### ✅ Milestone 7 — Doku und Prüfung
 
 > Doku folgt den Entscheidungen, und die Abnahmekriterien sind im Simulator geprüft.
 
@@ -461,13 +461,13 @@ Keine App-Kürzel (Touch-App).
 
 #### To-Dos
 
-- 🔲 Update `CLAUDE.md` „Rechenmodell“: „Toleranzen standardmäßig aus (0 %); Slider auf der Homepage, Nahrung 0–20 %, Verbrauch 0–30 %, Normbereich 5–20 % / 10–30 % markiert“; „Rahmenbedingungen“: Einstellungen über `SettingsStore` (`src/storage/`), Keys `introCompleted`, `profile.v1`, `settings.v1`, keine Health-Werte
-- 🔲 Update the decision „Toleranzen“ in the Langzeitplan doc to match (Slider ab 0 %, Normbereich markiert)
-- 🔲 Mark P0/P1 Open Question 5 and Intro Open Question 6 as resolved with a pointer to this spec
-- 🔲 Check in the simulator: toggle „Heute einrechnen“ on, kill the app (`xcrun simctl terminate`), start again → still on, and Bilanz says „inkl. heute“
-- 🔲 Check in the simulator: Null-Tage off → Bilanz changes at once without „Rechne …“
-- 🔲 Run `npm run lint`, `npm run typecheck`, `npm run test:coverage`, `npm run check:release-bundle`; all exit 0
-- 🔲 Commit (`docs: record settings store decisions`)
+- ✅ Update `CLAUDE.md` „Rechenmodell“: „Toleranzen standardmäßig aus (0 %); Slider auf der Homepage, Nahrung 0–20 %, Verbrauch 0–30 %, Normbereich 5–20 % / 10–30 % markiert“; „Rahmenbedingungen“: Einstellungen über `SettingsStore` (`src/storage/`), Keys `introCompleted`, `profile.v1`, `settings.v1`, keine Health-Werte _(dazu: nur `src/storage/app-group.ts` schreibt in die App Group)_
+- ✅ Update the decision „Toleranzen“ in the Langzeitplan doc to match (Slider ab 0 %, Normbereich markiert) _(Doc-Revision 37, alter Stand im Satz erwähnt)_
+- ✅ Mark P0/P1 Open Question 5 and Intro Open Question 6 as resolved with a pointer to this spec
+- ✅ Check in the simulator: toggle „Heute einrechnen“ on, kill the app (`xcrun simctl terminate`), start again → still on, and Bilanz says „inkl. heute“ _(statt Tippen `settings.v1` per `simctl spawn defaults write` in die App-Group-plist geschrieben, App beendet und neu gestartet: „Letzte 7 Tage, inkl. heute“, Schalter wie gespeichert (siehe M4); danach Eintrag wieder gelöscht)_
+- ✅ Check in the simulator: Null-Tage off → Bilanz changes at once without „Rechne …“ _(🛑 im Simulator nicht möglich (kein Tippen); im Code: Schalter → `updateSettings` → `useSyncExternalStore` → `buildReport` ohne Laden (Tests M1, M3). Julius prüft am iPhone)_
+- ✅ Run `npm run lint`, `npm run typecheck`, `npm run test:coverage`, `npm run check:release-bundle`; all exit 0 _(229 Tests, Kern 100/97,35/100/100)_
+- ✅ Commit (`docs: record settings store decisions`)
 
 #### Notes / Constraints
 
@@ -479,8 +479,8 @@ Keine App-Kürzel (Touch-App).
 
 | # | Question | Owner | Impact if Unresolved |
 |---|----------|-------|----------------------|
-| 1 | ❓ Texte der Seite „Wie wird gerechnet?“ (M6) passen so? | Julius | M6 nutzt den Entwurf |
-| 2 | ❓ Zeigt die Zeile „Null-Tage = Erhaltung“ die Anzahl betroffener Tage des aktuellen Zeitraums (braucht den geladenen Report im Einstellungen-Tab) oder nur den festen Text? Die Bilanz-Seite zeigt die Anzahl schon | Julius | M4 nimmt den festen Text |
+| 1 | ❓ Texte der Seite „Wie wird gerechnet?“ (M6) passen so? | Julius | M6 nutzt den Entwurf (umgesetzt, plus Satz zu „auffällig wenig Nahrung“) |
+| 2 | ❓ Zeigt die Zeile „Null-Tage = Erhaltung“ die Anzahl betroffener Tage des aktuellen Zeitraums (braucht den geladenen Report im Einstellungen-Tab) oder nur den festen Text? Die Bilanz-Seite zeigt die Anzahl schon | Julius | M4 nimmt den festen Text (umgesetzt) |
 
 ## Concerns & Decisions Log
 
@@ -495,3 +495,5 @@ Keine App-Kürzel (Touch-App).
 | 7 | 💡 Alternative | Wireframe 1l hat weitere Zeilen | Fußzeile, Sprache, „Wie wird gerechnet?“ aufgenommen; Farben, Erscheinungsbild, Widget, Trackingbeginn nicht (Key Decision 13) — Julius 2026-10-24 |
 | 8 | ⚠️ Concern | Ein neues `ageRecordedOn` ohne geänderten Wert würde das hochgerechnete Alter zurücksetzen | Nur geänderte Werte bekommen ein neues Datum (Key Decision 8) |
 | 9 | ⚠️ Concern | „ohne heute“ steht fest im Zeitraum-Text; mit dem Schalter wäre er falsch | `home.periodWithToday` (Key Decision 14) |
+| 10 | ⚠️ Concern | Bei Bedienungshilfen-Schriftgrößen war der Text neben dem Schalter zu schmal („Nahrungseintr-ag“) | Schalter und Werte rutschen ab `fontScale` > 1,35 unter den Text (M4) |
+| 11 | ⚠️ Concern | Wechselt man die Schriftgröße, während die App läuft, rendert React Native den Text bis zum Neustart abgeschnitten (gesehen im Simulator, betrifft alle Screens) | Nicht in P5 behoben; nach Neustart korrekt. Für TestFlight-Feinschliff (Schritt 10) vormerken |
