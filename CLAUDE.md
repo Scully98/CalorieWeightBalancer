@@ -37,9 +37,13 @@ Fragen, die die App beantwortet: Bin ich diesen Monat im Plus oder Minus? Wie la
 | Gewicht | `bodyMass` | letzter Wert | ja |
 | Körperfett | `bodyFatPercentage` | letzter Wert | ja |
 | Magermasse | `leanBodyMass` | letzter Wert | ja |
+| Größe | `height` | einmalig (neuester Wert), für Mifflin-St Jeor | ja |
+| Geburtsdatum | `dateOfBirth` (Merkmal) | einmalig, für Mifflin-St Jeor | ja |
+| Geschlecht | `biologicalSex` (Merkmal) | einmalig, für Mifflin-St Jeor | ja |
 | Periode | `menstrualFlow` | Tage | V2 |
 
-- Summen per `HKStatisticsCollectionQuery` pro Kalendertag (dedupliziert iPhone/Watch), keine Rohsamples summieren.
+- Nur Leserechte, genau die V1-Typen dieser Tabelle (Test `src/health/__tests__/authorization.test.ts`).
+- Summen per `HKStatisticsCollectionQuery` pro Kalendertag (dedupliziert iPhone/Watch), keine Rohsamples summieren. Rohsample-Abfragen erlaubt ESLint nur in `scan.ts` und `healthkit-source.ts` (Anzahl, erster oder letzter Eintrag).
 - Fehlt `leanBodyMass`: Magermasse = Gewicht × (1 − KFA), Fett = Gewicht × KFA.
 - Fehlt Ruheenergie (keine Watch, unter 6 h Tragezeit): Mifflin-St Jeor pro Tag. Gewicht = letzte Messung an/vor dem Tag, sonst erste danach, sonst Profilgewicht; Alter am jeweiligen Tag. Teiltage ab 6 h werden auf 24 h hochgerechnet und gelten als gemessen.
 - iOS verrät nicht, ob Leserechte verweigert wurden: leere Daten immer mit „Berechtigungen prüfen“ erklären.
