@@ -138,7 +138,7 @@ export function trendSeries(
 
 ---
 
-### Milestone 2 — Balken-Buckets
+### ✅ Milestone 2 — Balken-Buckets
 
 > Der Kern liefert die Balken: bis 31 Tage einen je Tag, darüber einen je ISO-Kalenderwoche als Ø kcal/Tag mit dem schlechtesten Flag ihrer Tage.
 
@@ -155,19 +155,19 @@ export function trendSeries(
 
 #### To-Dos
 
-- 🔲 Add `isoWeek(date)` to `dates.ts` (Thursday rule, like the design's `iso()`), local calendar day
-- 🔲 Create `FLAG_SEVERITY: DayFlag[] = ['lowFood', 'noFood', 'noResting', 'restingEstimated']` (worst first, Key Decision 3) and `worstFlag(flags)` → first of `FLAG_SEVERITY` present, else `undefined`
-- 🔲 Create `chartBuckets(days, { today? })` (sketch below): `days.length ≤ 31` → one `day` bucket per day; else `week` buckets
-- 🔲 Day bucket: `kcal` = `day.kcal` (undefined when not counted), `maintenance`, `flags`, `worst`
-- 🔲 Week buckets: group by ISO week; merge a first partial week with < 3 days into the next (design); `avgKcal` = Σ B ÷ counted days (undefined without counted days); `incompleteDays`, `worst` over all days; `avgFoodKcal` and `avgBurnKcal` over counted days with zero days as A = V (Key Decision 7); `measurements` = days with weight
-- 🔲 Append a `today` bucket (day mode only) when `options.today` is given: `kcal` = today's B from `dayBalances`, `counted: false`
-- 🔲 Test 7 and 30 days → 7/30 day buckets; 31 days → 31 day buckets; 32 days → week buckets
-- 🔲 Test 90 days ending on each of the 7 weekdays → always 13 or 14 week buckets, never a day bucket
-- 🔲 Test merging: first week with 1 or 2 days joins the next; with 3 days it stays
-- 🔲 Test week values: Σ B ÷ counted days incl. a zero day (B = 0), excluding a day without resting energy; `worst` = `lowFood` when the week has `lowFood` and `restingEstimated`; `incompleteDays` counts a day with two flags once
-- 🔲 Test the today bucket: present in day mode, absent in week mode and without `today`
-- 🔲 Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
-- 🔲 Commit (`feat: bucket daily balance into day and week bars`)
+- ✅ Add `isoWeek(date)` to `dates.ts` (Thursday rule, like the design's `iso()`), local calendar day _(Tests in `period.test.ts`, 2026 hat 53 Wochen)_
+- ✅ Create `FLAG_SEVERITY: DayFlag[] = ['lowFood', 'noFood', 'noResting', 'restingEstimated']` (worst first, Key Decision 3) and `worstFlag(flags)` → first of `FLAG_SEVERITY` present, else `undefined`
+- ✅ Create `chartBuckets(days, { today? })` (sketch below): `days.length ≤ 31` → one `day` bucket per day; else `week` buckets _(`measured` als Parallel-Array in den Optionen)_
+- ✅ Day bucket: `kcal` = `day.kcal` (undefined when not counted), `maintenance`, `flags`, `worst`
+- ✅ Week buckets: group by ISO week; merge a first partial week with < 3 days into the next (design); `avgKcal` = Σ B ÷ counted days (undefined without counted days); `incompleteDays`, `worst` over all days; `avgFoodKcal` and `avgBurnKcal` over counted days with zero days as A = V (Key Decision 7); `measurements` = days with weight _(zusammengelegte erste Woche trägt die KW der vollen Woche (wie im Design); Ø Nahrung/Verbrauch über gezählte Tage mit bekanntem Verbrauch)_
+- ✅ Append a `today` bucket (day mode only) when `options.today` is given: `kcal` = today's B from `dayBalances`, `counted: false`
+- ✅ Test 7 and 30 days → 7/30 day buckets; 31 days → 31 day buckets; 32 days → week buckets
+- ✅ Test 90 days ending on each of the 7 weekdays → always 13 or 14 week buckets, never a day bucket _(Start So → 1 Tag, Sa → 2 Tage angehängt; Fr → 3 Tage bleiben eigene Woche)_
+- ✅ Test merging: first week with 1 or 2 days joins the next; with 3 days it stays
+- ✅ Test week values: Σ B ÷ counted days incl. a zero day (B = 0), excluding a day without resting energy; `worst` = `lowFood` when the week has `lowFood` and `restingEstimated`; `incompleteDays` counts a day with two flags once
+- ✅ Test the today bucket: present in day mode, absent in week mode and without `today`
+- ✅ Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
+- ✅ Commit (`feat: bucket daily balance into day and week bars`)
 
 ```ts
 // src/core/chart.ts

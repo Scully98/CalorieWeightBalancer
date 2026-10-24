@@ -1,3 +1,4 @@
+import { isoWeek } from '../dates';
 import { fromDateKey, toDateKey } from '../day-record';
 import { periodDateKeys, resolvePeriod, type Period } from '../period';
 
@@ -211,5 +212,24 @@ describe('date keys', () => {
   it('rejects invalid keys', () => {
     expect(fromDateKey('2026-02-30')).toBeUndefined();
     expect(fromDateKey('5.1.2026')).toBeUndefined();
+  });
+});
+
+describe('isoWeek', () => {
+  it('numbers weeks from Monday with the first Thursday in week 1', () => {
+    // Fri 23 Oct 2026 and Sun 25 Oct (25 hours) are in week 43.
+    expect(isoWeek(new Date(2026, 9, 23))).toEqual({ year: 2026, week: 43 });
+    expect(isoWeek(new Date(2026, 9, 25, 23))).toEqual({
+      year: 2026,
+      week: 43,
+    });
+    expect(isoWeek(new Date(2026, 9, 26))).toEqual({ year: 2026, week: 44 });
+  });
+
+  it('assigns days around new year to the week of their Thursday', () => {
+    expect(isoWeek(new Date(2026, 11, 31))).toEqual({ year: 2026, week: 53 });
+    expect(isoWeek(new Date(2027, 0, 3))).toEqual({ year: 2026, week: 53 });
+    expect(isoWeek(new Date(2027, 0, 4))).toEqual({ year: 2027, week: 1 });
+    expect(isoWeek(new Date(2025, 11, 29))).toEqual({ year: 2026, week: 1 });
   });
 });

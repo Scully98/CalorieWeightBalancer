@@ -13,3 +13,15 @@ export function addDays(date: Date, days: number): Date {
 export function daysBetween(a: Date, b: Date): number {
   return Math.round((b.getTime() - a.getTime()) / (24 * 60 * 60 * 1000));
 }
+
+// ISO 8601 calendar week of the local day: weeks start on Monday, and week 1
+// is the one with the year's first Thursday.
+export function isoWeek(date: Date): { year: number; week: number } {
+  const day = startOfDay(date);
+  // Monday = 0 … Sunday = 6.
+  const weekday = (day.getDay() + 6) % 7;
+  const thursday = addDays(day, 3 - weekday);
+  const year = thursday.getFullYear();
+  const week = Math.floor(daysBetween(new Date(year, 0, 1), thursday) / 7) + 1;
+  return { year, week };
+}
