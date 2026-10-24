@@ -465,7 +465,7 @@ Keine App-Kürzel (Touch-App).
 - ✅ Update the decision „Toleranzen“ in the Langzeitplan doc to match (Slider ab 0 %, Normbereich markiert) _(Doc-Revision 37, alter Stand im Satz erwähnt)_
 - ✅ Mark P0/P1 Open Question 5 and Intro Open Question 6 as resolved with a pointer to this spec
 - ✅ Check in the simulator: toggle „Heute einrechnen“ on, kill the app (`xcrun simctl terminate`), start again → still on, and Bilanz says „inkl. heute“ _(statt Tippen `settings.v1` per `simctl spawn defaults write` in die App-Group-plist geschrieben, App beendet und neu gestartet: „Letzte 7 Tage, inkl. heute“, Schalter wie gespeichert (siehe M4); danach Eintrag wieder gelöscht)_
-- ✅ Check in the simulator: Null-Tage off → Bilanz changes at once without „Rechne …“ _(🛑 im Simulator nicht möglich (kein Tippen); im Code: Schalter → `updateSettings` → `useSyncExternalStore` → `buildReport` ohne Laden (Tests M1, M3). Julius prüft am iPhone)_
+- 🔲 🛑 Check in the simulator: Null-Tage off → Bilanz changes at once without „Rechne …“ _(blocked: im Simulator nicht möglich (kein Tippen); im Code: Schalter → `updateSettings` → `useSyncExternalStore` → `buildReport` ohne Laden (Tests M1, M3). Julius prüft am iPhone)_
 - ✅ Run `npm run lint`, `npm run typecheck`, `npm run test:coverage`, `npm run check:release-bundle`; all exit 0 _(229 Tests, Kern 100/97,35/100/100)_
 - ✅ Commit (`docs: record settings store decisions`)
 
