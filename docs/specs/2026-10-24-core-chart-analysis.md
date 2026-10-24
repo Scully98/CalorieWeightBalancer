@@ -270,7 +270,7 @@ export function chartLines(
 
 ---
 
-### Milestone 4 — Abgleich
+### ✅ Milestone 4 — Abgleich
 
 > Der Kern vergleicht die Bilanz mit der gemessenen Energieänderung nach Hall 2008 und liefert den Zustand der Karte. Der goldene Testfall ergibt die erwarteten Zahlen.
 
@@ -288,25 +288,25 @@ export function chartLines(
 
 #### To-Dos
 
-- 🔲 Create `analyzeBalance(records, days, leadInDays)` (sketch below)
-- 🔲 Count `measurements` = period days with a weight; `compositionMeasurements` = period days with fat and lean
-- 🔲 `insufficient` when `days < 21` or `measurements < 6`, with `days` and `measurements` (design: „Bisher: {Tage} Tage, {Messungen} Messungen“)
-- 🔲 `weightOnly` when `compositionMeasurements < 6` (Key Decision 10): `balanceFatKg` = B ÷ 7.700 („wenn alles Fett wäre“) and `weightChangeKg` = weight trend end − start
-- 🔲 Otherwise ΔFett, ΔMager = trend on the last period day − trend on the first (Key Decision 5); `storedKcal` E = 9.400 · ΔFett + 1.800 · ΔMager; `bodyFatPointsChange` = (fat end ÷ weight end − fat start ÷ weight start) × 100
-- 🔲 Sums over counted days, zero days with A = V (Key Decision 7): `foodKcal` (Σ A_eff), `burnKcal` (Σ V); `actualBurnPerDay` = (Σ A_eff − E) ÷ counted days; `trackerBurnPerDay` = Σ V ÷ counted days; `differencePerDay` = actual − tracker
-- 🔲 `ok` when |E − B| ≤ max(0,1 · |B|, 400), else `deviation` with `direction: 'less' | 'more'` (E < B → less) and `leanShare: ΔMager > 0,05`
-- 🔲 Keep the computed values also in `insufficient` when they can be computed (`preview`), so the greyed card can show them (design: opacity 0,3)
-- 🔲 Extend `golden-30.ts`: 7 lead-in days and the 30 days with a measurement every other day; fat 17,6 kg / lean 64,1 kg up to day 6 (and in the lead-in), 18,0 / 64,4 from day 23, linear in between; weight = fat + lean, `bodyFatFraction` = fat ÷ weight; export `GOLDEN_LEAD_IN`
-- 🔲 Test golden case: `state` = `deviation` (`less`), E ≈ 4.300 („≈ +4.300“ with rounding to 100), `actualBurnPerDay` ≈ 2.756,7 → „2.760“, `trackerBurnPerDay` ≈ 2.666,7 → „2.670“, difference „+90“ (rounded − rounded and raw)
-- 🔲 Test that `actual − tracker = (B − E) ÷ days` with a zero day in the period
-- 🔲 Test 7 days with 4 measurements → `insufficient`, `days: 7`, `measurements: 4`; 7 days with 7 measurements → still `insufficient`
-- 🔲 Test 21 days with 5 measurements → `insufficient`; with 6 → not
-- 🔲 Test `weightOnly` without any KFA/lean; and with only 3 composition measurements
-- 🔲 Test the threshold: |E − B| = 400 with B = 1.000 → `ok`; 401 → `deviation`; B = 10.000, |E − B| = 1.000 → `ok`
-- 🔲 Test lean share: ΔMager 0,06 → `leanShare: true`, 0,05 → false
-- 🔲 Update `CLAUDE.md` Rechenmodell: analysis bullet with trend, threshold, zero days, the four states; Features 7: week bars from 32 days, worst-flag order
-- 🔲 Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
-- 🔲 Commit (`feat: compare balance with the scale after Hall 2008`)
+- ✅ Create `analyzeBalance(records, days, leadInDays)` (sketch below)
+- ✅ Count `measurements` = period days with a weight; `compositionMeasurements` = period days with fat and lean
+- ✅ `insufficient` when `days < 21` or `measurements < 6`, with `days` and `measurements` (design: „Bisher: {Tage} Tage, {Messungen} Messungen“)
+- ✅ `weightOnly` when `compositionMeasurements < 6` (Key Decision 10): `balanceFatKg` = B ÷ 7.700 („wenn alles Fett wäre“) and `weightChangeKg` = weight trend end − start _(auch, wenn sich die Fett-Trends nicht berechnen lassen)_
+- ✅ Otherwise ΔFett, ΔMager = trend on the last period day − trend on the first (Key Decision 5); `storedKcal` E = 9.400 · ΔFett + 1.800 · ΔMager; `bodyFatPointsChange` = (fat end ÷ weight end − fat start ÷ weight start) × 100 _(ΔFett/ΔMager = letzter minus erster Trendwert im Zeitraum (wie die Linien))_
+- ✅ Sums over counted days, zero days with A = V (Key Decision 7): `foodKcal` (Σ A_eff), `burnKcal` (Σ V); `actualBurnPerDay` = (Σ A_eff − E) ÷ counted days; `trackerBurnPerDay` = Σ V ÷ counted days; `differencePerDay` = actual − tracker
+- ✅ `ok` when |E − B| ≤ max(0,1 · |B|, 400), else `deviation` with `direction: 'less' | 'more'` (E < B → less) and `leanShare: ΔMager > 0,05`
+- ✅ Keep the computed values also in `insufficient` when they can be computed (`preview`), so the greyed card can show them (design: opacity 0,3)
+- ✅ Extend `golden-30.ts`: 7 lead-in days and the 30 days with a measurement every other day; fat 17,6 kg / lean 64,1 kg up to day 6 (and in the lead-in), 18,0 / 64,4 from day 23, linear in between; weight = fat + lean, `bodyFatFraction` = fat ÷ weight; export `GOLDEN_LEAD_IN` _(Messung an geraden Tagen inkl. Vorlauf (−6, −4, −2); Energie-Tage unverändert, P2-Golden-Test liest weiter `GOLDEN_DAYS`)_
+- ✅ Test golden case: `state` = `deviation` (`less`), E ≈ 4.300 („≈ +4.300“ with rounding to 100), `actualBurnPerDay` ≈ 2.756,7 → „2.760“, `trackerBurnPerDay` ≈ 2.666,7 → „2.670“, difference „+90“ (rounded − rounded and raw) _(`deviation`/`less`, `leanShare: true`; formatiert „+4.300“, „2.760“, „2.670“, „+90“)_
+- ✅ Test that `actual − tracker = (B − E) ÷ days` with a zero day in the period
+- ✅ Test 7 days with 4 measurements → `insufficient`, `days: 7`, `measurements: 4`; 7 days with 7 measurements → still `insufficient`
+- ✅ Test 21 days with 5 measurements → `insufficient`; with 6 → not
+- ✅ Test `weightOnly` without any KFA/lean; and with only 3 composition measurements _(mit 5 statt 3 KFA-Tagen; beides unter 6)_
+- ✅ Test the threshold: |E − B| = 400 with B = 1.000 → `ok`; 401 → `deviation`; B = 10.000, |E − B| = 1.000 → `ok` _(statt exakt 400/401 (Gleitkomma) mit 399/401 geprüft, B = 3.000; dazu 10 % bei B = 30.000 und Fälle 180/650/760 kcal Abstand)_
+- ✅ Test lean share: ΔMager 0,06 → `leanShare: true`, 0,05 → false
+- ✅ Update `CLAUDE.md` Rechenmodell: analysis bullet with trend, threshold, zero days, the four states; Features 7: week bars from 32 days, worst-flag order
+- ✅ Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
+- ✅ Commit (`feat: compare balance with the scale after Hall 2008`)
 
 ```ts
 // src/core/analysis.ts

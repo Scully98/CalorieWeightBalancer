@@ -1,10 +1,14 @@
 import {
+  GOLDEN_BODY_DAYS,
   GOLDEN_DAYS,
+  GOLDEN_DELTA,
   GOLDEN_EXPECTED as EXPECTED,
+  GOLDEN_LEAD_IN,
   GOLDEN_TOLERANCE,
 } from '../__fixtures__/golden-30';
+import { analyzeBalance } from '../analysis';
 import { dayBalances } from '../day-balance';
-import { formatKcal, formatSignedKg } from '../format';
+import { formatKcal, formatNumber, formatSignedKg } from '../format';
 import { periodBalance } from '../period-balance';
 
 const LOCALE = 'de-DE';
@@ -66,5 +70,52 @@ describe('golden test case', () => {
   it('gives min = max = balance without tolerance', () => {
     const { kcal, range } = golden({ foodPercent: 0, burnPercent: 0 });
     expect(range).toEqual({ min: kcal, max: kcal });
+  });
+});
+
+describe('golden test case: balance against the scale', () => {
+  const days = dayBalances(GOLDEN_BODY_DAYS.slice(GOLDEN_LEAD_IN), {
+    zeroDaysAsMaintenance: true,
+    profile: {},
+  });
+  const analysis = analyzeBalance(GOLDEN_BODY_DAYS, days, GOLDEN_LEAD_IN);
+  const round = (value: number, to: number) => Math.round(value / to) * to;
+
+  it('shows less gain on the scale than in the balance', () => {
+    expect(analysis).toMatchObject({
+      state: 'deviation',
+      direction: 'less',
+      leanShare: true,
+      days: 30,
+      measurements: 15,
+    });
+  });
+
+  it('stores ≈ +4,300 kcal and gives 2,760 against 2,670 kcal a day', () => {
+    if (analysis.state !== 'deviation') throw new Error(analysis.state);
+    const { values } = analysis;
+    const expected = EXPECTED.analysis;
+    expect(values.fatChangeKg).toBeCloseTo(GOLDEN_DELTA.fatKg);
+    expect(values.leanChangeKg).toBeCloseTo(GOLDEN_DELTA.leanKg);
+    expect(values.storedKcal).toBeCloseTo(expected.storedKcal);
+    expect(values.actualBurnPerDay).toBeCloseTo(expected.actualBurnRaw);
+    expect(values.trackerBurnPerDay).toBeCloseTo(expected.trackerBurnRaw);
+    expect(values.differencePerDay).toBeCloseTo(expected.differencePerDay);
+
+    // Shown like the design: E to 100, burn to 10, difference of the two.
+    const actual = round(values.actualBurnPerDay, 10);
+    const tracker = round(values.trackerBurnPerDay, 10);
+    expect(formatKcal(round(values.storedKcal, 100), LOCALE)).toBe(
+      expected.formatted.storedKcal,
+    );
+    expect(formatNumber(actual, LOCALE)).toBe(
+      expected.formatted.actualBurnPerDay,
+    );
+    expect(formatNumber(tracker, LOCALE)).toBe(
+      expected.formatted.trackerBurnPerDay,
+    );
+    expect(formatKcal(actual - tracker, LOCALE)).toBe(
+      expected.formatted.differencePerDay,
+    );
   });
 });
