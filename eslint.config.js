@@ -16,6 +16,10 @@ const RAW_SAMPLES = {
   importNames: ['queryQuantitySamples'],
   message: 'Sum Health values with statistics queries, not raw samples.',
 };
+const APP_GROUP = {
+  name: '@bacons/apple-targets',
+  message: 'Read and write the App Group through the store in src/storage.',
+};
 
 module.exports = defineConfig([
   expoConfig,
@@ -53,6 +57,7 @@ module.exports = defineConfig([
   // imports them; routes in src/app/dev load them behind __DEV__.
   // Health values are summed by statistics queries, which deduplicate iPhone
   // and Watch; raw samples are only read where nothing is summed.
+  // Only the store touches the App Group.
   // ESLint keeps one config per rule and file, so each block lists every
   // restriction that applies to its files.
   {
@@ -60,27 +65,42 @@ module.exports = defineConfig([
     rules: {
       'no-restricted-imports': [
         'error',
-        { paths: [RAW_SAMPLES], patterns: [DEV_CODE] },
+        { paths: [RAW_SAMPLES, APP_GROUP], patterns: [DEV_CODE] },
       ],
     },
   },
   {
     files: ['src/health/scan.ts', 'src/health/healthkit-source.ts'],
     rules: {
-      'no-restricted-imports': ['error', { patterns: [DEV_CODE] }],
+      'no-restricted-imports': [
+        'error',
+        { paths: [APP_GROUP], patterns: [DEV_CODE] },
+      ],
     },
   },
   {
     files: ['src/dev/**/*.{ts,tsx}', 'src/app/dev/**/*.{ts,tsx}'],
     rules: {
-      'no-restricted-imports': ['error', { paths: [RAW_SAMPLES] }],
+      'no-restricted-imports': ['error', { paths: [RAW_SAMPLES, APP_GROUP] }],
     },
   },
   {
     // Tests mock the HealthKit module, including the raw sample query.
     files: ['src/health/__tests__/**'],
     rules: {
-      'no-restricted-imports': ['error', { patterns: [DEV_CODE] }],
+      'no-restricted-imports': [
+        'error',
+        { paths: [APP_GROUP], patterns: [DEV_CODE] },
+      ],
+    },
+  },
+  {
+    files: ['src/storage/app-group.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        { paths: [RAW_SAMPLES], patterns: [DEV_CODE] },
+      ],
     },
   },
   eslintConfigPrettier,
