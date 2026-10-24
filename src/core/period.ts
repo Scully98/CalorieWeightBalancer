@@ -1,5 +1,5 @@
 import { addDays, daysBetween, startOfDay } from './dates';
-import { fromDateKey } from './day-record';
+import { fromDateKey, toDateKey } from './day-record';
 
 export type PresetDays = 7 | 30 | 60 | 90;
 
@@ -63,4 +63,12 @@ export function resolvePeriod(
         : empty;
     }
   }
+}
+
+// One local date key per day of the period, oldest first. Steps by calendar
+// day, so a 23- or 25-hour day never skips or repeats a key.
+export function periodDateKeys({ start, days }: ResolvedPeriod): string[] {
+  return Array.from({ length: days }, (_, offset) =>
+    toDateKey(addDays(start, offset)),
+  );
 }
