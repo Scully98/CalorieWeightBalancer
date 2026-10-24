@@ -39,7 +39,8 @@
     "lint": "expo lint",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
-    "test": "jest"
+    "test": "jest",
+    "check:release-bundle": "scripts/check-release-bundle.sh"
   },
   "private": true,
   "license": "PolyForm-Noncommercial-1.0.0",

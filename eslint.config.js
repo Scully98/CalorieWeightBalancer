@@ -39,5 +39,25 @@ module.exports = defineConfig([
       ],
     },
   },
+  // Demo data and the state gallery stay out of release builds: only dev code
+  // imports them; routes in src/app/dev load them behind __DEV__.
+  {
+    files: ['src/**/*.{ts,tsx}'],
+    ignores: ['src/dev/**', 'src/app/dev/**'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@/dev/*', '**/dev/*'],
+              message:
+                'Development-only code; load it in src/app/dev behind __DEV__.',
+            },
+          ],
+        },
+      ],
+    },
+  },
   eslintConfigPrettier,
 ]);

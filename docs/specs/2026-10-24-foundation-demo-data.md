@@ -610,7 +610,7 @@ Tag-Nummern = Position im 30-Tage-Fenster (0 = ältester Tag, 29 = gestern), wie
 
 ---
 
-### Milestone 9 — Zustandsgalerie
+### ✅ Milestone 9 — Zustandsgalerie
 
 > Ein Dev-Screen listet alle Design-Zustände und rendert für jeden den Bilanz-Tab mit der passenden `DemoSource`; im Release-Build ist davon nichts erreichbar.
 
@@ -631,27 +631,28 @@ Tag-Nummern = Position im 30-Tage-Fenster (0 = ältester Tag, 29 = gestern), wie
 | 🟠 | `eslint.config.js` | `no-restricted-imports` für `@/dev/*` außerhalb `src/dev/**` und `src/app/dev/**` |
 | 🟠 | `package.json` | Skript `check:release-bundle` |
 | 🟠 | `.github/workflows/ci.yml` | Schritt `npm run check:release-bundle` |
-| 🟠 | `src/app/(tabs)/index.tsx` | `HomeScreen` exportierbar mit optionalem `period`, damit die Galerie ihn einbettet |
+| 🟢 | `src/features/balance/components/home-screen.tsx` | `HomeScreen` mit optionalem `period` (aus der Route verschoben), damit die Galerie ihn einbettet |
+| 🟠 | `src/app/(tabs)/index.tsx` | Rendert nur noch `<HomeScreen />` |
 
 #### To-Dos
 
-- 🔲 Create `entries.ts` with the 14 entries (table below)
-- 🔲 Create `gallery-screen.tsx`: one row per entry with design ID, title and scenario name; tap opens `/dev/[entry]`
-- 🔲 Create `entry-screen.tsx`: header with back, design ID and title; renders `HomeScreen` inside `HealthSourceProvider` with `createDemoSource(entry.scenario, new Date())` and the scenario's period
-- 🔲 Show a small badge „UI-Vorgabe folgt mit der Homepage“ on entries whose UI preset the current page can't show yet (toleranz, sheet, tooltip, picker, abgleich part)
-- 🔲 For 1b, force dark with `Appearance.setColorScheme('dark')` on enter and reset to `null` on leave
-- 🔲 For 1i, show the hint „Textgröße am Gerät auf AX1 stellen (≈ 140 %)“; Dynamic Type can't be forced from inside the app
-- 🔲 Create the stub routes; their only import outside React is the `__DEV__`-guarded `require`
-- 🔲 Add the protected dev routes to `src/app/_layout.tsx`
-- 🔲 Add the link „Zustandsgalerie (dev) ›“ to the dev section in Einstellungen
-- 🔲 Add the `no-restricted-imports` rule for `@/dev/*` and verify it with a temporary import in `balance-page.tsx`
-- 🔲 Create `scripts/check-release-bundle.sh`: `npx expo export --platform ios --output-dir dist` (production by default), then fail if `dist/` contains `kcalwaage-demo-data`, `normal30` or `Zustandsgalerie`
-- 🔲 Add `"check:release-bundle"` to `package.json` and run it locally; expect exit 0
-- 🔲 Verify the check works: temporarily import `@/dev/demo/demo-source` without `__DEV__` guard (lint rule disabled for that line), expect the script to fail, then revert
-- 🔲 Add the step to `.github/workflows/ci.yml` and confirm the workflow is green
-- 🔲 Check in the simulator: every entry opens; 1a shows +7.000 kcal for 30 days; 1f shows the empty state; 1b is dark and returns to system appearance on back
-- 🔲 Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
-- 🔲 Commit (`feat: add dev-only state gallery for design states`)
+- ✅ Create `entries.ts` with the 14 entries (table below)
+- ✅ Create `gallery-screen.tsx`: one row per entry with design ID, title and scenario name; tap opens `/dev/[entry]`
+- ✅ Create `entry-screen.tsx`: header with back, design ID and title; renders `HomeScreen` inside `HealthSourceProvider` with `createDemoSource(entry.scenario, new Date())` and the scenario's period
+- ✅ Show a small badge „UI-Vorgabe folgt mit der Homepage“ on entries whose UI preset the current page can't show yet (toleranz, sheet, tooltip, picker, abgleich part)
+- ✅ For 1b, force dark with `Appearance.setColorScheme('dark')` on enter and reset to `null` on leave
+- ✅ For 1i, show the hint „Textgröße am Gerät auf AX1 stellen (≈ 140 %)“; Dynamic Type can't be forced from inside the app
+- ✅ Create the stub routes; their only import outside React is the `__DEV__`-guarded `require` _(`require` mit begründetem `eslint-disable` für `no-require-imports`)_
+- ✅ Add the protected dev routes to `src/app/_layout.tsx`
+- ✅ Add the link „Zustandsgalerie (dev) ›“ to the dev section in Einstellungen
+- ✅ Add the `no-restricted-imports` rule for `@/dev/*` and verify it with a temporary import in `balance-page.tsx` _(Muster `@/dev/*` und `**/dev/*`; mit Probe-Import geprüft)_
+- ✅ Create `scripts/check-release-bundle.sh`: `npx expo export --platform ios --output-dir dist` (production by default), then fail if `dist/` contains `kcalwaage-demo-data`, `normal30` or `Zustandsgalerie` _(Ausgabe nach `dist/release-check`; `grep -a`, weil das Bundle Hermes-Bytecode ist. Gegenprobe: „excluding today“ wird gefunden, „Reset intro“ nicht)_
+- ✅ Add `"check:release-bundle"` to `package.json` and run it locally; expect exit 0
+- ✅ Verify the check works: temporarily import `@/dev/demo/demo-source` without `__DEV__` guard (lint rule disabled for that line), expect the script to fail, then revert _(ungeschützter Import von `DEMO_BUNDLE_MARKER` in `balance-page.tsx` → Skript meldet den Fund; danach zurückgesetzt)_
+- ✅ Add the step to `.github/workflows/ci.yml` and confirm the workflow is green
+- ✅ Check in the simulator: every entry opens; 1a shows +7.000 kcal for 30 days; 1f shows the empty state; 1b is dark and returns to system appearance on back _(per Deep Link `calorieweightbalancer://dev/<id>`: 1a +7.000 kcal / +0,9 kg wie im Design, 1d 90 Tage, 1f leerer Zustand, 1b dunkel und nach dem Verlassen wieder hell)_
+- ✅ Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
+- ✅ Commit (`feat: add dev-only state gallery for design states`)
 
 **Galerie-Einträge**
 
@@ -678,6 +679,7 @@ Tag-Nummern = Position im 30-Tage-Fenster (0 = ältester Tag, 29 = gestern), wie
 > - Picker-Vorgabe aus dem Design: `pF = 102`, `pT = 116` bei 120 Tagen, also vor 18 und vor 4 Tagen. Der eigene Zeitraum steht vorher auf Index 67–119, also vor 53 Tagen bis gestern.
 > - „Nicht erreichbar“ heißt hier zweierlei: keine Navigation (`Stack.Protected`, Link nur unter `__DEV__`) und kein Code im Bundle (Stub-Routen + Skript-Prüfung). Die Stub-Routen selbst sind im Release vorhanden und zeigen `NotAvailable`, sind aber nicht ansteuerbar.
 > - `dist/` steht schon in `.gitignore`.
+> - Umsetzung: Die Leiste mit „‹ Galerie“, ID, Titel und Badge sitzt unten statt oben (Wireframe), damit der Bilanz-Screen darüber sein echtes Layout mit Safe Area behält. Die Galerie hat einen eigenen Titel mit „‹ Einstellungen“ statt Stack-Header (`headerShown: false` gilt app-weit). `entry-screen` hält die Demo-Quelle in `useState` statt `useMemo` (React-Compiler-Lint).
 
 #### 🔀 Inbound Flow — CLI: npm run check:release-bundle
 

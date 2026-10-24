@@ -46,6 +46,11 @@ export default function RootLayout() {
         <Stack.Protected guard={introCompleted}>
           <Stack.Screen name="(tabs)" />
         </Stack.Protected>
+        {/* Development only; the routes are empty in release builds. */}
+        <Stack.Protected guard={__DEV__ && introCompleted}>
+          <Stack.Screen name="dev/gallery" />
+          <Stack.Screen name="dev/[entry]" />
+        </Stack.Protected>
         <Stack.Protected guard={!introCompleted}>
           <Stack.Screen name="intro" />
         </Stack.Protected>

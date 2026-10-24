@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -29,6 +30,10 @@ export function SettingsPage() {
           <View style={styles.dev}>
             <Divider />
             <LinkButton label="Reset intro (dev)" onPress={resetIntro} />
+            <LinkButton
+              label="Zustandsgalerie (dev) ›"
+              onPress={() => router.push('/dev/gallery')}
+            />
             <TypeSpecimen />
           </View>
         ) : null}
