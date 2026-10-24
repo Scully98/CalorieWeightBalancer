@@ -173,7 +173,7 @@ sequenceDiagram
 
 ---
 
-### Milestone 3 — Zahlenformat
+### ✅ Milestone 3 — Zahlenformat
 
 > `formatKcal` und `formatKg` formatieren je Sprache und sind getestet.
 
@@ -188,14 +188,14 @@ sequenceDiagram
 
 #### To-Dos
 
-- 🔲 Add `formatKcal(value, locale)`: whole kcal with explicit sign via `formatSigned` (`+`, U+2212, none for 0); no rounding to 10 (callers round where needed)
-- 🔲 Add `formatKg(value, locale)`: one decimal, no sign
-- 🔲 Add `formatSignedKg(value, locale)`: one decimal with explicit sign via `formatSigned` (e.g. `+0,9`, `−0,8`), for fat equivalents
-- 🔲 Test `formatKcal(7000, 'de-DE')` → `+7.000` and `formatKcal(7000, 'en-US')` → `+7,000`
-- 🔲 Test `formatKg(0.9, 'de-DE')` → `0,9` and `formatKg(0.9, 'en-US')` → `0.9`
-- 🔲 Test edge cases: `formatKcal(-6200, 'en-US')` → `−6,200`, `formatKcal(0, 'de-DE')` → `0`, `formatKg(0.04, 'de-DE')` → `0,0`, `formatSignedKg(0.9, 'de-DE')` → `+0,9`, `formatSignedKg(-0.8, 'en-US')` → `−0.8`, `formatSignedKg(-0.04, 'de-DE')` → `0,0`
-- 🔲 Run `npm test`; all pass
-- 🔲 Commit (`feat: add formatKcal, formatKg and formatSignedKg`)
+- ✅ Add `formatKcal(value, locale)`: whole kcal with explicit sign via `formatSigned` (`+`, U+2212, none for 0); no rounding to 10 (callers round where needed)
+- ✅ Add `formatKg(value, locale)`: one decimal, no sign
+- ✅ Add `formatSignedKg(value, locale)`: one decimal with explicit sign via `formatSigned` (e.g. `+0,9`, `−0,8`), for fat equivalents
+- ✅ Test `formatKcal(7000, 'de-DE')` → `+7.000` and `formatKcal(7000, 'en-US')` → `+7,000`
+- ✅ Test `formatKg(0.9, 'de-DE')` → `0,9` and `formatKg(0.9, 'en-US')` → `0.9`
+- ✅ Test edge cases: `formatKcal(-6200, 'en-US')` → `−6,200`, `formatKcal(0, 'de-DE')` → `0`, `formatKg(0.04, 'de-DE')` → `0,0`, `formatSignedKg(0.9, 'de-DE')` → `+0,9`, `formatSignedKg(-0.8, 'en-US')` → `−0.8`, `formatSignedKg(-0.04, 'de-DE')` → `0,0`
+- ✅ Run `npm test`; all pass
+- ✅ Commit (`feat: add formatKcal, formatKg and formatSignedKg`)
 
 #### Notes / Constraints
 

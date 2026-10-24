@@ -1,4 +1,39 @@
-import { formatApproxKcal, formatSigned, parseLocaleNumber } from '../format';
+import {
+  formatApproxKcal,
+  formatKcal,
+  formatKg,
+  formatSigned,
+  formatSignedKg,
+  parseLocaleNumber,
+} from '../format';
+
+describe('formatKcal', () => {
+  it('groups by language with explicit sign', () => {
+    expect(formatKcal(7000, 'de-DE')).toBe('+7.000');
+    expect(formatKcal(7000, 'en-US')).toBe('+7,000');
+  });
+
+  it('uses U+2212 for negative values and no sign for zero', () => {
+    expect(formatKcal(-6200, 'en-US')).toBe('−6,200');
+    expect(formatKcal(0, 'de-DE')).toBe('0');
+  });
+});
+
+describe('formatKg', () => {
+  it('shows one decimal without sign', () => {
+    expect(formatKg(0.9, 'de-DE')).toBe('0,9');
+    expect(formatKg(0.9, 'en-US')).toBe('0.9');
+    expect(formatKg(0.04, 'de-DE')).toBe('0,0');
+  });
+});
+
+describe('formatSignedKg', () => {
+  it('shows one decimal with explicit sign', () => {
+    expect(formatSignedKg(0.9, 'de-DE')).toBe('+0,9');
+    expect(formatSignedKg(-0.8, 'en-US')).toBe('−0.8');
+    expect(formatSignedKg(-0.04, 'de-DE')).toBe('0,0');
+  });
+});
 
 describe('formatApproxKcal', () => {
   it('rounds to 10 kcal with German grouping', () => {
