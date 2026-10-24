@@ -40,7 +40,8 @@
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
     "test": "jest",
-    "check:release-bundle": "scripts/check-release-bundle.sh"
+    "check:release-bundle": "scripts/check-release-bundle.sh",
+    "test:coverage": "jest --coverage"
   },
   "private": true,
   "license": "PolyForm-Noncommercial-1.0.0",
@@ -55,6 +56,14 @@
       "!src/**/*.d.ts",
       "!src/i18n/locales/**",
       "!src/**/__fixtures__/**"
-    ]
+    ],
+    "coverageThreshold": {
+      "./src/core/": {
+        "statements": 90,
+        "branches": 90,
+        "functions": 90,
+        "lines": 90
+      }
+    }
   }
 }
