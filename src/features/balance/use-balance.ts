@@ -42,7 +42,20 @@ export type BalanceReport = {
   sources: Record<EnergyKey, SourceRevision | undefined>;
 };
 
-export type BalanceState = LoadState<BalanceReport>;
+// `empty`: no day of the period has a food entry. iOS reports denied read
+// access as empty data, so the pages explain it with a permissions hint;
+// it is never an error.
+export type BalanceState =
+  | Exclude<LoadState<BalanceReport>, { status: 'done' }>
+  | { status: 'done' | 'empty'; value: BalanceReport };
+
+export function toBalanceState(state: LoadState<BalanceReport>): BalanceState {
+  if (state.status !== 'done') return state;
+  const { balance } = state.value;
+  return balance.flagCounts.noFood === balance.days
+    ? { status: 'empty', value: state.value }
+    : state;
+}
 
 // Days loaded before the period, so the 7-day trend on its first day can
 // reach back as far as on any other day.
@@ -133,5 +146,5 @@ export function useBalance(
     () => loadBalance(source, JSON.parse(settingsKey) as Settings, new Date()),
     [source, settingsKey],
   );
-  return useForegroundRefresh(load);
+  return toBalanceState(useForegroundRefresh(load));
 }

@@ -140,7 +140,7 @@ export function DataPage({
           days === undefined ? undefined : t('home.period', { count: days })
         }
       />
-      {state.status === 'done' ? (
+      {state.status === 'done' || state.status === 'empty' ? (
         <Report report={state.value} />
       ) : state.status === 'error' ? (
         <AppText>{t('data.error')}</AppText>

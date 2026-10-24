@@ -135,7 +135,7 @@ Abnahmekriterien → Milestones:
 
 ---
 
-### Milestone 3 — Zustand empty
+### ✅ Milestone 3 — Zustand empty
 
 > `useBalance` meldet `empty`, wenn der Zeitraum keinen Nahrungseintrag hat; die Seiten lesen den Zustand, statt selbst zu zählen.
 
@@ -153,17 +153,17 @@ Abnahmekriterien → Milestones:
 
 #### To-Dos
 
-- 🔲 Add `{ status: 'empty'; days: number; report: BalanceReport }` to `BalanceState`; keep `LoadState` in `use-foreground-refresh.ts` generic
-- 🔲 Create `toBalanceState(state: LoadState<BalanceReport>): BalanceState`: `done` with `flagCounts.noFood === days` (includes 0 days) → `empty`; everything else unchanged
-- 🔲 Use it in `useBalance`
-- 🔲 Update `balance-page.tsx`: empty state from `status === 'empty'`, count from `state.days`; keep the permissions hint
-- 🔲 Update `data-page.tsx`: `empty` shows the same as today for a period without food (calc card „Noch kein Tag mit Nahrungseintrag“ and „Was ankommt“ from `state.report`)
-- 🔲 Update `home-screen.tsx`: days from `done` or `empty`
-- 🔲 Test `toBalanceState`: no food on any day → `empty` with days; one day with food → `done`; 0 days → `empty`; `loading`/`error` pass through
-- 🔲 Test that `loadBalance` with a source that has no data at all resolves (no throw) and maps to `empty` (demo scenario `empty`)
-- 🔲 Check the gallery entry 1f in the simulator: still the empty state with „Berechtigungen prüfen“
-- 🔲 Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
-- 🔲 Commit (`feat: report an empty period as its own load state`)
+- ✅ Add `{ status: 'empty'; days: number; report: BalanceReport }` to `BalanceState`; keep `LoadState` in `use-foreground-refresh.ts` generic _(Form wie `done`: `{ status: 'empty'; value: BalanceReport }`, Tage aus `value.balance.days`; `LoadState` bleibt generisch)_
+- ✅ Create `toBalanceState(state: LoadState<BalanceReport>): BalanceState`: `done` with `flagCounts.noFood === days` (includes 0 days) → `empty`; everything else unchanged
+- ✅ Use it in `useBalance`
+- ✅ Update `balance-page.tsx`: empty state from `status === 'empty'`, count from `state.days`; keep the permissions hint _(`BalanceSummary` zählt nicht mehr selbst; `empty` und `error` zeigen den leeren Zustand)_
+- ✅ Update `data-page.tsx`: `empty` shows the same as today for a period without food (calc card „Noch kein Tag mit Nahrungseintrag“ and „Was ankommt“ from `state.report`) _(`empty` zeigt den `Report` wie `done`)_
+- ✅ Update `home-screen.tsx`: days from `done` or `empty`
+- ✅ Test `toBalanceState`: no food on any day → `empty` with days; one day with food → `done`; 0 days → `empty`; `loading`/`error` pass through
+- ✅ Test that `loadBalance` with a source that has no data at all resolves (no throw) and maps to `empty` (demo scenario `empty`) _(statt Demo-Szenario eine Test-Quelle ohne Werte (wie HealthKit ohne Daten/Rechte); dazu „Alles“ ohne Daten → 0 Tage → `empty`)_
+- ✅ Check the gallery entry 1f in the simulator: still the empty state with „Berechtigungen prüfen“ _(1f per Deep Link: „Keine Nahrungsdaten in den letzten 30 Tagen“ + „Berechtigungen prüfen“)_
+- ✅ Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
+- ✅ Commit (`feat: report an empty period as its own load state`)
 
 #### Notes / Constraints
 

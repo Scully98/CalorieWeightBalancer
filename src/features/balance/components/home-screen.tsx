@@ -32,7 +32,7 @@ export function HomeScreen({
   // Settings UI follows with the homepage; until then only the period varies.
   const state = useBalance({ ...DEFAULT_SETTINGS, period });
   const days =
-    state.status === 'done'
+    state.status === 'done' || state.status === 'empty'
       ? state.value.balance.days
       : period.kind === 'days'
         ? period.days

@@ -12,7 +12,7 @@ import { formatLocale } from '@/i18n';
 import { space } from '@/theme/spacing';
 
 type BalanceSummaryProps = {
-  // Without a balance (failed load) the empty state is shown.
+  // Without a balance (empty period or failed load) the empty state is shown.
   balance?: PeriodBalance;
   days?: number;
   onShowData: () => void;
@@ -25,11 +25,11 @@ function BalanceSummary({ balance, days, onShowData }: BalanceSummaryProps) {
   // iOS reports denied read access as empty data, so a period without any
   // food entries shows the empty state with a permissions hint instead of a
   // balance.
-  if (!balance || balance.flagCounts.noFood === balance.days) {
+  if (!balance) {
     return (
       <>
         <AppText style={styles.center}>
-          {t('home.empty', { count: balance?.days ?? days ?? 0 })}
+          {t('home.empty', { count: days ?? 0 })}
         </AppText>
         <View style={styles.group}>
           <Button
@@ -105,7 +105,7 @@ export function BalancePage({ state, days, onShowData }: BalancePageProps) {
           days={days}
           onShowData={onShowData}
         />
-      ) : state.status === 'error' ? (
+      ) : state.status === 'empty' || state.status === 'error' ? (
         <BalanceSummary days={days} onShowData={onShowData} />
       ) : (
         <AppText variant="secondary" tone="muted" style={styles.center}>
