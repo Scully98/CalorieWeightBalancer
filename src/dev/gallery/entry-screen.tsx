@@ -3,19 +3,38 @@ import { useEffect, useState } from 'react';
 import { Appearance, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { GALLERY_ENTRIES, hasPendingUi } from './entries';
+import { GALLERY_ENTRIES, hasPendingUi, type GalleryUi } from './entries';
 import { AppText } from '@/components/app-text';
 import { Badge } from '@/components/badge';
 import { LinkButton } from '@/components/link-button';
 import { createDemoSource } from '@/dev/demo/demo-source';
 import { buildScenario } from '@/dev/demo/scenarios';
-import { HomeScreen } from '@/features/balance/components/home-screen';
+import { addDays } from '@/core/dates';
+import { toDateKey } from '@/core/day-record';
+import {
+  HomeScreen,
+  type HomeUi,
+} from '@/features/balance/components/home-screen';
 import { HealthSourceProvider } from '@/health/source-context';
 import { createMemoryStore } from '@/storage/key-value-store';
 import { SettingsStoreProvider } from '@/storage/settings-context';
 import { createSettingsStore } from '@/storage/settings-store';
 import { space } from '@/theme/spacing';
 import { useColors } from '@/theme/use-colors';
+
+// Presets of the design that are UI state, not data or settings.
+function homeUi(ui: GalleryUi | undefined): HomeUi {
+  const now = new Date();
+  const key = (daysAgo: number) => toDateKey(addDays(now, -daysAgo));
+  return {
+    toleranceOpen: ui?.tolerance?.open,
+    picker: ui?.picker && {
+      from: key(ui.picker.fromDaysAgo),
+      to: key(ui.picker.toDaysAgo),
+      editing: ui.picker.editing,
+    },
+  };
+}
 
 // Development only: the balance tab with the entry's demo scenario. The bar
 // sits at the bottom so the screen above keeps its real layout.
@@ -36,6 +55,7 @@ export function EntryScreen() {
     return memory;
   });
   const colorScheme = entry?.ui?.colorScheme;
+  const [initialUi] = useState(() => homeUi(entry?.ui));
 
   // Overrides the system appearance for the whole app while open.
   useEffect(() => {
@@ -59,7 +79,7 @@ export function EntryScreen() {
     <View style={[styles.flex, { backgroundColor: colors.background }]}>
       <HealthSourceProvider source={source}>
         <SettingsStoreProvider store={store}>
-          <HomeScreen />
+          <HomeScreen initialUi={initialUi} />
         </SettingsStoreProvider>
       </HealthSourceProvider>
       <SafeAreaView

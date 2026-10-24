@@ -132,6 +132,30 @@ export const de = {
     dayMonth: '{{day}}. {{month}}',
     dayMonthYear: '{{day}}. {{month}} {{year}}',
     monthsShort: 'Jan Feb Mär Apr Mai Jun Jul Aug Sep Okt Nov Dez',
+    months:
+      'Januar Februar März April Mai Juni Juli August September Oktober November Dezember',
+    monthYear: '{{month}} {{year}}',
+    // Monday first in both languages, like the ISO weeks of the chart.
+    weekdaysShort: 'Mo Di Mi Do Fr Sa So',
+    weekdays: 'Montag Dienstag Mittwoch Donnerstag Freitag Samstag Sonntag',
+    dayFull: '{{weekday}}, {{day}}. {{month}} {{year}}',
+  },
+  picker: {
+    title: 'Eigener Zeitraum',
+    cancel: 'Abbrechen',
+    from: 'Von',
+    to: 'Bis',
+    apply: 'Übernehmen',
+    days_one: '{{count}} Tag',
+    days_other: '{{count}} Tage',
+    untilYesterday: 'bis gestern',
+    untilToday: 'bis heute',
+    dataFrom: 'Daten ab {{date}}',
+    todayExcluded: 'heute zählt nicht',
+    todayIncluded: 'heute zählt mit',
+    prevMonth: 'Vorheriger Monat',
+    nextMonth: 'Nächster Monat',
+    field: '{{label}}, {{date}}',
   },
   // Spoken by VoiceOver instead of signs and units.
   a11y: {

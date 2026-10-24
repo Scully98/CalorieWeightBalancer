@@ -13,6 +13,10 @@ export type ColorTokens = {
 export type ThemeColors = ColorTokens & {
   // Grid lines and separators: muted at 35 %.
   separator: string;
+  // Selected range in the calendar: muted at 20 %.
+  band: string;
+  // Dims the screen behind a sheet: black at 32 % in both schemes.
+  scrim: string;
 };
 
 // V1 has no accent color: plus and minus are told apart by sign, bar direction
@@ -42,7 +46,12 @@ export function withAlpha(color: string, alpha: number): string {
 }
 
 function theme(tokens: ColorTokens): ThemeColors {
-  return { ...tokens, separator: withAlpha(tokens.muted, 0.35) };
+  return {
+    ...tokens,
+    separator: withAlpha(tokens.muted, 0.35),
+    band: withAlpha(tokens.muted, 0.2),
+    scrim: withAlpha('#000000', 0.32),
+  };
 }
 
 export const colors = { light: theme(light), dark: theme(dark) };

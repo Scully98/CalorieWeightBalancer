@@ -389,7 +389,7 @@ Keine App-Kürzel (Touch-App). VoiceOver: Segmente als `radiogroup`/`radio` mit 
 
 ---
 
-### Milestone 4 — Datumsbereich-Picker
+### ✅ Milestone 4 — Datumsbereich-Picker
 
 > „Eigener“ öffnet das Sheet aus 1m; die Auswahl-Logik ist eine getestete reine Funktion.
 
@@ -402,25 +402,26 @@ Keine App-Kürzel (Touch-App). VoiceOver: Segmente als `radiogroup`/`radio` mit 
 | 🟢 | `src/features/balance/date-range.ts` | `pickerBounds`, `calendarMonth`, `pickDay`, `selectionSummary` |
 | 🟢 | `src/features/balance/__tests__/date-range.test.ts` | Regeln aus Key Decision 14, Grenzen, Monatsraster |
 | 🟢 | `src/features/balance/components/date-range-sheet.tsx` | Sheet nach Design 1m |
-| 🟠 | `src/features/balance/components/period-segments.tsx` | „Eigener“ öffnet das Sheet; Übernehmen schreibt den Zeitraum |
+| 🟠 | `src/features/balance/components/home-screen.tsx` | Hält das offene Sheet, „Eigener“ öffnet es, Übernehmen schreibt den Zeitraum |
+| 🟠 | `src/theme/colors.ts`, `src/theme/__tests__/colors.test.ts` | Abgeleitete Farben `band` (Nebentext 20 %) und `scrim` (Schwarz 32 %) |
 | 🟠 | `src/i18n/locales/de.ts` | `picker.*`, `date.months`, `date.weekdaysShort` |
 | 🟠 | `src/i18n/locales/en.ts` | dasselbe auf Englisch |
 
 #### To-Dos
 
-- 🔲 Create `pickerBounds(firstDataDate, today, includeToday)` → `{ min, max }` date keys: min = first data day (fallback Open Question 2), max = yesterday or today
-- 🔲 Create `pickDay(selection, dayKey)` with `selection = { from, to, editing: 'from' | 'to' }` after Key Decision 14; days outside the bounds are ignored
-- 🔲 Create `calendarMonth(year, month, bounds, selection, today)` → leading blanks (week starts Monday) and one cell per day: `selectable`, `isStart`, `isEnd`, `inRange` (band), `isToday`; `canGoBack`/`canGoForward` from the bounds
-- 🔲 Create `selectionSummary(selection, bounds, includeToday, locale, t)`: „{n} Tage · bis gestern“ (`_one` „1 Tag …“; suffix only when `to` is yesterday; with today on „· bis heute“), caption „Daten ab {TT.MM.JJJJ} · heute zählt nicht“ (today on: „· heute zählt mit“)
-- 🔲 Test: tap with „Von“ active sets start, pushes the end if needed, switches to „Bis“; tap before start with „Bis“ active moves the start; tap after start sets the end; days outside the bounds do nothing; October 2026 grid starts with 3 blanks (1.10.2026 is a Thursday); band cells between start and end; 15 days from 18 to 4 days ago → „15 Tage“ without „bis gestern“
-- 🔲 Create `DateRangeSheet` after 1m: transparent `Modal` (`animationType="slide"`), backdrop `Pressable` foreground at 32 % via `withAlpha` (closes), sheet with background, radius 14 on top, grabber 36×5 muted 50 %, title `sectionTitle` „Eigener Zeitraum“, „Abbrechen“; fields „Von“/„Bis“ (caption uppercase muted + `bodyStrong` date, active field 2 pt foreground border, else 1,5 pt muted 50 %); month row with 44 pt arrows (opacity 0,25 at the bound) and „Oktober 2026“; weekday row „Mo … So“; 7-column grid, cells 42 high with 38 pt circle; start/end filled foreground with background text, band `separator`-like muted 20 %, today dashed 1,5 pt ring, outside bounds 30 %; summary row; pill `Button` „Übernehmen“
-- 🔲 Load `firstDataDate()` from `useHealthSource()` when the sheet opens; until it resolves the lower bound is open and the back arrow is disabled
-- 🔲 Wire `PeriodSegments`: „Eigener“ opens the sheet with the current period’s first/last day and „Von“ active; „Übernehmen“ → `updateSettings({ period: { kind: 'custom', from, to } })` and close; „Abbrechen“/backdrop close without change
-- 🔲 Accessibility: sheet `accessibilityViewIsModal`; day cells `button` with label „Donnerstag, 1. Oktober 2026“ and state `selected` for start/end, `disabled` outside the bounds; fields „Von, 6. Oktober 2026, ausgewählt“; arrows „Vorheriger Monat“/„Nächster Monat“
-- 🔲 Add texts DE: `picker.title` „Eigener Zeitraum“, `picker.cancel` „Abbrechen“, `picker.from` „Von“, `picker.to` „Bis“, `picker.apply` „Übernehmen“, `picker.days` „{{count}} Tage“, `picker.untilYesterday` „bis gestern“, `picker.untilToday` „bis heute“, `picker.dataFrom` „Daten ab {{date}}“, `picker.todayExcluded` „heute zählt nicht“, `picker.todayIncluded` „heute zählt mit“, `picker.prevMonth`, `picker.nextMonth`; `date.months` Januar…Dezember; `date.weekdaysShort` Mo…So. EN: „Custom period“, „Cancel“, „From“, „To“, „Apply“, „{{count}} days“, „through yesterday“, „through today“, „Data from {{date}}“, „today doesn’t count“, „today counts“, „Previous month“, „Next month“, January…December, Mo…Su
-- 🔲 Check in the simulator: choose 6.–20. Okt, apply → segment „Eigener“ selected, subtitle „6. Okt – 20. Okt · 15 Tage“, balance reloaded; cancel keeps the old period; large Dynamic Type keeps the grid usable
-- 🔲 Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
-- 🔲 Commit (`feat: pick a custom period in a calendar sheet`)
+- ✅ Create `pickerBounds(firstDataDate, today, includeToday)` → `{ min, max }` date keys: min = first data day (fallback Open Question 2), max = yesterday or today
+- ✅ Create `pickDay(selection, dayKey)` with `selection = { from, to, editing: 'from' | 'to' }` after Key Decision 14; days outside the bounds are ignored
+- ✅ Create `calendarMonth(year, month, bounds, selection, today)` → leading blanks (week starts Monday) and one cell per day: `selectable`, `isStart`, `isEnd`, `inRange` (band), `isToday`; `canGoBack`/`canGoForward` from the bounds
+- ✅ Create `selectionSummary(selection, bounds, includeToday, locale, t)`: „{n} Tage · bis gestern“ (`_one` „1 Tag …“; suffix only when `to` is yesterday; with today on „· bis heute“), caption „Daten ab {TT.MM.JJJJ} · heute zählt nicht“ (today on: „· heute zählt mit“)
+- ✅ Test: tap with „Von“ active sets start, pushes the end if needed, switches to „Bis“; tap before start with „Bis“ active moves the start; tap after start sets the end; days outside the bounds do nothing; October 2026 grid starts with 3 blanks (1.10.2026 is a Thursday); band cells between start and end; 15 days from 18 to 4 days ago → „15 Tage“ without „bis gestern“
+- ✅ Create `DateRangeSheet` after 1m: transparent `Modal` (`animationType="slide"`) _(`fade`, weil `slide` die Abdunklung mitschiebt; Zellbreite 14,28 %, sonst rutscht Sonntag in die nächste Zeile)_, backdrop `Pressable` foreground at 32 % via `withAlpha` (closes), sheet with background, radius 14 on top, grabber 36×5 muted 50 %, title `sectionTitle` „Eigener Zeitraum“, „Abbrechen“; fields „Von“/„Bis“ (caption uppercase muted + `bodyStrong` date, active field 2 pt foreground border, else 1,5 pt muted 50 %); month row with 44 pt arrows (opacity 0,25 at the bound) and „Oktober 2026“; weekday row „Mo … So“; 7-column grid, cells 42 high with 38 pt circle; start/end filled foreground with background text, band `separator`-like muted 20 %, today dashed 1,5 pt ring, outside bounds 30 %; summary row; pill `Button` „Übernehmen“
+- ✅ Load `firstDataDate()` from `useHealthSource()` when the sheet opens; until it resolves the lower bound is open and the back arrow is disabled _(bis dahin ist die Untergrenze der Start des gezeigten Zeitraums)_
+- ✅ Wire `PeriodSegments`: _(Sheet-State in `HomeScreen`, der den Zeitraum kennt; ohne Spanne vorbelegt mit den letzten 30 Tagen)_ „Eigener“ opens the sheet with the current period’s first/last day and „Von“ active; „Übernehmen“ → `updateSettings({ period: { kind: 'custom', from, to } })` and close; „Abbrechen“/backdrop close without change
+- ✅ Accessibility: sheet `accessibilityViewIsModal`; day cells `button` with label „Donnerstag, 1. Oktober 2026“ and state `selected` for start/end, `disabled` outside the bounds; fields „Von, 6. Oktober 2026, ausgewählt“; arrows „Vorheriger Monat“/„Nächster Monat“
+- ✅ Add texts DE: `picker.title` „Eigener Zeitraum“, `picker.cancel` „Abbrechen“, `picker.from` „Von“, `picker.to` „Bis“, `picker.apply` „Übernehmen“, `picker.days` „{{count}} Tage“, `picker.untilYesterday` „bis gestern“, `picker.untilToday` „bis heute“, `picker.dataFrom` „Daten ab {{date}}“, `picker.todayExcluded` „heute zählt nicht“, `picker.todayIncluded` „heute zählt mit“, `picker.prevMonth`, `picker.nextMonth`; `date.months` Januar…Dezember; `date.weekdaysShort` Mo…So. EN: „Custom period“, „Cancel“, „From“, „To“, „Apply“, „{{count}} days“, „through yesterday“, „through today“, „Data from {{date}}“, „today doesn’t count“, „today counts“, „Previous month“, „Next month“, January…December, Mo…Su
+- ✅ Check in the simulator: choose 6.–20. Okt, apply → segment „Eigener“ selected, subtitle „6. Okt – 20. Okt · 15 Tage“, balance reloaded; cancel keeps the old period; large Dynamic Type keeps the grid usable _(1m per Deep Link wie im Design: 6.–20. Okt, „15 Tage“, „Daten ab 26.06.2026 · heute zählt nicht“, heute gestrichelt. Antippen und Übernehmen offen für Julius am iPhone; Galerie-Vorgabe 1m dafür aus M6 vorgezogen)_
+- ✅ Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
+- ✅ Commit (`feat: pick a custom period in a calendar sheet`)
 
 #### Notes / Constraints
 

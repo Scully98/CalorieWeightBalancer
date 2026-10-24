@@ -133,6 +133,30 @@ export const en: typeof de = {
     dayMonth: '{{month}} {{day}}',
     dayMonthYear: '{{month}} {{day}}, {{year}}',
     monthsShort: 'Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec',
+    months:
+      'January February March April May June July August September October November December',
+    monthYear: '{{month}} {{year}}',
+    // Monday first in both languages, like the ISO weeks of the chart.
+    weekdaysShort: 'Mo Tu We Th Fr Sa Su',
+    weekdays: 'Monday Tuesday Wednesday Thursday Friday Saturday Sunday',
+    dayFull: '{{weekday}}, {{month}} {{day}}, {{year}}',
+  },
+  picker: {
+    title: 'Custom period',
+    cancel: 'Cancel',
+    from: 'From',
+    to: 'To',
+    apply: 'Apply',
+    days_one: '{{count}} day',
+    days_other: '{{count}} days',
+    untilYesterday: 'through yesterday',
+    untilToday: 'through today',
+    dataFrom: 'Data from {{date}}',
+    todayExcluded: "today doesn't count",
+    todayIncluded: 'today counts',
+    prevMonth: 'Previous month',
+    nextMonth: 'Next month',
+    field: '{{label}}, {{date}}',
   },
   // Spoken by VoiceOver instead of signs and units.
   a11y: {
