@@ -1,6 +1,6 @@
 # Rechenkern I: Zeitraum, Tagesbilanz, Periodenbilanz (P2)
 
-Stand 2026-10-24. In Umsetzung auf Branch `feature/home-page-base`. Voraussetzung P1 (`docs/specs/2026-10-24-foundation-demo-data.md`) ist umgesetzt.
+Stand 2026-10-24. Umgesetzt auf Branch `feature/home-page-base` (M1–M6, CI grün). Offen für Julius: Daten-Seite am iPhone ansehen (im Simulator ohne Wischen nicht erreichbar, Zeilen per Test geprüft) und die vier Open Questions. Voraussetzung P1 (`docs/specs/2026-10-24-foundation-demo-data.md`) ist umgesetzt.
 
 ## Overview
 
@@ -491,7 +491,7 @@ Keine neuen Kürzel: reine Touch-App fürs iPhone. Für die Prüfung gelten die 
 
 ---
 
-### Milestone 6 — Abdeckungs-Schwelle
+### ✅ Milestone 6 — Abdeckungs-Schwelle
 
 > Jest bricht ab, wenn `src/core/` unter 90 % Abdeckung fällt, und CI prüft das bei jedem Push.
 
@@ -506,13 +506,13 @@ Keine neuen Kürzel: reine Touch-App fürs iPhone. Für die Prüfung gelten die 
 
 #### To-Dos
 
-- 🔲 Add `"coverageThreshold": { "./src/core/": { "statements": 90, "branches": 90, "functions": 90, "lines": 90 } }` to the Jest config
-- 🔲 Add script `"test:coverage": "jest --coverage"`
-- 🔲 Check that a directory path aggregates all files in it (Jest docs) and `settings.ts` (only a constant, 0 % statements today) doesn't fail the threshold on its own; if Jest checks per file, add a test that imports `DEFAULT_SETTINGS`
-- 🔲 Verify the gate: temporarily skip `period-balance.test.ts`, expect `npm run test:coverage` to fail with „coverage threshold … not met“, then revert
-- 🔲 Replace `npm test` with `npm run test:coverage` in `ci.yml`; push and confirm the workflow is green
-- 🔲 Run `npm run lint`, `npm run typecheck`, `npm run test:coverage`; all exit 0 and `src/core/` ≥ 90 % in every column
-- 🔲 Commit (`ci: require 90 % test coverage for the core`)
+- ✅ Add `"coverageThreshold": { "./src/core/": { "statements": 90, "branches": 90, "functions": 90, "lines": 90 } }` to the Jest config
+- ✅ Add script `"test:coverage": "jest --coverage"`
+- ✅ Check that a directory path aggregates all files in it (Jest docs) and `settings.ts` (only a constant, 0 % statements today) doesn't fail the threshold on its own; if Jest checks per file, add a test that imports `DEFAULT_SETTINGS` _(Verzeichnispfad wird zusammengerechnet (Meldung „./src/core/ … not met: 45.76 %“); `settings.ts` ist inzwischen über Importe abgedeckt, `src/core/` steht bei 100 %)_
+- ✅ Verify the gate: temporarily skip `period-balance.test.ts`, expect `npm run test:coverage` to fail with „coverage threshold … not met“, then revert _(statt nur `period-balance.test.ts` alle Tests ausgeblendet, die `period-balance.ts` treffen (`--testPathIgnorePatterns 'period-balance|golden|scenarios|data-rows'`), sonst bleibt die Abdeckung über 90 %; Schwelle schlägt bei allen vier Spalten an)_
+- ✅ Replace `npm test` with `npm run test:coverage` in `ci.yml`; push and confirm the workflow is green _(Run 40113293633 für 26b8942 grün)_
+- ✅ Run `npm run lint`, `npm run typecheck`, `npm run test:coverage`; all exit 0 and `src/core/` ≥ 90 % in every column
+- ✅ Commit (`ci: require 90 % test coverage for the core`)
 
 #### Notes / Constraints
 
