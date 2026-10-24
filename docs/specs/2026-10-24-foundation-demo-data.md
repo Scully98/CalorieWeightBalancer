@@ -385,7 +385,7 @@ sequenceDiagram
 
 ---
 
-### Milestone 6 — Datenmodell
+### ✅ Milestone 6 — Datenmodell
 
 > `DayRecord`, `Period` und `Settings` als reine TypeScript-Typen im Rechenkern; der bestehende Kern rechnet mit `DayRecord`.
 
@@ -405,17 +405,17 @@ sequenceDiagram
 
 #### To-Dos
 
-- 🔲 Create `DayRecord` (see sketch below): `date` required, all values optional
-- 🔲 Derive `DayEnergy` from `DayRecord` (`Pick` of `food`, `resting`, `restingEstimated`, `restingCoverage`, `active`) and re-export it from `balance.ts` so existing imports keep working
-- 🔲 Update `dayRestingKind`/`dayResting`: a day with `restingEstimated: true` and a `resting` value counts as `fallback` and uses its own `resting` value (not the period fallback)
-- 🔲 Test: a period with one estimated day sums its given resting value and counts it in `restingFallbackDays`
-- 🔲 Create `Period` with `PERIOD_PRESETS` in segment order (7, 30, 60, 90, all, custom)
-- 🔲 Create `resolvePeriod(period, today, options)` → `{ start, days }` (local midnight, calendar days, DST-safe like `queryDailyEnergy`); options `includeToday` and `firstDataDate`
-- 🔲 Test `resolvePeriod`: 30 days ending yesterday; with `includeToday` ending today; `all` from `firstDataDate`; `all` without data → 0 days; `custom` clamped to yesterday (or today with `includeToday`); `custom` with `from > to` swapped; across a DST change
-- 🔲 Create `Settings` and `DEFAULT_SETTINGS` (period 30 days, `zeroDaysAsMaintenance: true`, `includeToday: false`, tolerance 0 % / 0 % = aus)
-- 🔲 Update CLAUDE.md feature 2 to the design's period list
-- 🔲 Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
-- 🔲 Commit (`feat: add DayRecord, Period and Settings types`)
+- ✅ Create `DayRecord` (see sketch below): `date` required, all values optional
+- ✅ Derive `DayEnergy` from `DayRecord` (`Pick` of `food`, `resting`, `restingEstimated`, `restingCoverage`, `active`) and re-export it from `balance.ts` so existing imports keep working
+- ✅ Update `dayRestingKind`/`dayResting`: a day with `restingEstimated: true` and a `resting` value counts as `fallback` and uses its own `resting` value (not the period fallback) _(plus: geschätzte Tage zählen nicht in `typicalResting`)_
+- ✅ Test: a period with one estimated day sums its given resting value and counts it in `restingFallbackDays`
+- ✅ Create `Period` with `PERIOD_PRESETS` in segment order (7, 30, 60, 90, all, custom) _(`PERIOD_PRESETS` = Segmente `[7, 30, 60, 90, 'all', 'custom']`)_
+- ✅ Create `resolvePeriod(period, today, options)` → `{ start, days }` (local midnight, calendar days, DST-safe like `queryDailyEnergy`); options `includeToday` and `firstDataDate`
+- ✅ Test `resolvePeriod`: 30 days ending yesterday; with `includeToday` ending today; `all` from `firstDataDate`; `all` without data → 0 days; `custom` clamped to yesterday (or today with `includeToday`); `custom` with `from > to` swapped; across a DST change
+- ✅ Create `Settings` and `DEFAULT_SETTINGS` (period 30 days, `zeroDaysAsMaintenance: true`, `includeToday: false`, tolerance 0 % / 0 % = aus)
+- ✅ Update CLAUDE.md feature 2 to the design's period list
+- ✅ Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0
+- ✅ Commit (`feat: add DayRecord, Period and Settings types`)
 
 ```ts
 // src/core/day-record.ts
@@ -453,6 +453,7 @@ export type Settings = {
 
 #### Notes / Constraints
 
+> - Umsetzung: Mit „Heute einrechnen“ endet jeder Zeitraum heute statt gestern, „30 T“ heißt dann die 30 Tage bis heute (nicht 30 + heute). Geschätzte Ruheenergie der Quelle (`restingEstimated`) zählt nicht in den Median `typicalResting`, weil sie keine Messung ist. `toDateKey`/`fromDateKey` liegen in `day-record.ts`.
 > - „jeweils optional“ gilt für die Werte; ohne Datum ist ein Datensatz nicht zuzuordnen, deshalb ist `date` Pflicht.
 > - KFA wird als Anteil 0–1 gespeichert (wie HealthKit mit Einheit `%`), Anzeige in Prozent erst in der UI.
 > - Fehlt `leanMassKg`, gilt laut CLAUDE.md Magermasse = Gewicht × (1 − KFA), Fett = Gewicht × KFA. Die Ableitung kommt mit der Analyse (Schritt 8), nicht in P1.

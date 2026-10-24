@@ -57,7 +57,7 @@ Fragen, die die App beantwortet: Bin ich diesen Monat im Plus oder Minus? Wie la
 ## Features V1
 Drei Screens (Bilanz, Analyse-Chart, Einstellungen) plus Widget.
 1. Große Bilanzzahl mit Zeitraum, Vorzeichen klar beschriftet.
-2. Zeitraum: 7 Tage, 30 Tage, dieser Monat, seit Trackingbeginn, eigener.
+2. Zeitraum: 7, 30, 60, 90 Tage, Alles (seit erstem Datenpunkt), Eigener (laut Design; „dieser Monat“ geht über Eigener).
 3. Null-Tage als Erhaltungstage (Schalter).
 4. Umrechnung in Körperfett unter der Bilanz.
 5./6. Toleranz Verbrauch / Nahrung, Bilanz zeigt dann Spanne.

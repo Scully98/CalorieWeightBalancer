@@ -152,6 +152,37 @@ describe('dayResting', () => {
   });
 });
 
+describe('estimated resting energy from the source', () => {
+  it('counts as fallback but keeps its own value', () => {
+    const day = { food: 2000, resting: 1750, restingEstimated: true };
+    expect(dayRestingKind(day, 1800)).toBe('fallback');
+    expect(dayRestingKind(day, undefined)).toBe('fallback');
+    expect(dayResting(day, 1800)).toBe(1750);
+  });
+
+  it('sums its value and counts it as a fallback day', () => {
+    const result = periodBreakdown(
+      [
+        { food: 2000, resting: 1750, restingEstimated: true, active: 300 },
+        { food: 2500, resting: 1800, active: 400 },
+      ],
+      1900,
+    );
+    expect(result.restingKcal).toBe(3550);
+    expect(result.restingFallbackDays).toBe(1);
+    expect(result.kcal).toBe(250);
+  });
+
+  it('is left out of the typical resting energy', () => {
+    const measured = Array.from({ length: 7 }, () => ({ resting: 1800 }));
+    const estimated = Array.from({ length: 8 }, () => ({
+      resting: 1000,
+      restingEstimated: true,
+    }));
+    expect(typicalResting([...measured, ...estimated])).toBe(1800);
+  });
+});
+
 describe('typicalResting', () => {
   const full = (resting: number): DayEnergy => ({
     resting,

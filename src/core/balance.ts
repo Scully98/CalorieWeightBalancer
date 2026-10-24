@@ -1,12 +1,7 @@
+import type { DayEnergy } from './day-record';
+
 // Energy of one calendar day in kcal; undefined when Health has no entry.
-export type DayEnergy = {
-  food?: number;
-  resting?: number;
-  active?: number;
-  // Share of the day's hours with resting energy, 0–1. A watch only measures
-  // while worn, so a low share means `resting` covers part of the day.
-  restingCoverage?: number;
-};
+export type { DayEnergy } from './day-record';
 
 // kcal per kg of adipose tissue.
 export const KCAL_PER_KG_FAT = 7700;
@@ -50,12 +45,20 @@ function isFullDay(day: DayEnergy): boolean {
   return (day.restingCoverage ?? 1) >= FULL_DAY_COVERAGE;
 }
 
+// A value the source estimated itself counts like the fallback but keeps
+// its own number.
+function hasOwnEstimate(day: DayEnergy): boolean {
+  return day.restingEstimated === true && day.resting !== undefined;
+}
+
 // Where a day's resting energy comes from: full days as measured, partial
-// days scaled up to 24 hours, days with too little data from the fallback.
+// days scaled up to 24 hours, days with too little data or an estimate from
+// the source as fallback.
 export function dayRestingKind(
   day: DayEnergy,
   fallback: number | undefined,
 ): RestingKind {
+  if (hasOwnEstimate(day)) return 'fallback';
   if (
     day.resting === undefined ||
     (day.restingCoverage ?? 1) < MIN_SCALED_COVERAGE
@@ -75,7 +78,7 @@ export function dayResting(
     case 'scaled':
       return (day.resting as number) / (day.restingCoverage ?? 1);
     case 'fallback':
-      return fallback;
+      return hasOwnEstimate(day) ? day.resting : fallback;
     case 'missing':
       return undefined;
   }
@@ -85,7 +88,10 @@ export function dayResting(
 // MIN_TYPICAL_DAYS days.
 export function typicalResting(days: readonly DayEnergy[]): number | undefined {
   const values = days
-    .filter((day) => day.resting !== undefined && isFullDay(day))
+    .filter(
+      (day) =>
+        day.resting !== undefined && !day.restingEstimated && isFullDay(day),
+    )
     .map((day) => day.resting as number)
     .sort((a, b) => a - b);
   if (values.length < MIN_TYPICAL_DAYS) return undefined;
