@@ -1,73 +1,19 @@
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
+import { EmptyState } from './empty-state';
 import { HeroSection } from './hero-section';
 import { PeriodSegments } from './period-segments';
+import { QualityRow } from './quality-row';
+import { TodayCard } from './today-card';
 import { AppText } from '@/components/app-text';
-import { Button } from '@/components/button';
 import { LinkButton } from '@/components/link-button';
 import { PageIndicator } from '@/components/page-indicator';
-import type { PeriodBalance } from '@/core/period-balance';
 import type { BalanceState } from '@/features/balance/use-balance';
-import { openHealthApp } from '@/health/open-health-app';
 import { space } from '@/theme/spacing';
-
-function EmptyState({ days }: { days?: number }) {
-  const { t } = useTranslation();
-
-  // iOS reports denied read access as empty data, so a period without any
-  // food entries shows a permissions hint instead of a balance.
-  return (
-    <View style={styles.group}>
-      <AppText>{t('home.empty', { count: days ?? 0 })}</AppText>
-      <Button
-        variant="secondary"
-        label={t('home.checkPermissions')}
-        onPress={openHealthApp}
-      />
-      <AppText variant="caption" tone="muted">
-        {t('common.permissionsPath')}
-      </AppText>
-    </View>
-  );
-}
-
-function BalanceSummary({
-  balance,
-  toleranceOpen,
-  onShowData,
-}: {
-  balance: PeriodBalance;
-  toleranceOpen?: boolean;
-  onShowData: () => void;
-}) {
-  const { t } = useTranslation();
-
-  return (
-    <View style={styles.summary}>
-      <HeroSection balance={balance} initialOpen={toleranceOpen} />
-      {/* Until the data quality row replaces them. */}
-      {balance.maintenanceDays > 0 ? (
-        <AppText variant="caption" tone="muted">
-          {t('home.daysWithoutFood', { count: balance.maintenanceDays })}
-        </AppText>
-      ) : null}
-      {balance.excludedDays > 0 ? (
-        <AppText variant="caption" tone="muted">
-          {t('home.daysWithoutResting', { count: balance.excludedDays })}
-        </AppText>
-      ) : null}
-      <View style={styles.link}>
-        <LinkButton label={t('data.showData')} onPress={onShowData} />
-      </View>
-    </View>
-  );
-}
 
 type BalancePageProps = {
   state: BalanceState;
-  // Days of the period; undefined while a period like "all" is loading.
-  days?: number;
   periodLabel?: string;
   pageCount: number;
   // Gallery preset: the tolerance card starts open.
@@ -76,18 +22,20 @@ type BalancePageProps = {
   scrollEnabled?: boolean;
   onShowData: () => void;
   onPickCustom: () => void;
+  onOpenQuality: () => void;
 };
 
-// First page of the balance tab: period, then the balance of that period.
+// First page of the balance tab: period, the balance of that period, its
+// data quality and today so far. Chart (P8) and Abgleich (P9) follow below.
 export function BalancePage({
   state,
-  days,
   periodLabel,
   pageCount,
   toleranceOpen,
   scrollEnabled = true,
   onShowData,
   onPickCustom,
+  onOpenQuality,
 }: BalancePageProps) {
   const { t } = useTranslation();
 
@@ -118,18 +66,36 @@ export function BalancePage({
         )}
       </View>
       {state.status === 'done' ? (
-        <BalanceSummary
-          balance={state.value.balance}
-          toleranceOpen={toleranceOpen}
-          onShowData={onShowData}
-        />
-      ) : state.status === 'empty' || state.status === 'error' ? (
-        <EmptyState days={days} />
+        <>
+          <View style={styles.data}>
+            <HeroSection
+              balance={state.value.balance}
+              initialOpen={toleranceOpen}
+            />
+            <QualityRow balance={state.value.balance} onOpen={onOpenQuality} />
+          </View>
+          <TodayCard
+            today={state.value.today}
+            loadedAt={state.value.loadedAt}
+          />
+        </>
+      ) : state.status === 'empty' ? (
+        <EmptyState report={state.value} />
+      ) : state.status === 'error' ? (
+        <EmptyState />
       ) : (
         <AppText variant="secondary" tone="muted">
           {t('home.loading')}
         </AppText>
       )}
+      <View style={styles.end}>
+        <View style={styles.link}>
+          <LinkButton label={t('data.showData')} onPress={onShowData} />
+        </View>
+        <AppText variant="caption" tone="muted" style={styles.footer}>
+          {t('home.footer')}
+        </AppText>
+      </View>
     </ScrollView>
   );
 }
@@ -150,13 +116,18 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     gap: space.m,
   },
-  summary: {
+  data: {
     gap: 14,
   },
-  group: {
-    gap: space.m,
+  end: {
+    gap: space.xl,
   },
   link: {
     alignItems: 'flex-start',
+  },
+  footer: {
+    textAlign: 'center',
+    paddingHorizontal: space.m,
+    lineHeight: 17,
   },
 });

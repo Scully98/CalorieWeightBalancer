@@ -11,6 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { BalancePage } from './balance-page';
 import { DateRangeSheet } from './date-range-sheet';
 import { DataPage } from './data-page';
+import { IncompleteDaysSheet } from './incomplete-days-sheet';
 import type { DateRangeSelection } from '../date-range';
 import { periodSpan, periodSubtitle } from '../period-subtitle';
 import { useBalance } from '../use-balance';
@@ -27,6 +28,7 @@ const PAGES = 2;
 export type HomeUi = {
   toleranceOpen?: boolean;
   picker?: DateRangeSelection;
+  sheet?: 'incompleteDays';
 };
 
 // Balance on the first page, the Health data behind it one swipe to the right.
@@ -35,7 +37,7 @@ export function HomeScreen({ initialUi }: { initialUi?: HomeUi } = {}) {
   const colors = useColors();
   const { t } = useTranslation();
   const { width } = useWindowDimensions();
-  const { period, includeToday } = useSettings();
+  const { period, includeToday, zeroDaysAsMaintenance } = useSettings();
   const state = useBalance();
   const now = new Date();
   const span = periodSpan(
@@ -54,6 +56,16 @@ export function HomeScreen({ initialUi }: { initialUi?: HomeUi } = {}) {
   const [picking, setPicking] = useState(initialUi?.picker);
   // A slider is being dragged: neither the pager nor the page may scroll.
   const [scrollLocked, setScrollLocked] = useState(false);
+  // „Unvollständige Tage“ is open.
+  const [qualityOpen, setQualityOpen] = useState(
+    initialUi?.sheet === 'incompleteDays',
+  );
+  // Days for the sheet; a reload without incomplete days closes it.
+  const incompleteDays =
+    state.status === 'done' &&
+    state.value.balance.completeDays < state.value.balance.days
+      ? state.value.days
+      : undefined;
 
   function showPage(index: number) {
     pager.current?.scrollTo({ x: index * width, animated: true });
@@ -76,12 +88,12 @@ export function HomeScreen({ initialUi }: { initialUi?: HomeUi } = {}) {
           <View style={{ width }}>
             <BalancePage
               state={state}
-              days={span?.days}
               periodLabel={periodLabel}
               pageCount={PAGES}
               toleranceOpen={initialUi?.toleranceOpen}
               scrollEnabled={!scrollLocked}
               onShowData={() => showPage(1)}
+              onOpenQuality={() => setQualityOpen(true)}
               onPickCustom={() =>
                 setPicking({
                   from: span?.first ?? toDateKey(addDays(now, -30)),
@@ -109,6 +121,13 @@ export function HomeScreen({ initialUi }: { initialUi?: HomeUi } = {}) {
             store.updateSettings({ period: { kind: 'custom', from, to } });
             setPicking(undefined);
           }}
+        />
+      ) : null}
+      {qualityOpen && incompleteDays ? (
+        <IncompleteDaysSheet
+          days={incompleteDays}
+          settings={{ zeroDaysAsMaintenance }}
+          onClose={() => setQualityOpen(false)}
         />
       ) : null}
     </SafeAreaView>
