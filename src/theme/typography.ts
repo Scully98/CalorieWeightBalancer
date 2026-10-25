@@ -74,6 +74,29 @@ export const typography = {
     letterSpacing: -0.5,
     fontVariant: TABULAR,
   },
+  // Values in the columns of the Abgleich card, e.g. „+7.000 kcal“.
+  cardValue: {
+    fontSize: 24,
+    lineHeight: 29,
+    fontWeight: '600',
+    letterSpacing: -0.5,
+    fontVariant: TABULAR,
+  },
+  // The second big number of the page: estimated actual burn.
+  burnNumber: {
+    fontSize: 48,
+    lineHeight: 50,
+    fontWeight: '600',
+    letterSpacing: -1.5,
+    fontVariant: TABULAR,
+  },
+  // "kcal/Tag" next to it.
+  burnUnit: {
+    fontSize: 20,
+    lineHeight: 25,
+    fontWeight: '600',
+    fontVariant: TABULAR,
+  },
   // Title of the empty state, „Noch keine Daten.“
   emptyTitle: {
     fontSize: 24,

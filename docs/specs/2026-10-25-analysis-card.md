@@ -83,7 +83,7 @@ Die vier Zustände `ok`, `deviation`, `weightOnly` und `insufficient` kommen fer
 |-----------|----------|--------|-----------|-----------|------------|
 | M1 — Kern: Zähler, Erwartung, Zusammensetzung, i18n-Sperre | `compositionMeasurements` bei `weightOnly`, `expected` und `composition` bei `ok`/`deviation` (statt `leanShare`), ESLint ohne i18n in `src/core/`, Tests | 0 | 6 | 0 | — |
 | M2 — Karten-Modell und Texte | `analysisCardModel` mit Keys je Zustand/Richtung/Erwartung/Zusammensetzung, Formatierung, a11y-Labels; i18n DE/EN; Tests inkl. goldenem Testfall | 2 | 3 | 0 | M1 |
-| M3 — Karte auf der Bilanz-Seite | `AnalysisCard` mit vier Zuständen, Erklärung, VoiceOver, Dynamic Type; Typo-Varianten | 1 | 3 | 0 | M2 |
+| M3 — Karte auf der Bilanz-Seite | `AnalysisCard` mit vier Zuständen, Erklärung, VoiceOver, Dynamic Type; Typo-Varianten | 1 | 4 | 0 | M2 |
 | M4 — Galerie, Abnahme, Doku | Einzelansicht für 1j/1k/1l, Screenshots 1e, 1a, 1j, 1k, 1l hell und dunkel, CLAUDE.md | 1 | 3 | 0 | M3 |
 
 ```
@@ -380,7 +380,7 @@ Keine App-Kürzel (Touch-App). Keine UI in diesem Milestone.
 
 ---
 
-### Milestone 3 — Karte auf der Bilanz-Seite
+### ✅ Milestone 3 — Karte auf der Bilanz-Seite
 
 > Unter dem Chart steht die Abgleich-Karte in allen vier Zuständen nach dem Design, mit aufklappbarer Erklärung, VoiceOver und Dynamic Type.
 
@@ -394,21 +394,22 @@ Keine App-Kürzel (Touch-App). Keine UI in diesem Milestone.
 | 🟠 | `src/features/balance/components/balance-page.tsx` | `AnalysisCard` nach `BalanceChart` im `done`-Zweig, Kommentar anpassen |
 | 🟠 | `src/theme/typography.ts` | `cardValue`, `burnNumber`, `burnUnit` (Key Decision 11) |
 | 🟠 | `src/components/app-text.tsx` | `MAX_FONT_SCALE` für die drei Varianten |
+| 🟠 | `src/features/settings/components/type-specimen.tsx` | 🆕 Beispieltexte für `cardValue`, `burnNumber`, `burnUnit` (`SAMPLES` ist ein `Record` über alle Varianten) |
 
 #### To-Dos
 
-- 🔲 Create `AnalysisCard`: border 1,5 pt foreground, radius 16, padding 16, gap 16
-- 🔲 Add the header: `sectionTitle` + `footnote` muted, gap 2, one `header` element for VoiceOver
-- 🔲 Add the locked hint: dashed box 1,5 pt, radius 12, padding 12/14, gap 4, `secondary` + `secondary` 600
-- 🔲 Add the dimmed body (opacity 0,3) hidden from VoiceOver when locked
-- 🔲 Add the two columns: top line 1,5 pt, padding top 8, gap 3, `overline` muted, `cardValue`, `secondary`/`footnote` lines, `flexBasis: 130`, wrapping, gap 16
-- 🔲 Add the verdict (`secondary`, line height 21) and the separator (`colors.separator`, 1 pt)
-- 🔲 Add the burn block: label `secondary`, number `burnNumber` + `burnUnit` on one baseline (wrapping, gap 8), detail `secondary` muted, gap 4
-- 🔲 Add the disclosure row (min. 44 pt, chevron like `tolerance-card.tsx`, `expanded` state) and the explanation (`secondary` line height 21, formula `footnote` muted, gap 6)
-- 🔲 Add the `weightOnly` body: columns and dashed note box, no verdict, no burn, no disclosure
-- 🔲 Wire `AnalysisCard` into `BalancePage` after the chart, only for `status === 'done'`
-- 🔲 Check 1a, 1e, 1i (AX1) and dark mode in the simulator
-- 🔲 Commit (`feat: show the analysis card below the chart`)
+- ✅ Create `AnalysisCard`: border 1,5 pt foreground, radius 16, padding 16, gap 16
+- ✅ Add the header: `sectionTitle` + `footnote` muted, gap 2, one `header` element for VoiceOver
+- ✅ Add the locked hint: dashed box 1,5 pt, radius 12, padding 12/14, gap 4, `secondary` + `secondary` 600
+- ✅ Add the dimmed body (opacity 0,3) hidden from VoiceOver when locked
+- ✅ Add the two columns: top line 1,5 pt, padding top 8, gap 3, `overline` muted, `cardValue`, `secondary`/`footnote` lines, `flexBasis: 130`, wrapping, gap 16
+- ✅ Add the verdict (`secondary`, line height 21) and the separator (`colors.separator`, 1 pt)
+- ✅ Add the burn block: label `secondary`, number `burnNumber` + `burnUnit` on one baseline (wrapping, gap 8), detail `secondary` muted, gap 4
+- ✅ Add the disclosure row (min. 44 pt, chevron like `tolerance-card.tsx`, `expanded` state) and the explanation (`secondary` line height 21, formula `footnote` muted, gap 6) _(Chevron 7 × 7 wie im Design; die Erklärung lässt sich auch ausgegraut aufklappen)_
+- ✅ Add the `weightOnly` body: columns and dashed note box, no verdict, no burn, no disclosure
+- ✅ Wire `AnalysisCard` into `BalancePage` after the chart, only for `status === 'done'`
+- 🔲 ~~Check 1a, 1e, 1i (AX1) and dark mode in the simulator~~ _(verschoben nach M4, Screenshots: `simctl openurl` öffnet die Galerie nur mit iOS-Rückfrage „In ‚Kcalwaage‘ öffnen?“, ohne Touch-Steuerung nicht automatisch prüfbar)_
+- ✅ Commit (`feat: show the analysis card below the chart`)
 
 #### Notes / Constraints
 
