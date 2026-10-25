@@ -1,8 +1,8 @@
 # Spike: Chart-Library für P8
 
-Stand 2026-10-25. Spike zu P8 M1 (`docs/specs/2026-10-25-chart.md`). Branch `spike/chart-library`. Zeitrahmen ½ Tag.
+Stand 2026-10-25. Spike zu P8 M1 (`docs/specs/2026-10-25-chart.md`). Branch `spike/chart-library`; alle drei Prototypen auf `spike/chart-candidates` (bb76ddd). Zeitrahmen ½ Tag.
 
-**Entscheidung Julius:** _offen_
+**Entscheidung Julius (2026-10-25): eigenes SVG.** Geste per Responder-System mit 300-ms-Timer, Rückfall Gesture Handler. In der Galerie bleiben S1 (30 T) und S2 (90 T) mit dem SVG-Prototyp, bis M4 sie ersetzt.
 
 ## Frage
 
@@ -58,4 +58,3 @@ Screenshots (Simulator, hell):
 
 1. S1 öffnen (Galerie): lange drücken, ziehen, loslassen. Bleibt der Tooltip, ruckelt nichts, lässt sich ohne Halten weiter scrollen und blättern?
 2. Release-Build auf dem älteren iPhone (Open Question 1 der Spec): S2 (90 T) scrollen, ziehen, FPS im Perf Monitor.
-3. Entscheidung oben eintragen.

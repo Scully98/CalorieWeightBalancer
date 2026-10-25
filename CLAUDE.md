@@ -23,7 +23,7 @@ Fragen, die die App beantwortet: Bin ich diesen Monat im Plus oder Minus? Wie la
 ## Stack
 - React Native mit Expo, Development Build (kein Expo Go), Build/Upload über EAS, TypeScript.
 - HealthKit: `@kingstinct/react-native-healthkit`.
-- Charts: `react-native-gifted-charts` oder `victory-native`.
+- Chart: eigenes SVG mit `react-native-svg`, keine Chart-Library (Spike `docs/spikes/2026-10-25-chart-library.md`: gifted-charts kann keine dritte Linie, keine Tageslinien unter Wochenbalken; victory-native bräuchte Skia und die Muster ein zweites Mal).
 - SVG: `react-native-svg` für die Qualitäts-Muster (`src/components/quality-pattern.tsx`: `QualityPatternDefs`, `qualityFill`, `QualitySwatch`, `QualityCross`) und den Chart; der Chart füllt seine Balken mit denselben Mustern.
 - Toleranz-Slider: eigener Slider aus Views (`src/components/marked-slider.tsx`), Farben aus den Tokens. `@react-native-community/slider` lädt unter der neuen Architektur ohne Bridge kein Daumen-Bild.
 - Widget: SwiftUI-WidgetKit-Extension via `@bacons/apple-targets` (Ordner `targets/widget/`). Kein Flutter.
