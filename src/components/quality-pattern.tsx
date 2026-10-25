@@ -1,5 +1,5 @@
 import { useId } from 'react';
-import Svg, { Defs, G, Line, Pattern, Rect } from 'react-native-svg';
+import Svg, { Defs, G, Line, Path, Pattern, Rect } from 'react-native-svg';
 
 import type { DayFlag } from '@/core/day-balance';
 import { useColors } from '@/theme/use-colors';
@@ -20,6 +20,18 @@ export function usePatternPrefix(): string {
   return `q${useId().replace(/[^a-zA-Z0-9]/g, '')}`;
 }
 
+// Hatch lines 3.6 apart, measured across them as in the design; along the
+// axes that is a tile of 3.6 × √2.
+const HATCH_TILE = 3.6 * Math.SQRT2;
+// One diagonal through the tile plus the two corner pieces of its
+// neighbours, so tiles join seamlessly. react-native-svg clips a rotated
+// pattern (`patternTransform`) per tile into triangles, so no rotation.
+const HATCH_PATH = (() => {
+  const s = HATCH_TILE;
+  const q = s / 4;
+  return `M0,${s} L${s},0 M${-q},${q} L${q},${-q} M${s - q},${s + q} L${s + q},${s - q}`;
+})();
+
 // The two fills as SVG patterns from the tokens. Put them into any <Svg>,
 // e.g. the chart (P8), and fill shapes with `qualityFill`.
 export function QualityPatternDefs({ idPrefix }: { idPrefix: string }) {
@@ -29,12 +41,11 @@ export function QualityPatternDefs({ idPrefix }: { idPrefix: string }) {
       <Pattern
         id={`${idPrefix}-hatch`}
         patternUnits="userSpaceOnUse"
-        width={3.6}
-        height={3.6}
-        patternTransform="rotate(45)"
+        width={HATCH_TILE}
+        height={HATCH_TILE}
       >
-        <Rect width={3.6} height={3.6} fill={colors.background} />
-        <Rect width={1.5} height={3.6} fill={colors.foreground} />
+        <Rect width={HATCH_TILE} height={HATCH_TILE} fill={colors.background} />
+        <Path d={HATCH_PATH} stroke={colors.foreground} strokeWidth={1.5} />
       </Pattern>
       <Pattern
         id={`${idPrefix}-stripes`}
