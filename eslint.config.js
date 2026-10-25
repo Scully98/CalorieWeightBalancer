@@ -103,5 +103,29 @@ module.exports = defineConfig([
       ],
     },
   },
+  // The chart only draws finished series of the core (P8): from src/core it
+  // may import types and the display formatting, nothing that computes.
+  {
+    files: [
+      'src/features/balance/chart-*.ts',
+      'src/features/balance/components/chart-*.tsx',
+      'src/features/balance/components/balance-chart.tsx',
+    ],
+    rules: {
+      '@typescript-eslint/no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@/core/*', '!@/core/format'],
+              allowTypeImports: true,
+              message:
+                'The chart gets finished series from the core and computes nothing; import types or @/core/format only.',
+            },
+          ],
+        },
+      ],
+    },
+  },
   eslintConfigPrettier,
 ]);
