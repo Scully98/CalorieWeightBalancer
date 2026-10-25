@@ -11,7 +11,8 @@ export type GalleryUi = {
   tooltip?: 'lastEstimatedDay';
   // Days before today; „Bis“ is being edited.
   picker?: { fromDaysAgo: number; toDaysAgo: number; editing: 'from' | 'to' };
-  part?: 'abgleich';
+  // chartSpike: the chart candidates of the P8 spike instead of the screen.
+  part?: 'abgleich' | 'chartSpike';
   // Shown above the screen, for presets the app can't set itself.
   hint?: string;
 };
@@ -91,6 +92,18 @@ export const GALLERY_ENTRIES: readonly GalleryEntry[] = [
     scenario: 'normal30',
     ui: { picker: { fromDaysAgo: 18, toDaysAgo: 4, editing: 'to' } },
   },
+  {
+    id: 'S1',
+    title: 'Chart-Spike · 30 T (Prototyp)',
+    scenario: 'normal30',
+    ui: { part: 'chartSpike' },
+  },
+  {
+    id: 'S2',
+    title: 'Chart-Spike · 90 T (Prototyp)',
+    scenario: 'long90',
+    ui: { part: 'chartSpike' },
+  },
   { id: 'L1', title: 'Lücken (nicht im Design)', scenario: 'gaps30' },
   { id: 'L2', title: 'Erster Tag (nicht im Design)', scenario: 'firstDay' },
   {
@@ -114,5 +127,5 @@ export const GALLERY_ENTRIES: readonly GalleryEntry[] = [
 // Presets the current balance screen can't show yet.
 export function hasPendingUi(entry: GalleryEntry): boolean {
   const ui = entry.ui ?? {};
-  return Boolean(ui.tooltip || ui.part);
+  return Boolean(ui.tooltip || ui.part === 'abgleich');
 }
