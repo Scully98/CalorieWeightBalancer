@@ -2,7 +2,7 @@ import type { ScenarioId } from '@/dev/demo/scenarios';
 
 // What the screen should show besides the data. Tolerance, picker, sheet,
 // tooltip and „Heute einrechnen“ are passed to the home screen; the part
-// follows with the Abgleich card (P9).
+// „abgleich“ shows the Abgleich card on its own, as in the design.
 export type GalleryUi = {
   colorScheme?: 'dark';
   tolerance?: { foodPercent: number; burnPercent: number; open: boolean };
@@ -110,8 +110,3 @@ export const GALLERY_ENTRIES: readonly GalleryEntry[] = [
     scenario: 'noProfileGaps30',
   },
 ];
-
-// Presets the current balance screen can't show yet.
-export function hasPendingUi(entry: GalleryEntry): boolean {
-  return Boolean(entry.ui?.part);
-}

@@ -1,6 +1,6 @@
 # Kcalwaage (CalorieWeightBalancer)
 
-Projektkontext für Claude, Stand 2026-10-12. Nutzbar als `CLAUDE.md` im Repo oder als System-Prompt in der Claude Developer Console.
+Projektkontext für Claude, Stand 2026-10-25. Nutzbar als `CLAUDE.md` im Repo oder als System-Prompt in der Claude Developer Console.
 
 ## Arbeitsweise
 - Julius schreibt Deutsch; antworte auf Deutsch, Code und Commit-Messages auf Englisch.
@@ -96,6 +96,7 @@ Drei Screens (Bilanz, Analyse-Chart, Einstellungen) plus Widget.
 9. Fettmasse-Linie (7-Tage-Trend, gestrichelt) und „Fett laut Bilanz“ (gepunktet), Linien und Chips nur mit Messungen. Magermasse und Einordnung stehen in der Abgleich-Karte (P9).
 10. Widget klein/mittel: Zeitraum, Bilanz, Fett-Äquivalent; Spanne, wenn Toleranz aktiv.
 11. Daten-Seite (Wischen vom Bilanz-Screen): was aus Health ankommt, wie sich die Bilanz zusammensetzt, Link zu Health (Spec `docs/specs/2026-10-21-data-page.md`).
+12. Abgleich-Karte „Passt die Bilanz zur Waage?“ unter dem Chart (Spec `docs/specs/2026-10-25-analysis-card.md`): „Laut Bilanz“ gegen „Laut Waage“, Einordnungssatz nach Zustand, Richtung und `expected` (Zuwachs, Abnahme oder neutral), dazu ein Satz zur Zusammensetzung (Anteil Magermasse oder Fett ab, Magermasse auf), „Geschätzter tatsächlicher Verbrauch“ mit Tracker und Differenz, aufklappbar „Wie wird das berechnet?“. Gesperrt: gestrichelter Hinweis, darunter Vorschau mit Deckkraft 0,3 ohne Satz. Nur Gewicht: Hinweis je nach KFA-Tagen (keine oder zu wenige). Alle Sätze aus i18n (`analysis.*`), das Modell `src/features/balance/analysis-card.ts` wählt nur Keys (ESLint).
 
 Nicht in V1: Farbwahl, Widget-Konfiguration, Zyklus, Zielkalorien, iPad, Schreiben nach HealthKit.
 

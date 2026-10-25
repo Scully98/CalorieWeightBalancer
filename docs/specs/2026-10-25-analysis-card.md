@@ -1,6 +1,6 @@
 # Abgleich-Karte „Passt die Bilanz zur Waage?“ (P9)
 
-Stand 2026-10-25. In Arbeit auf `feature/chart-lines`. Voraussetzung P3 (`docs/specs/2026-10-24-core-chart-analysis.md`) und P6 (`docs/specs/2026-10-24-home-top-period-hero-tolerance.md`) sind umgesetzt. P9 kann laut Plan parallel zu P8 laufen. Die Karte steht aber unter dem Chart, und `balance-page.tsx` hat sich in P8 geändert. Deshalb geht die Arbeit auf dem aktuellen Branch `feature/chart-lines` weiter, mit Commits nach den P8-Commits (M5–M7). Der PR dieses Branches enthält dann P8 PR 3 und P9 (Key Decision 12).
+Stand 2026-10-25. Umgesetzt auf `feature/chart-lines` (M1–M4). Offen für Julius: Sichtprüfung und Screenshots 1e, 1a, 1j, 1k, 1l hell und dunkel im Simulator oder am iPhone, englische Texte im PR. PR noch nicht geöffnet. Voraussetzung P3 (`docs/specs/2026-10-24-core-chart-analysis.md`) und P6 (`docs/specs/2026-10-24-home-top-period-hero-tolerance.md`) sind umgesetzt. P9 kann laut Plan parallel zu P8 laufen. Die Karte steht aber unter dem Chart, und `balance-page.tsx` hat sich in P8 geändert. Deshalb geht die Arbeit auf dem aktuellen Branch `feature/chart-lines` weiter, mit Commits nach den P8-Commits (M5–M7). Der PR dieses Branches enthält dann P8 PR 3 und P9 (Key Decision 12).
 
 ## Overview
 
@@ -84,7 +84,7 @@ Die vier Zustände `ok`, `deviation`, `weightOnly` und `insufficient` kommen fer
 | M1 — Kern: Zähler, Erwartung, Zusammensetzung, i18n-Sperre | `compositionMeasurements` bei `weightOnly`, `expected` und `composition` bei `ok`/`deviation` (statt `leanShare`), ESLint ohne i18n in `src/core/`, Tests | 0 | 6 | 0 | — |
 | M2 — Karten-Modell und Texte | `analysisCardModel` mit Keys je Zustand/Richtung/Erwartung/Zusammensetzung, Formatierung, a11y-Labels; i18n DE/EN; Tests inkl. goldenem Testfall | 2 | 3 | 0 | M1 |
 | M3 — Karte auf der Bilanz-Seite | `AnalysisCard` mit vier Zuständen, Erklärung, VoiceOver, Dynamic Type; Typo-Varianten | 1 | 4 | 0 | M2 |
-| M4 — Galerie, Abnahme, Doku | Einzelansicht für 1j/1k/1l, Screenshots 1e, 1a, 1j, 1k, 1l hell und dunkel, CLAUDE.md | 1 | 3 | 0 | M3 |
+| M4 — Galerie, Abnahme, Doku | Einzelansicht für 1j/1k/1l, Screenshots 1e, 1a, 1j, 1k, 1l hell und dunkel, CLAUDE.md | 1 | 4 | 0 | M3 |
 
 ```
 🟢 Add   🟠 Change   🔴 Delete
@@ -550,7 +550,7 @@ Keine App-Kürzel (Touch-App). VoiceOver: Kopf `header`, Spalten und Verbrauch j
 
 ---
 
-### Milestone 4 — Galerie, Abnahme, Doku
+### ✅ Milestone 4 — Galerie, Abnahme, Doku
 
 > Die Galerie zeigt 1j, 1k und 1l wie das Design als Einzelkarte. Die Screenshots belegen beide Abnahmekriterien, und CLAUDE.md beschreibt die Karte.
 
@@ -563,24 +563,30 @@ Keine App-Kürzel (Touch-App). VoiceOver: Kopf `header`, Spalten und Verbrauch j
 | 🟢 | `src/dev/gallery/analysis-card-preview.tsx` | `AnalysisCardPreview`: `useBalance()` → nur `AnalysisCard` in `ScrollView`, Rand 20, Hintergrund |
 | 🟠 | `src/dev/gallery/entry-screen.tsx` | Bei `entry.ui?.part === 'abgleich'` `AnalysisCardPreview` statt `HomeScreen`; Badge entfernen |
 | 🟠 | `src/dev/gallery/entries.ts` | `hasPendingUi` entfernen, Kommentar zu `GalleryUi.part` anpassen |
+| 🟠 | `src/dev/gallery/gallery-screen.tsx` | 🆕 Badge „UI folgt“ in der Liste entfernen (nutzte auch `hasPendingUi`) |
 | 🟠 | `CLAUDE.md` | Features V1: Abgleich-Karte (vier Zustände, Sätze nach erwarteter Veränderung inkl. neutral, Satz zur Zusammensetzung von Fett und Magermasse, `weightOnly`-Hinweis je nach KFA-Messungen); Stand-Datum |
 
 #### To-Dos
 
-- 🔲 Create `AnalysisCardPreview` inside the entry's providers
-- 🔲 Wire `part: 'abgleich'` in `EntryScreen` and remove `hasPendingUi` and the badge
-- 🔲 Take screenshots of 1e (whole page), 1a (card), 1j, 1k, 1l, light and dark, and compare with the design side by side
-- 🔲 Record differences that come from demo noise (e.g. `normal30` E 4.200 instead of 4.300) in this spec
-- 🔲 Run `npm run lint`, `npm run typecheck`, `npm test` (core coverage ≥ 90 %)
-- 🔲 Update `CLAUDE.md` (features, date)
-- 🔲 Update this spec: mark milestones done, add deviations
-- 🔲 Commit (`docs: record analysis card acceptance`) on `feature/chart-lines`
-- 🔲 Add P9 to the description of the branch's PR (P8 PR 3 + P9) and ask Julius to review the English texts there
+- ✅ Create `AnalysisCardPreview` inside the entry's providers
+- ✅ Wire `part: 'abgleich'` in `EntryScreen` and remove `hasPendingUi` and the badge
+- 🔲 Take screenshots of 1e (whole page), 1a (card), 1j, 1k, 1l, light and dark, and compare with the design side by side _(offen für Julius: `simctl openurl calorieweightbalancer://dev/<id>` zeigt die iOS-Rückfrage „In ‚Kcalwaage‘ öffnen?“, Scrollen und Tippen gehen ohne Touch-Steuerung nicht. Dazu gehört die Sichtprüfung aus M3: 1a, 1e, 1i (AX1), Dark Mode)_
+- ✅ Record differences that come from demo noise (e.g. `normal30` E 4.200 instead of 4.300) in this spec _(aus den Modell-Texten der Szenarien, siehe Notes)_
+- ✅ Run `npm run lint`, `npm run typecheck`, `npm test` (core coverage ≥ 90 %) _(374 Tests grün; `src/core` 100 % Zeilen, 98 % Zweige; `analysis-card.ts` 100 % Zeilen, 97 % Zweige)_
+- ✅ Update `CLAUDE.md` (features, date)
+- ✅ Update this spec: mark milestones done, add deviations
+- ✅ Commit (`docs: record analysis card acceptance`) on `feature/chart-lines` _(als `feat: show the analysis card alone in the gallery`, mit Doku)_
+- 🔲 Add P9 to the description of the branch's PR (P8 PR 3 + P9) and ask Julius to review the English texts there _(offen: PR für `feature/chart-lines` ist noch nicht geöffnet, P8 wartet auf die iPhone-Prüfung)_
 
 #### Notes / Constraints
 
 > - Galerie-Code bleibt Dev-only (ESLint `DEV_CODE`).
 > - 1e und 1l nutzen beide `short7`: 1e als ganze Seite (Zustand 5), 1l als Einzelkarte.
+> - Texte der Szenarien (Stand 2026-10-24 14:32, DE), verglichen mit dem Design:
+>   - `normal30` (1a, `deviation`/`less`): „+7.000 kcal“, „≈ +0,9 kg Fett“ wie im Design. „≈ +4.200 kcal“, „Fett +0,3 kg (Körperfett +0,2 %-Pkt.)“, „Magermasse +0,5 kg“ statt 4.300 / +0,4 / +0,3 (Rauschen der Demo-Waage). Satz „… weniger Zuwachs … Etwa 60 % des Zuwachses sind Magermasse …“ (Design: 40 % bei 0,4/0,3). „2.760“, „Tracker: 2.670 kcal/Tag · Differenz +90“ wie im Design. Untertitel „24. Sep – 23. Okt · 19 Messungen“.
+>   - `goodFit30` (1j, `ok`): „≈ +6.700 kcal“, Fett +0,6, Magermasse +0,3, „Passt gut. … Etwa 30 % des Zuwachses sind Magermasse …“, „2.680“, Differenz „+10“.
+>   - `noBodyFat30` (1k, `weightOnly`, 0 KFA-Tage): „≈ +0,9 kg“ / „wenn alles Fett wäre“ gegen „+0,9 kg“ / „Gewicht, 7-Tage-Trend“, Hinweis „Keine Körperfett-Daten in Health. …“ wie im Design.
+>   - `short7` (1e, 1l, `insufficient`): Hinweis und „Bisher: 7 Tage, 4 Messungen.“ wie im Design. Die Vorschau zeigt Rauschen über 7 Tage („≈ +1.100 kcal“, Magermasse +0,8 kg), ausgegraut und ohne Satz.
 
 #### 📐 Wireframe — Galerie, Einzelkarte (1j/1k/1l)
 
@@ -637,3 +643,5 @@ Keine App-Kürzel (Touch-App).
 | 10 | ⚠️ Concern | Die Spec-Konventionen liegen unter `.claude/docs/reference/patterns/docs/`, der Skill nennt `docs/references/patterns/docs/specs.md` | Gelesen aus `.claude/docs/reference/patterns/docs/specs.md` und `doc-building-blocks.md`; Skill-Pfad bei Gelegenheit korrigieren |
 | 11 | ⚠️ Concern | Auf `feature/chart-lines` wird der PR des Branches größer: P8 PR 3 (M5–M7) und P9 zusammen. Die P8-Spec plant drei getrennte PRs | Hingenommen (Key Decision 12). P9-Commits beginnen erst nach den P8-Commits, die PR-Beschreibung trennt beide Teile |
 | 12 | ⚠️ Concern | Der Satz zur Zusammensetzung weicht vom Design ab (fester Zusatz nur bei „weniger“) und ändert den Kern (`leanShare` → `composition`). Bioimpedanz-Waagen schwanken bei Fett und Magermasse stark | Gewollt (Key Decision 4). Grenze 0,05 kg wie bisher, Prozent auf 10 % gerundet und „etwa“, damit keine falsche Genauigkeit entsteht. Start und Ende sind 7-Tage-Trends |
+| 13 | 💡 Alternative | „Etwa 0 %“ bei sehr kleinem Anteil Magermasse (z. B. ΔFett 5 kg, ΔMager 0,06 kg) | Unter 10 % ganze Prozent, mindestens 1 (M2) |
+| 14 | ⚠️ Concern | Die Sichtprüfung im Simulator ließ sich nicht automatisieren (iOS-Rückfrage beim Öffnen per URL, kein Tippen und Scrollen) | Offen für Julius (M4); Texte der Szenarien stattdessen über das Modell geprüft und notiert |

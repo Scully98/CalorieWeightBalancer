@@ -3,9 +3,9 @@ import { useEffect, useState } from 'react';
 import { Appearance, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { GALLERY_ENTRIES, hasPendingUi, type GalleryUi } from './entries';
+import { AnalysisCardPreview } from './analysis-card-preview';
+import { GALLERY_ENTRIES, type GalleryUi } from './entries';
 import { AppText } from '@/components/app-text';
-import { Badge } from '@/components/badge';
 import { LinkButton } from '@/components/link-button';
 import { createDemoSource } from '@/dev/demo/demo-source';
 import { buildScenario } from '@/dev/demo/scenarios';
@@ -92,7 +92,11 @@ export function EntryScreen() {
     <View style={[styles.flex, { backgroundColor: colors.background }]}>
       <HealthSourceProvider source={source}>
         <SettingsStoreProvider store={store}>
-          <HomeScreen initialUi={initialUi} />
+          {entry.ui?.part === 'abgleich' ? (
+            <AnalysisCardPreview />
+          ) : (
+            <HomeScreen initialUi={initialUi} />
+          )}
         </SettingsStoreProvider>
       </HealthSourceProvider>
       <SafeAreaView
@@ -105,9 +109,6 @@ export function EntryScreen() {
             {entry.id} · {entry.title}
           </AppText>
         </View>
-        {hasPendingUi(entry) ? (
-          <Badge label="UI-Vorgabe folgt mit der Homepage" />
-        ) : null}
         {entry.ui?.hint ? (
           <AppText variant="footnote" tone="muted">
             {entry.ui.hint}
