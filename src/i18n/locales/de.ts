@@ -345,6 +345,90 @@ export const de = {
     todayBurn: 'Verbraucht {{value}} Kilokalorien, {{detail}}',
     todayUnknown: '{{label}} unbekannt',
     plusWord: 'plus',
+    analysisHeader: '{{title}} {{from}} bis {{to}}, {{measurements}}',
+    analysisBalance:
+      'Laut Bilanz: {{kcal}} Kilokalorien, etwa {{fat}} Kilogramm Fett',
+    analysisScale:
+      'Laut Waage: etwa {{kcal}} Kilokalorien gespeichert. Fett {{fat}} Kilogramm, Körperfett {{points}} Prozentpunkte. Magermasse {{lean}} Kilogramm.',
+    analysisBalanceWeightOnly:
+      'Laut Bilanz: etwa {{fat}} Kilogramm, wenn alles Fett wäre',
+    analysisScaleWeightOnly: 'Laut Waage: {{weight}} Kilogramm, {{trend}}',
+    analysisBurn:
+      'Geschätzter tatsächlicher Verbrauch {{actual}} Kilokalorien pro Tag. Tracker {{tracker}}, Differenz {{difference}}.',
+  },
+  // Abgleich-Karte „Passt die Bilanz zur Waage?“ (P9). The core only gives
+  // the state; the card picks these words.
+  analysis: {
+    title: 'Passt die Bilanz zur Waage?',
+    subtitle: '{{from}} – {{to}} · {{measurements}}',
+    measurements_one: '{{count}} Messung',
+    measurements_other: '{{count}} Messungen',
+    days_one: '{{count}} Tag',
+    days_other: '{{count}} Tage',
+    locked: {
+      hint: 'Für den Abgleich brauchst du mindestens {{days}} Tage und {{measurements}} Messungen.',
+      soFarDays: 'Bisher: {{days}}, {{measurements}}.',
+      soFar: 'Bisher: {{measurements}}.',
+    },
+    balance: 'Laut Bilanz',
+    scale: 'Laut Waage',
+    kcal: '{{value}} kcal',
+    approxKcal: '≈ {{value}} kcal',
+    balanceFat: '≈ {{value}} kg Fett',
+    stored: 'gespeichert',
+    fat: 'Fett {{value}} kg',
+    fatPoints: '(Körperfett {{value}} %-Pkt.)',
+    lean: 'Magermasse {{value}} kg',
+    verdict: {
+      gain: {
+        ok: 'Passt gut. Die Waage zeigt ungefähr den Zuwachs, den die Bilanz erwarten lässt. Einträge und Tracker sind stimmig.',
+        less: 'Die Waage zeigt weniger Zuwachs als die Bilanz.',
+        more: 'Die Waage zeigt mehr Zuwachs als die Bilanz.',
+      },
+      loss: {
+        ok: 'Passt gut. Die Waage zeigt ungefähr die Abnahme, die die Bilanz erwarten lässt. Einträge und Tracker sind stimmig.',
+        less: 'Die Waage zeigt mehr Abnahme als die Bilanz.',
+        more: 'Die Waage zeigt weniger Abnahme als die Bilanz.',
+      },
+      even: {
+        ok: 'Passt gut. Die Bilanz lässt kaum eine Veränderung erwarten, und die Waage zeigt auch keine. Einträge und Tracker sind stimmig.',
+        less: 'Die Bilanz lässt kaum eine Veränderung erwarten, die Waage zeigt aber eine Abnahme.',
+        more: 'Die Bilanz lässt kaum eine Veränderung erwarten, die Waage zeigt aber einen Zuwachs.',
+      },
+      cause: {
+        less: 'Wahrscheinlich verbrauchst du etwas mehr, als der Tracker misst, oder hast weniger gegessen als eingetragen.',
+        more: 'Wahrscheinlich verbrauchst du weniger, als der Tracker misst, oder hast mehr gegessen als eingetragen.',
+      },
+    },
+    composition: {
+      shareGain:
+        'Etwa {{percent}} % des Zuwachses sind Magermasse (z. B. Muskeln oder Wasser).',
+      shareLoss:
+        'Etwa {{percent}} % der Abnahme sind Magermasse (z. B. Muskeln oder Wasser).',
+      fatLossLeanGain:
+        'Dabei hast du {{fat}} kg Fett abgebaut und {{lean}} kg Magermasse aufgebaut (z. B. Muskeln oder Wasser).',
+      fatGainLeanLoss:
+        'Dabei hast du {{fat}} kg Fett zugelegt und {{lean}} kg Magermasse verloren (z. B. Muskeln oder Wasser).',
+    },
+    burn: {
+      label: 'Geschätzter tatsächlicher Verbrauch',
+      unit: 'kcal/Tag',
+      detail: 'Tracker: {{tracker}} kcal/Tag · Differenz {{difference}}',
+    },
+    explanation: {
+      toggle: 'Wie wird das berechnet?',
+      text: 'Aus deiner eingetragenen Nahrung und der gemessenen Veränderung von Fett- und Magermasse. Stimmt nur, wenn die Nahrung vollständig eingetragen ist.',
+      formula:
+        '(Nahrung − {{fat}} × Δ Fett − {{lean}} × Δ Magermasse) ÷ Tage. Start und Ende als {{trend}}-Tage-Trend.',
+    },
+    weightOnly: {
+      balanceFat: '≈ {{value}} kg',
+      allFat: 'wenn alles Fett wäre',
+      weight: '{{value}} kg',
+      trend: 'Gewicht, {{trend}}-Tage-Trend',
+      none: 'Keine Körperfett-Daten in Health. Verglichen wird nur das Gewicht. Ob Fett, Muskeln oder Wasser dazugekommen sind, lässt sich so nicht trennen, und der tatsächliche Verbrauch kann nicht geschätzt werden.',
+      few: 'Zu wenige Körperfett-Messungen ({{count}} von {{min}}). Verglichen wird nur das Gewicht. Ob Fett, Muskeln oder Wasser dazugekommen sind, lässt sich so nicht trennen, und der tatsächliche Verbrauch kann nicht geschätzt werden.',
+    },
   },
   data: {
     title: 'Daten aus Health',

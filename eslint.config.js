@@ -27,6 +27,8 @@ const NO_I18N = [
   { name: 'react-i18next', message: CORE_TEXT_MESSAGE },
   { name: '@/i18n', message: CORE_TEXT_MESSAGE },
 ];
+const ANALYSIS_CARD_MESSAGE =
+  'The analysis card gets its values from the core and computes nothing; import types, @/core/format or the constants of its texts only.';
 const NO_I18N_PATTERN = { group: ['@/i18n/*'], message: CORE_TEXT_MESSAGE };
 
 module.exports = defineConfig([
@@ -142,6 +144,52 @@ module.exports = defineConfig([
               allowTypeImports: true,
               message:
                 'The chart gets finished series from the core and computes nothing; import types or @/core/format only.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  // The analysis card picks words for the core's state and computes nothing
+  // (P9): besides types and formatting only the constants its texts name.
+  {
+    files: [
+      'src/features/balance/analysis-card.ts',
+      'src/features/balance/components/analysis-card.tsx',
+    ],
+    rules: {
+      '@typescript-eslint/no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: '@/core/analysis',
+              allowImportNames: [
+                'KCAL_PER_KG_FAT_TISSUE',
+                'KCAL_PER_KG_LEAN',
+                'MIN_ANALYSIS_DAYS',
+                'MIN_MEASUREMENTS',
+              ],
+              allowTypeImports: true,
+              message: ANALYSIS_CARD_MESSAGE,
+            },
+            {
+              name: '@/core/body',
+              allowImportNames: ['TREND_DAYS'],
+              allowTypeImports: true,
+              message: ANALYSIS_CARD_MESSAGE,
+            },
+          ],
+          patterns: [
+            {
+              group: [
+                '@/core/*',
+                '!@/core/format',
+                '!@/core/analysis',
+                '!@/core/body',
+              ],
+              allowTypeImports: true,
+              message: ANALYSIS_CARD_MESSAGE,
             },
           ],
         },

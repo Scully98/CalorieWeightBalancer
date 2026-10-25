@@ -249,7 +249,7 @@ Keine App-Kürzel (Touch-App, siehe P0/P1-Spec). Keine UI in diesem Milestone.
 
 ---
 
-### Milestone 2 — Karten-Modell und Texte
+### ✅ Milestone 2 — Karten-Modell und Texte
 
 > Ein reines, getestetes Modell macht aus `report.analysis` alle Texte und Zahlen der Karte. Die Komponente muss danach nur noch zeichnen.
 
@@ -263,7 +263,7 @@ Keine App-Kürzel (Touch-App, siehe P0/P1-Spec). Keine UI in diesem Milestone.
 | 🟢 | `src/features/balance/__tests__/analysis-card.test.ts` | Zustände, Richtungen, Erwartung, Zusammensetzung, Platzhalter, Rundung, goldener Testfall, a11y-Labels |
 | 🟠 | `src/i18n/locales/de.ts` | Namespace `analysis.*` (Texte siehe unten) und `a11y.analysis*` |
 | 🟠 | `src/i18n/locales/en.ts` | dieselben Keys auf Englisch (Entwurf, Julius prüft im PR) |
-| 🟠 | `eslint.config.js` | Chart-Block um `src/features/balance/analysis-card.ts` und `components/analysis-card.tsx` erweitern (`@/core` nur Typen, `format`, die vier Konstanten aus `analysis` und `TREND_DAYS` aus `body`) |
+| 🟠 | `eslint.config.js` | Eigener Block für `src/features/balance/analysis-card.ts` und `components/analysis-card.tsx` (`@/core` nur Typen, `format`, die vier Konstanten aus `analysis` und `TREND_DAYS` aus `body` per `allowImportNames`) _(statt den Chart-Block zu erweitern: dessen Muster sperrt ganze Module, einzelne Namen lassen sich dort nicht freigeben)_ |
 
 Modell (Skizze):
 
@@ -347,25 +347,26 @@ Der Absatz setzt sich so zusammen: `verdict.{expected}.{less|more}` + `verdict.c
 
 #### To-Dos
 
-- 🔲 Create `analysisCardModel` with subtitle from `days[0].date`/`days.at(-1).date` (`shortDate`) and `analysis.measurements`
-- 🔲 Add the locked hint with `MIN_ANALYSIS_DAYS`/`MIN_MEASUREMENTS` and „Bisher“: days and measurements if `days < 21`, else measurements only
-- 🔲 Add composition columns: balance `roundKcal` + `formatSigned`, fat `formatSignedKg`; scale E rounded to 100 with „≈“, fat, points (0,1, signed), lean
-- 🔲 Add the verdict from i18n keys by state, `direction` and `expected`
-- 🔲 Add the composition sentence for `ok` and `deviation` from `composition` (share in 10 % steps, kg as magnitude)
-- 🔲 Add the burn block: actual and tracker `roundKcal` + `formatNumber`, difference = rounded − rounded via `formatSigned`
-- 🔲 Add the explanation text and formula with `KCAL_PER_KG_FAT_TISSUE`, `KCAL_PER_KG_LEAN` and `TREND_DAYS`
-- 🔲 Add `insufficient`: `dimmed: true`, no verdict, `preview` values or „–“ for every number
-- 🔲 Add `weightOnly`: „≈ +0,9 kg“ / „wenn alles Fett wäre“, „+0,7 kg“ / „Gewicht, 7-Tage-Trend“, note `none` (0) or `few` (1–5, „{count} von 6“)
-- 🔲 Add spoken labels for header, columns and burn via `spokenSigned`
-- 🔲 Add the `analysis.*` and `a11y.analysis*` keys to `de.ts` and `en.ts`
-- 🔲 Test the golden case: „+7.000 kcal“, „≈ +0,9 kg Fett“, „≈ +4.300 kcal“, „Fett +0,4 kg“, „Magermasse +0,3 kg“, „2.760“, „2.670“, „Differenz +90“, verdict keys `gain.less` + `cause.less` + `composition.shareGain` with „40“
-- 🔲 Test every verdict key with a `t` that returns keys: `ok`/`less`/`more` × `gain`/`loss`/`even`
-- 🔲 Test every composition key: `shareGain`, `shareLoss`, `fatLossLeanGain` („0,3“/„0,8“, no sign), `fatGainLeanLoss`; none without `composition`; also with `ok` and with `more`
-- 🔲 Test `insufficient` with and without `preview` (no verdict, „–“), „Bisher“ for 7 days/4 measurements and 30 days/4 measurements, singular „1 Messung“
-- 🔲 Test `weightOnly` with 0 and 3 composition measurements
-- 🔲 Test difference „±0“ when both round to the same value
-- 🔲 Extend the chart ESLint block to the card model and component
-- 🔲 Commit (`feat: build the analysis card texts from the core state`)
+- ✅ Create `analysisCardModel` with subtitle from `days[0].date`/`days.at(-1).date` (`shortDate`) and `analysis.measurements`
+- ✅ Add the locked hint with `MIN_ANALYSIS_DAYS`/`MIN_MEASUREMENTS` and „Bisher“: days and measurements if `days < 21`, else measurements only
+- ✅ Add composition columns: balance `roundKcal` + `formatSigned`, fat `formatSignedKg`; scale E rounded to 100 with „≈“, fat, points (0,1, signed), lean
+- ✅ Add the verdict from i18n keys by state, `direction` and `expected`
+- ✅ Add the composition sentence for `ok` and `deviation` from `composition` (share in 10 % steps, kg as magnitude) _(unter 10 % auf ganze Prozent, mindestens 1, damit kein „Etwa 0 %“ entsteht)_
+- ✅ Add the burn block: actual and tracker `roundKcal` + `formatNumber`, difference = rounded − rounded via `formatSigned`
+- ✅ Add the explanation text and formula with `KCAL_PER_KG_FAT_TISSUE`, `KCAL_PER_KG_LEAN` and `TREND_DAYS`
+- ✅ Add `insufficient`: `dimmed: true`, no verdict, `preview` values or „–“ for every number
+- ✅ Add `weightOnly`: „≈ +0,9 kg“ / „wenn alles Fett wäre“, „+0,7 kg“ / „Gewicht, 7-Tage-Trend“, note `none` (0) or `few` (1–5, „{count} von 6“)
+- ✅ Add spoken labels for header, columns and burn via `spokenSigned` _(ohne Werte „{Label} unbekannt“ über `a11y.todayUnknown`)_
+- ✅ Add the `analysis.*` and `a11y.analysis*` keys to `de.ts` and `en.ts` _(EN-Entwurf: „Does the balance match the scale?“, „By balance“/„By scale“, „Estimated actual burn“, „kcal/day“; Julius prüft im PR)_
+- ✅ Test the golden case: „+7.000 kcal“, „≈ +0,9 kg Fett“, „≈ +4.300 kcal“, „Fett +0,4 kg“, „Magermasse +0,3 kg“, „2.760“, „2.670“, „Differenz +90“, verdict keys `gain.less` + `cause.less` + `composition.shareGain` with „40“
+- ✅ Test every verdict key with a `t` that returns keys: `ok`/`less`/`more` × `gain`/`loss`/`even`
+- ✅ Test every composition key: `shareGain`, `shareLoss`, `fatLossLeanGain` („0,3“/„0,8“, no sign), `fatGainLeanLoss`; none without `composition`; also with `ok` and with `more`
+- ✅ Test `insufficient` with and without `preview` (no verdict, „–“), „Bisher“ for 7 days/4 measurements and 30 days/4 measurements, singular „1 Messung“
+- ✅ Test `weightOnly` with 0 and 3 composition measurements
+- ✅ Test difference „±0“ when both round to the same value
+- ✅ 🆕 Test the English texts with the same keys (`en-US`, „2,760“)
+- ✅ Extend the chart ESLint block to the card model and component _(eigener Block, s. o.; Probe mit `analyzeBalance`, `bodyValues`, `chartBuckets`: alle drei gemeldet)_
+- ✅ Commit (`feat: build the analysis card texts from the core state`)
 
 #### Notes / Constraints
 

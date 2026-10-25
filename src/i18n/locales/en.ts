@@ -347,6 +347,89 @@ export const en: typeof de = {
     todayBurn: 'Burned {{value}} kilocalories, {{detail}}',
     todayUnknown: '{{label}} unknown',
     plusWord: 'plus',
+    analysisHeader: '{{title}} {{from}} to {{to}}, {{measurements}}',
+    analysisBalance:
+      'By balance: {{kcal}} kilocalories, about {{fat}} kilograms of fat',
+    analysisScale:
+      'By scale: about {{kcal}} kilocalories stored. Fat {{fat}} kilograms, body fat {{points}} percentage points. Lean mass {{lean}} kilograms.',
+    analysisBalanceWeightOnly:
+      'By balance: about {{fat}} kilograms, if it were all fat',
+    analysisScaleWeightOnly: 'By scale: {{weight}} kilograms, {{trend}}',
+    analysisBurn:
+      'Estimated actual burn {{actual}} kilocalories a day. Tracker {{tracker}}, difference {{difference}}.',
+  },
+  // Abgleich card „Does the balance match the scale?“ (P9).
+  analysis: {
+    title: 'Does the balance match the scale?',
+    subtitle: '{{from}} – {{to}} · {{measurements}}',
+    measurements_one: '{{count}} measurement',
+    measurements_other: '{{count}} measurements',
+    days_one: '{{count}} day',
+    days_other: '{{count}} days',
+    locked: {
+      hint: 'The comparison needs at least {{days}} days and {{measurements}} measurements.',
+      soFarDays: 'So far: {{days}}, {{measurements}}.',
+      soFar: 'So far: {{measurements}}.',
+    },
+    balance: 'By balance',
+    scale: 'By scale',
+    kcal: '{{value}} kcal',
+    approxKcal: '≈ {{value}} kcal',
+    balanceFat: '≈ {{value}} kg fat',
+    stored: 'stored',
+    fat: 'Fat {{value}} kg',
+    fatPoints: '(body fat {{value}} pts)',
+    lean: 'Lean mass {{value}} kg',
+    verdict: {
+      gain: {
+        ok: 'A good fit. The scale shows about the gain the balance suggests. Your entries and tracker agree.',
+        less: 'The scale shows less gain than the balance.',
+        more: 'The scale shows more gain than the balance.',
+      },
+      loss: {
+        ok: 'A good fit. The scale shows about the loss the balance suggests. Your entries and tracker agree.',
+        less: 'The scale shows more loss than the balance.',
+        more: 'The scale shows less loss than the balance.',
+      },
+      even: {
+        ok: 'A good fit. The balance suggests hardly any change, and the scale shows none either. Your entries and tracker agree.',
+        less: 'The balance suggests hardly any change, but the scale shows a loss.',
+        more: 'The balance suggests hardly any change, but the scale shows a gain.',
+      },
+      cause: {
+        less: 'You probably burn a bit more than the tracker measures, or ate less than you logged.',
+        more: 'You probably burn less than the tracker measures, or ate more than you logged.',
+      },
+    },
+    composition: {
+      shareGain:
+        'About {{percent}}% of the gain is lean mass (e.g. muscle or water).',
+      shareLoss:
+        'About {{percent}}% of the loss is lean mass (e.g. muscle or water).',
+      fatLossLeanGain:
+        'You lost {{fat}} kg of fat and gained {{lean}} kg of lean mass (e.g. muscle or water).',
+      fatGainLeanLoss:
+        'You gained {{fat}} kg of fat and lost {{lean}} kg of lean mass (e.g. muscle or water).',
+    },
+    burn: {
+      label: 'Estimated actual burn',
+      unit: 'kcal/day',
+      detail: 'Tracker: {{tracker}} kcal/day · difference {{difference}}',
+    },
+    explanation: {
+      toggle: 'How is this calculated?',
+      text: 'From the food you logged and the measured change in fat and lean mass. Only right if your food is logged completely.',
+      formula:
+        '(Food − {{fat}} × Δ fat − {{lean}} × Δ lean mass) ÷ days. Start and end as {{trend}}-day trend.',
+    },
+    weightOnly: {
+      balanceFat: '≈ {{value}} kg',
+      allFat: 'if it were all fat',
+      weight: '{{value}} kg',
+      trend: 'Weight, {{trend}}-day trend',
+      none: "No body fat data in Health. Only the weight is compared. Whether fat, muscle or water changed can't be told apart this way, and the actual burn can't be estimated.",
+      few: "Too few body fat measurements ({{count}} of {{min}}). Only the weight is compared. Whether fat, muscle or water changed can't be told apart this way, and the actual burn can't be estimated.",
+    },
   },
   data: {
     title: 'Data from Health',
