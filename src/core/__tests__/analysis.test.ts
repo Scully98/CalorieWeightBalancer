@@ -1,4 +1,4 @@
-import { analyzeBalance } from '../analysis';
+import { analyzeBalance, bodyComposition, expectedChange } from '../analysis';
 import { addDays } from '../dates';
 import type { DayBalance } from '../day-balance';
 import { toDateKey, type DayRecord } from '../day-record';
@@ -105,7 +105,13 @@ describe('analyzeBalance', () => {
 
   it('compares the weight only with fewer than 6 body fat measurements', () => {
     const analysis = analyze({ days: 30, withBodyFat: (i) => i < 10 });
-    expect(analysis.state).toBe('weightOnly');
+    expect(analysis).toMatchObject({
+      state: 'weightOnly',
+      compositionMeasurements: 5,
+    });
+    expect(analyze({ days: 30, withBodyFat: () => false })).toMatchObject({
+      compositionMeasurements: 0,
+    });
   });
 
   it('fits within 400 kcal or 10 % of the balance', () => {
@@ -136,11 +142,41 @@ describe('analyzeBalance', () => {
     );
   });
 
-  it('mentions lean mass above 0.05 kg', () => {
+  it('describes the composition above 0.05 kg of lean mass', () => {
     const lean = (gain: number) =>
       analyze({ days: 30, kcal: 100, lean: ramp(64, gain, 30) });
-    expect(lean(0.06)).toMatchObject({ leanShare: true });
-    expect(lean(0.05)).toMatchObject({ leanShare: false });
+    expect(lean(0.06)).toMatchObject({
+      composition: { kind: 'share', change: 'gain', leanShare: 1 },
+    });
+    expect(lean(0.05)).toMatchObject({ composition: undefined });
+  });
+
+  it('tells which change the balance lets expect', () => {
+    // B = 30 × 300 = 9,000.
+    expect(analyze({ days: 30 })).toMatchObject({ expected: 'gain' });
+    // B = 30 × 13 = 390: within the fit margin.
+    expect(analyze({ days: 30, kcal: 13 })).toMatchObject({
+      expected: 'even',
+    });
+  });
+
+  it('keeps E on the side of the direction when it expects no change', () => {
+    // B = 390; the scale stores clearly less or more.
+    let deviations = 0;
+    for (const fatGain of [-0.2, -0.05, 0.1, 0.2]) {
+      const analysis = analyze({
+        days: 30,
+        kcal: 13,
+        fat: ramp(18, fatGain, 30),
+      });
+      if (analysis.state !== 'deviation') continue;
+      expect(analysis.expected).toBe('even');
+      expect(Math.sign(analysis.values.storedKcal)).toBe(
+        analysis.direction === 'less' ? -1 : 1,
+      );
+      deviations++;
+    }
+    expect(deviations).toBeGreaterThanOrEqual(2);
   });
 
   it('counts a zero day as eating what it burns', () => {
@@ -164,5 +200,49 @@ describe('analyzeBalance', () => {
     expect(analysis.values.bodyFatPointsChange).toBeCloseTo(
       (19 / 83 - 18 / 82) * 100,
     );
+  });
+});
+
+describe('expectedChange', () => {
+  it('is even within 400 kcal of zero', () => {
+    expect(expectedChange(399)).toBe('even');
+    expect(expectedChange(-399)).toBe('even');
+    expect(expectedChange(0)).toBe('even');
+    expect(expectedChange(401)).toBe('gain');
+    expect(expectedChange(-401)).toBe('loss');
+  });
+});
+
+describe('bodyComposition', () => {
+  it('shifts when fat and lean mass move apart', () => {
+    // Weight up, fat down, muscles up.
+    expect(bodyComposition(-0.3, 0.8)).toEqual({ kind: 'shift', fat: 'loss' });
+    expect(bodyComposition(0.3, -0.8)).toEqual({ kind: 'shift', fat: 'gain' });
+  });
+
+  it('gives the lean share of a change in one direction', () => {
+    expect(bodyComposition(0.4, 0.3)).toEqual({
+      kind: 'share',
+      change: 'gain',
+      leanShare: expect.closeTo(3 / 7),
+    });
+    expect(bodyComposition(-0.6, -0.2)).toEqual({
+      kind: 'share',
+      change: 'loss',
+      leanShare: expect.closeTo(0.25),
+    });
+  });
+
+  it('counts a tiny fat change as no direction', () => {
+    expect(bodyComposition(0.02, -0.3)).toEqual({
+      kind: 'share',
+      change: 'loss',
+      leanShare: expect.closeTo(0.3 / 0.32),
+    });
+  });
+
+  it('says nothing up to 0.05 kg of lean mass', () => {
+    expect(bodyComposition(0.4, 0.05)).toBeUndefined();
+    expect(bodyComposition(0.4, -0.05)).toBeUndefined();
   });
 });

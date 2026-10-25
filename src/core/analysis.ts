@@ -15,7 +15,8 @@ export const MIN_MEASUREMENTS = 6;
 export const FIT_SHARE = 0.1;
 export const FIT_MIN_KCAL = 400;
 
-// Above this gain in lean mass the card says part of it is lean mass.
+// Above this change in lean mass the card says how the change splits into
+// fat and lean mass; also the least fat change that counts as a direction.
 export const LEAN_SHARE_KG = 0.05;
 
 export type AnalysisValues = {
@@ -38,22 +39,61 @@ export type AnalysisValues = {
 
 type Counts = { days: number; measurements: number };
 
+// What the balance lets expect: within the fit margin it expects no visible
+// change, so the card speaks neutrally.
+export type Expected = 'gain' | 'loss' | 'even';
+
+// How the change splits into fat and lean mass.
+export type Composition =
+  // Same direction, or too little fat change to count: share of lean mass in
+  // the change, 0–1; `change` is the direction of the lean mass.
+  | { kind: 'share'; change: 'gain' | 'loss'; leanShare: number }
+  // Opposite directions, e.g. fat lost and lean mass gained.
+  | { kind: 'shift'; fat: 'gain' | 'loss' };
+
+type Verdict = { expected: Expected; composition?: Composition };
+
 export type Analysis =
   | (Counts & { state: 'insufficient'; preview?: AnalysisValues })
   | (Counts & {
       state: 'weightOnly';
       balanceFatKg: number;
       weightChangeKg: number;
+      // Days with fat and lean mass in the period, below 6.
+      compositionMeasurements: number;
     })
-  | (Counts & { state: 'ok'; values: AnalysisValues })
-  | (Counts & {
-      state: 'deviation';
-      values: AnalysisValues;
-      // less: the scale shows less gain than the balance.
-      direction: 'less' | 'more';
-      // Part of the change is lean mass (muscle or water).
-      leanShare: boolean;
-    });
+  | (Counts & Verdict & { state: 'ok'; values: AnalysisValues })
+  | (Counts &
+      Verdict & {
+        state: 'deviation';
+        values: AnalysisValues;
+        // less: the scale shows less energy stored than the balance.
+        direction: 'less' | 'more';
+      });
+
+export function expectedChange(balanceKcal: number): Expected {
+  if (Math.abs(balanceKcal) <= FIT_MIN_KCAL) return 'even';
+  return balanceKcal > 0 ? 'gain' : 'loss';
+}
+
+// Undefined while the lean mass barely changed.
+export function bodyComposition(
+  fatChangeKg: number,
+  leanChangeKg: number,
+): Composition | undefined {
+  if (Math.abs(leanChangeKg) <= LEAN_SHARE_KG) return undefined;
+  if (
+    Math.sign(fatChangeKg) === -Math.sign(leanChangeKg) &&
+    Math.abs(fatChangeKg) > LEAN_SHARE_KG
+  )
+    return { kind: 'shift', fat: fatChangeKg > 0 ? 'gain' : 'loss' };
+  return {
+    kind: 'share',
+    change: leanChangeKg > 0 ? 'gain' : 'loss',
+    leanShare:
+      Math.abs(leanChangeKg) / (Math.abs(fatChangeKg) + Math.abs(leanChangeKg)),
+  };
+}
 
 // Start and end of a trend in the period: the first and last value, so a
 // trend that only begins within the period starts there.
@@ -142,20 +182,25 @@ export function analyzeBalance(
       state: 'weightOnly',
       balanceFatKg: fatKgFromKcal(balanceKcal),
       weightChangeKg: weight ? weight.end - weight.start : 0,
+      compositionMeasurements,
     };
   }
 
+  const verdict: Verdict = {
+    expected: expectedChange(values.balanceKcal),
+    composition: bodyComposition(values.fatChangeKg, values.leanChangeKg),
+  };
   const gap = values.storedKcal - values.balanceKcal;
   if (
     Math.abs(gap) <=
     Math.max(FIT_SHARE * Math.abs(values.balanceKcal), FIT_MIN_KCAL)
   )
-    return { ...counts, state: 'ok', values };
+    return { ...counts, ...verdict, state: 'ok', values };
   return {
     ...counts,
+    ...verdict,
     state: 'deviation',
     values,
     direction: gap < 0 ? 'less' : 'more',
-    leanShare: values.leanChangeKg > LEAN_SHARE_KG,
   };
 }

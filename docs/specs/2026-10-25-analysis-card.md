@@ -177,7 +177,7 @@ sequenceDiagram
 
 ---
 
-### Milestone 1 — Kern: Zähler, Erwartung, Zusammensetzung, i18n-Sperre
+### ✅ Milestone 1 — Kern: Zähler, Erwartung, Zusammensetzung, i18n-Sperre
 
 > Der Kern liefert alles, woraus die Karte ihre Sätze wählt (KFA-Zähler, erwartete Veränderung, Zusammensetzung), und kann nachweislich keine Texte erzeugen.
 
@@ -221,19 +221,19 @@ export type Composition =
 
 #### To-Dos
 
-- 🔲 Add `compositionMeasurements` to the `weightOnly` result in `analyzeBalance`
-- 🔲 Add `expectedChange`: `even` when |B| ≤ `FIT_MIN_KCAL`, else `gain`/`loss` by sign
-- 🔲 Add `bodyComposition`: none when |ΔL| ≤ `LEAN_SHARE_KG`; `shift` when signs differ and |ΔF| > `LEAN_SHARE_KG`; else `share` with `change` = sign of ΔL and `leanShare` = |ΔL| ÷ (|ΔF| + |ΔL|)
-- 🔲 Replace `leanShare: boolean` with `expected` and `composition` in `ok` and `deviation`
-- 🔲 Test `compositionMeasurements` with 0 and 5 body fat days
-- 🔲 Test `expected` at B = 400 (`even`), 401 (`gain`), −400 (`even`), −401 (`loss`) _(Gleitkomma: mit 399/401 prüfen wie in P3)_
-- 🔲 Test `composition`: ΔF −0,3 / ΔL +0,8 → `shift`/`loss` (Gewicht zu, Fett ab); ΔF +0,3 / ΔL −0,8 → `shift`/`gain`; ΔF +0,4 / ΔL +0,3 → `share`/`gain` ≈ 0,43; ΔF −0,6 / ΔL −0,2 → `share`/`loss` 0,25; ΔF +0,02 / ΔL −0,3 → `share`/`loss`; ΔL 0,05 → none
-- 🔲 Test `even` + `deviation` always has E on the side of `direction` (E < 0 for `less`, E > 0 for `more`)
-- 🔲 Update the golden test and the scenario tests
-- 🔲 Add the ESLint block that forbids i18n imports in `src/core/`
-- 🔲 Test the rule by hand: a temporary `import i18n from 'i18next'` in `src/core/analysis.ts` fails `npm run lint` (then remove)
-- 🔲 Update `CLAUDE.md` (analysis states)
-- 🔲 Commit (`feat: add expected change and body composition to the analysis`)
+- ✅ Add `compositionMeasurements` to the `weightOnly` result in `analyzeBalance`
+- ✅ Add `expectedChange`: `even` when |B| ≤ `FIT_MIN_KCAL`, else `gain`/`loss` by sign
+- ✅ Add `bodyComposition`: none when |ΔL| ≤ `LEAN_SHARE_KG`; `shift` when signs differ and |ΔF| > `LEAN_SHARE_KG`; else `share` with `change` = sign of ΔL and `leanShare` = |ΔL| ÷ (|ΔF| + |ΔL|)
+- ✅ Replace `leanShare: boolean` with `expected` and `composition` in `ok` and `deviation`
+- ✅ Test `compositionMeasurements` with 0 and 5 body fat days
+- ✅ Test `expected` at B = 400 (`even`), 401 (`gain`), −400 (`even`), −401 (`loss`) _(direkt an `expectedChange` mit ±399/±401 und 0, dazu über `analyzeBalance` B = 390 → `even`)_
+- ✅ Test `composition`: ΔF −0,3 / ΔL +0,8 → `shift`/`loss` (Gewicht zu, Fett ab); ΔF +0,3 / ΔL −0,8 → `shift`/`gain`; ΔF +0,4 / ΔL +0,3 → `share`/`gain` ≈ 0,43; ΔF −0,6 / ΔL −0,2 → `share`/`loss` 0,25; ΔF +0,02 / ΔL −0,3 → `share`/`loss`; ΔL 0,05 → none _(dazu ΔL −0,05 → none; über `analyzeBalance` +0,06 kg nur Magermasse → `share`/`gain` 1)_
+- ✅ Test `even` + `deviation` always has E on the side of `direction` (E < 0 for `less`, E > 0 for `more`)
+- ✅ Update the golden test and the scenario tests
+- ✅ Add the ESLint block that forbids i18n imports in `src/core/`
+- ✅ Test the rule by hand: a temporary `import i18n from 'i18next'` in `src/core/analysis.ts` fails `npm run lint` (then remove) _(Probe-Datei `src/core/zz-lint-probe.ts` mit `i18next` und `@/i18n/locales/de`: beide gemeldet, dann gelöscht)_
+- ✅ Update `CLAUDE.md` (analysis states)
+- ✅ Commit (`feat: add expected change and body composition to the analysis`)
 
 #### Notes / Constraints
 

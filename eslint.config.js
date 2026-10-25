@@ -20,6 +20,14 @@ const APP_GROUP = {
   name: '@bacons/apple-targets',
   message: 'Read and write the App Group through the store in src/storage.',
 };
+const CORE_TEXT_MESSAGE =
+  'The core returns states and numbers; texts come from i18n in the UI.';
+const NO_I18N = [
+  { name: 'i18next', message: CORE_TEXT_MESSAGE },
+  { name: 'react-i18next', message: CORE_TEXT_MESSAGE },
+  { name: '@/i18n', message: CORE_TEXT_MESSAGE },
+];
+const NO_I18N_PATTERN = { group: ['@/i18n/*'], message: CORE_TEXT_MESSAGE };
 
 module.exports = defineConfig([
   expoConfig,
@@ -100,6 +108,19 @@ module.exports = defineConfig([
       'no-restricted-imports': [
         'error',
         { paths: [RAW_SAMPLES], patterns: [DEV_CODE] },
+      ],
+    },
+  },
+  // The core has no texts (P9): it says which state, the UI picks the words.
+  {
+    files: ['src/core/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [RAW_SAMPLES, APP_GROUP, ...NO_I18N],
+          patterns: [DEV_CODE, NO_I18N_PATTERN],
+        },
       ],
     },
   },

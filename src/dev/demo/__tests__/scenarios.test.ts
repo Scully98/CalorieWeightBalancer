@@ -120,13 +120,20 @@ describe('demo scenarios through the balance load', () => {
   });
 
   it('compare the weight only without body fat data', async () => {
-    expect((await load('noBodyFat30')).analysis.state).toBe('weightOnly');
+    expect((await load('noBodyFat30')).analysis).toMatchObject({
+      state: 'weightOnly',
+      compositionMeasurements: 0,
+    });
   });
 
   it('fit for the good-fit scenario and deviate for the design data', async () => {
     expect((await load('goodFit30')).analysis.state).toBe('ok');
     const { analysis } = await load('normal30');
-    expect(analysis).toMatchObject({ state: 'deviation', direction: 'less' });
+    expect(analysis).toMatchObject({
+      state: 'deviation',
+      direction: 'less',
+      expected: 'gain',
+    });
     if (analysis.state !== 'deviation') throw new Error(analysis.state);
     expect(Math.round(analysis.values.storedKcal / 100) * 100).toBe(
       STORED_NORMAL30,

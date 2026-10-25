@@ -99,7 +99,12 @@ describe('golden test case: balance against the scale', () => {
     expect(analysis).toMatchObject({
       state: 'deviation',
       direction: 'less',
-      leanShare: true,
+      expected: 'gain',
+      composition: {
+        kind: 'share',
+        change: 'gain',
+        leanShare: expect.closeTo(0.3 / 0.7),
+      },
       days: 30,
       measurements: 15,
     });
