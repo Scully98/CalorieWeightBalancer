@@ -18,6 +18,7 @@ import {
   summedDays,
   type CalcLine,
 } from '@/features/balance/data-rows';
+import { formatTime } from '@/features/balance/today';
 import type {
   BalanceReport,
   BalanceState,
@@ -140,6 +141,13 @@ export function DataPage({
       <View style={styles.titleRow}>
         <View style={styles.title}>
           <Headline title={t('data.title')} subline={periodLabel} />
+          {state.status === 'done' || state.status === 'empty' ? (
+            <AppText variant="secondary" tone="muted">
+              {t('today.asOf', {
+                time: formatTime(state.value.loadedAt, formatLocale()),
+              })}
+            </AppText>
+          ) : null}
         </View>
         <PageIndicator
           count={pageCount}
