@@ -9,7 +9,6 @@ import { Badge } from '@/components/badge';
 import { LinkButton } from '@/components/link-button';
 import { createDemoSource } from '@/dev/demo/demo-source';
 import { buildScenario } from '@/dev/demo/scenarios';
-import { ChartSpike } from '@/dev/spike/chart-spike';
 import { addDays } from '@/core/dates';
 import { toDateKey } from '@/core/day-record';
 import {
@@ -92,11 +91,7 @@ export function EntryScreen() {
     <View style={[styles.flex, { backgroundColor: colors.background }]}>
       <HealthSourceProvider source={source}>
         <SettingsStoreProvider store={store}>
-          {entry.ui?.part === 'chartSpike' ? (
-            <ChartSpike />
-          ) : (
-            <HomeScreen initialUi={initialUi} />
-          )}
+          <HomeScreen initialUi={initialUi} />
         </SettingsStoreProvider>
       </HealthSourceProvider>
       <SafeAreaView

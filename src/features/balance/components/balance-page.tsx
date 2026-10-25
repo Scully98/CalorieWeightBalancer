@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
+import { BalanceChart } from './balance-chart';
 import { EmptyState } from './empty-state';
 import { HeroSection } from './hero-section';
 import { PeriodSegments } from './period-segments';
@@ -26,7 +27,7 @@ type BalancePageProps = {
 };
 
 // First page of the balance tab: period, the balance of that period, its
-// data quality and today so far. Chart (P8) and Abgleich (P9) follow below.
+// data quality, today so far and the chart. Abgleich (P9) follows below.
 export function BalancePage({
   state,
   periodLabel,
@@ -78,6 +79,7 @@ export function BalancePage({
             today={state.value.today}
             loadedAt={state.value.loadedAt}
           />
+          <BalanceChart chart={state.value.chart} />
         </>
       ) : state.status === 'empty' ? (
         <EmptyState report={state.value} />
