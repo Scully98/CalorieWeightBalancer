@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import Svg, { Line, Rect, Text } from 'react-native-svg';
+import Svg, { Circle, Line, Polyline, Rect, Text } from 'react-native-svg';
 
 import {
   AXIS_LABEL,
@@ -8,6 +8,7 @@ import {
   VIEW,
   type ChartBar,
   type ChartModel,
+  type LineSeries,
 } from '../chart-model';
 import {
   QualityCross,
@@ -20,6 +21,28 @@ import { useColors } from '@/theme/use-colors';
 
 // Axis labels keep their size at every Dynamic Type step, like the chart.
 const AXIS_FONT_SIZE = 10;
+
+// Three line styles that stay apart in grayscale: solid and thick, dashed,
+// dotted (design „Muster & Linien“).
+export const LINE_STROKE: Record<
+  LineSeries,
+  {
+    strokeWidth: number;
+    strokeDasharray?: string;
+    strokeLinecap?: 'round';
+    strokeLinejoin?: 'round';
+  }
+> = {
+  weight: { strokeWidth: 2.6, strokeLinecap: 'round', strokeLinejoin: 'round' },
+  fat: { strokeWidth: 1.8, strokeDasharray: '6 3.5', strokeLinejoin: 'round' },
+  theoretical: {
+    strokeWidth: 2.2,
+    strokeDasharray: '0.1 4.2',
+    strokeLinecap: 'round',
+  },
+};
+
+const POINT = { r: 2.5, strokeWidth: 1.25 };
 
 function barFill(bar: ChartBar, prefix: string, colors: ThemeColors) {
   if (bar.kind === 'full') return bar.plus ? colors.plus : colors.minus;
@@ -82,6 +105,41 @@ function StaticLayer({ model, width }: StaticLayerProps) {
         stroke={colors.foreground}
         strokeWidth={1.25}
       />
+      {model.lines.flatMap((line) =>
+        line.segments.map((points, index) => (
+          <Polyline
+            key={`${line.series}${index}`}
+            points={points}
+            fill="none"
+            stroke={colors.foreground}
+            {...LINE_STROKE[line.series]}
+          />
+        )),
+      )}
+      {model.points.map((point) => (
+        <Circle
+          key={point.x}
+          cx={point.x}
+          cy={point.y}
+          r={POINT.r}
+          fill={colors.background}
+          stroke={colors.foreground}
+          strokeWidth={POINT.strokeWidth}
+        />
+      ))}
+      {model.showRight
+        ? model.ticks.map((tick) => (
+            <Text
+              key={`right${tick.y}`}
+              x={AXIS_LABEL.rightX}
+              y={tick.baseline}
+              fontSize={AXIS_FONT_SIZE}
+              fill={colors.muted}
+            >
+              {tick.right}
+            </Text>
+          ))
+        : null}
       {model.ticks.map((tick) => (
         <Text
           key={`left${tick.y}`}

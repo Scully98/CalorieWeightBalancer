@@ -1,10 +1,17 @@
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
+import Svg, { Line } from 'react-native-svg';
 
-import type { LegendHint } from '../chart-model';
+import { LINE_STROKE } from './chart-canvas';
+import type {
+  ChartLegend as Legend,
+  ChartSeries,
+  LegendHint,
+} from '../chart-model';
 import { AppText } from '@/components/app-text';
 import { QualitySwatch } from '@/components/quality-pattern';
 import type { DayFlag } from '@/core/day-balance';
+import { border } from '@/theme/spacing';
 import { useColors } from '@/theme/use-colors';
 
 const HINT_SWATCH: Partial<Record<LegendHint, DayFlag>> = {
@@ -15,6 +22,8 @@ const HINT_SWATCH: Partial<Record<LegendHint, DayFlag>> = {
 };
 
 const SWATCH_SIZE = 10;
+const CHIP_ICON = { width: 22, height: 8 };
+const HIDDEN_OPACITY = 0.35;
 
 function HintMark({ hint }: { hint: LegendHint }) {
   const colors = useColors();
@@ -30,25 +39,106 @@ function HintMark({ hint }: { hint: LegendHint }) {
   return null;
 }
 
-// What the patterns, the dashed bar and the lines mean.
-export function ChartLegend({ hints }: { hints: readonly LegendHint[] }) {
+// Bar or line sample of a chip, drawn like the chart.
+function ChipIcon({ series }: { series: ChartSeries }) {
+  const colors = useColors();
+  if (series === 'bars')
+    return (
+      <View style={[styles.barIcon, { backgroundColor: colors.foreground }]} />
+    );
+  const stroke = LINE_STROKE[series];
+  const inset = stroke.strokeLinecap ? 1.5 : 0;
+  return (
+    <Svg
+      width={CHIP_ICON.width}
+      height={CHIP_ICON.height}
+      accessible={false}
+      importantForAccessibility="no-hide-descendants"
+    >
+      <Line
+        x1={inset}
+        x2={CHIP_ICON.width - inset}
+        y1={CHIP_ICON.height / 2}
+        y2={CHIP_ICON.height / 2}
+        stroke={colors.foreground}
+        {...stroke}
+      />
+    </Svg>
+  );
+}
+
+type ChartLegendProps = {
+  legend: Legend;
+  onToggle: (series: ChartSeries) => void;
+};
+
+// Chips that show or hide bars and lines, and what the patterns, the dashed
+// bar and the lines mean.
+export function ChartLegend({ legend, onToggle }: ChartLegendProps) {
+  const colors = useColors();
   const { t } = useTranslation();
 
   return (
-    <View style={styles.hints}>
-      {hints.map((hint) => (
-        <View key={hint} style={styles.hint}>
-          <HintMark hint={hint} />
-          <AppText variant="caption" tone="muted">
-            {t(`chart.hints.${hint}`)}
-          </AppText>
-        </View>
-      ))}
+    <View style={styles.legend}>
+      <View style={styles.chips}>
+        {legend.chips.map((chip) => (
+          <Pressable
+            key={chip.series}
+            accessibilityRole="switch"
+            accessibilityState={{ checked: chip.visible }}
+            accessibilityLabel={t(`chart.chips.${chip.series}`)}
+            onPress={() => onToggle(chip.series)}
+            style={[
+              styles.chip,
+              {
+                borderColor: colors.foreground,
+                opacity: chip.visible ? 1 : HIDDEN_OPACITY,
+              },
+            ]}
+          >
+            <ChipIcon series={chip.series} />
+            <AppText variant="footnote">
+              {t(`chart.chips.${chip.series}`)}
+            </AppText>
+          </Pressable>
+        ))}
+      </View>
+      <View style={styles.hints}>
+        {legend.hints.map((hint) => (
+          <View key={hint} style={styles.hint}>
+            <HintMark hint={hint} />
+            <AppText variant="caption" tone="muted">
+              {t(`chart.hints.${hint}`)}
+            </AppText>
+          </View>
+        ))}
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  legend: {
+    gap: 10,
+  },
+  chips: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  chip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 7,
+    minHeight: 32,
+    paddingHorizontal: 11,
+    borderWidth: border.medium,
+    borderRadius: 16,
+  },
+  barIcon: {
+    width: 7,
+    height: 13,
+  },
   hints: {
     flexDirection: 'row',
     flexWrap: 'wrap',

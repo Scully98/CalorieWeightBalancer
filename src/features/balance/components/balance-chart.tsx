@@ -4,7 +4,11 @@ import { StyleSheet, View } from 'react-native';
 
 import { ChartCanvas } from './chart-canvas';
 import { ChartLegend } from './chart-legend';
-import { chartModel } from '../chart-model';
+import {
+  chartModel,
+  type ChartSeries,
+  type HiddenSeries,
+} from '../chart-model';
 import { chartSummary } from '../chart-tooltip';
 import type { BalanceReport } from '../use-balance';
 import { AppText } from '@/components/app-text';
@@ -22,11 +26,13 @@ export function BalanceChart({ chart }: BalanceChartProps) {
   const locale = formatLocale();
   // Content width, measured: the canvas scales the design's viewBox to it.
   const [width, setWidth] = useState<number>();
+  // Chips the user switched off; kept across period changes, not stored.
+  const [hidden, setHidden] = useState<HiddenSeries>({});
   // Stable while only the width or nothing changes, so the memoized canvas
   // skips redrawing.
   const model = useMemo(
-    () => chartModel(chart, {}, locale, t),
-    [chart, locale, t],
+    () => chartModel(chart, hidden, locale, t),
+    [chart, hidden, locale, t],
   );
 
   return (
@@ -53,12 +59,23 @@ export function BalanceChart({ chart }: BalanceChartProps) {
           >
             {t('chart.axisKcal')}
           </AppText>
+          {model.showRight ? (
+            <AppText
+              variant="caption2"
+              tone="muted"
+              maxFontSizeMultiplier={AXIS_HEADER_FONT_SCALE}
+            >
+              {t('chart.axisKg')}
+            </AppText>
+          ) : null}
         </View>
         {width ? <ChartCanvas model={model} width={width} /> : null}
       </View>
-      {/* Lines follow in M5; until then no line hint. */}
       <ChartLegend
-        hints={model.legend.hints.filter((hint) => hint !== 'trend')}
+        legend={model.legend}
+        onToggle={(series: ChartSeries) =>
+          setHidden((current) => ({ ...current, [series]: !current[series] }))
+        }
       />
     </View>
   );
