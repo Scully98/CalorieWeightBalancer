@@ -1,8 +1,8 @@
 import type { ScenarioId } from '@/dev/demo/scenarios';
 
-// What the screen should show besides the data. Tolerance, picker, sheet and
-// „Heute einrechnen“ are passed to the home screen; tooltip and part follow
-// with their parts.
+// What the screen should show besides the data. Tolerance, picker, sheet,
+// tooltip and „Heute einrechnen“ are passed to the home screen; the part
+// follows with the Abgleich card (P9).
 export type GalleryUi = {
   colorScheme?: 'dark';
   tolerance?: { foodPercent: number; burnPercent: number; open: boolean };
@@ -113,6 +113,5 @@ export const GALLERY_ENTRIES: readonly GalleryEntry[] = [
 
 // Presets the current balance screen can't show yet.
 export function hasPendingUi(entry: GalleryEntry): boolean {
-  const ui = entry.ui ?? {};
-  return Boolean(ui.tooltip || ui.part);
+  return Boolean(entry.ui?.part);
 }

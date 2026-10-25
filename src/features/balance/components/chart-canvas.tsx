@@ -1,9 +1,10 @@
 import { memo } from 'react';
-import Svg, { Circle, Line, Polyline, Rect, Text } from 'react-native-svg';
+import Svg, { Circle, G, Line, Polyline, Rect, Text } from 'react-native-svg';
 
 import {
   AXIS_LABEL,
   CROSS_SIZE,
+  GUIDE,
   PLOT,
   VIEW,
   type ChartBar,
@@ -53,23 +54,16 @@ function barFill(bar: ChartBar, prefix: string, colors: ThemeColors) {
   );
 }
 
-type StaticLayerProps = { model: ChartModel; width: number };
+// Opacity of the other bars while one is selected (design).
+const DIMMED = 0.3;
 
-// Everything that only changes with the data, the width or the visible
-// series; selecting a bar never redraws it.
-function StaticLayer({ model, width }: StaticLayerProps) {
+type LayerProps = { model: ChartModel };
+
+// Grid lines; only change with the data.
+const Grid = memo(function Grid({ model }: LayerProps) {
   const colors = useColors();
-  const prefix = usePatternPrefix();
-
   return (
-    <Svg
-      width={width}
-      height={(width * VIEW.height) / VIEW.width}
-      viewBox={`0 0 ${VIEW.width} ${VIEW.height}`}
-      accessible={false}
-      importantForAccessibility="no-hide-descendants"
-    >
-      <QualityPatternDefs idPrefix={prefix} />
+    <G>
       {model.ticks.map((tick) => (
         <Line
           key={tick.y}
@@ -81,6 +75,20 @@ function StaticLayer({ model, width }: StaticLayerProps) {
           strokeWidth={0.75}
         />
       ))}
+    </G>
+  );
+});
+
+// Bars and crosses; the only layer besides the guide that a selection
+// redraws.
+const Bars = memo(function Bars({
+  model,
+  prefix,
+  selected,
+}: LayerProps & { prefix: string; selected?: number }) {
+  const colors = useColors();
+  return (
+    <G>
       {model.bars.map((bar) => (
         <Rect
           key={bar.slot}
@@ -92,11 +100,21 @@ function StaticLayer({ model, width }: StaticLayerProps) {
           stroke={bar.kind === 'full' ? undefined : colors.foreground}
           strokeWidth={1}
           strokeDasharray={bar.kind === 'today' ? '2.5 2' : undefined}
+          opacity={selected === undefined || selected === bar.slot ? 1 : DIMMED}
         />
       ))}
       {model.crosses.map((x) => (
         <QualityCross key={x} size={CROSS_SIZE} x={x} y={PLOT.zeroY} />
       ))}
+    </G>
+  );
+});
+
+// Zero line, lines, points and axis labels above the bars.
+const Foreground = memo(function Foreground({ model }: LayerProps) {
+  const colors = useColors();
+  return (
+    <G>
       <Line
         x1={PLOT.left}
         x2={PLOT.right}
@@ -164,8 +182,42 @@ function StaticLayer({ model, width }: StaticLayerProps) {
           {label.text}
         </Text>
       ))}
+    </G>
+  );
+});
+
+type ChartCanvasProps = { model: ChartModel; width: number; selected?: number };
+
+// The chart in the design's viewBox, scaled to `width`. Selecting a bar
+// redraws only the bars and the guide line.
+export function ChartCanvas({ model, width, selected }: ChartCanvasProps) {
+  const colors = useColors();
+  const prefix = usePatternPrefix();
+  const guide = selected === undefined ? undefined : model.slots[selected];
+
+  return (
+    <Svg
+      width={width}
+      height={(width * VIEW.height) / VIEW.width}
+      viewBox={`0 0 ${VIEW.width} ${VIEW.height}`}
+      accessible={false}
+      importantForAccessibility="no-hide-descendants"
+    >
+      <QualityPatternDefs idPrefix={prefix} />
+      <Grid model={model} />
+      <Bars model={model} prefix={prefix} selected={selected} />
+      <Foreground model={model} />
+      {guide ? (
+        <Line
+          x1={guide.center}
+          x2={guide.center}
+          y1={GUIDE.top}
+          y2={GUIDE.bottom}
+          stroke={colors.foreground}
+          strokeWidth={1}
+          strokeDasharray="2 2"
+        />
+      ) : null}
     </Svg>
   );
 }
-
-export const ChartCanvas = memo(StaticLayer);

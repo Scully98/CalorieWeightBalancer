@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
-import { BalanceChart } from './balance-chart';
+import { BalanceChart, type ChartTooltipPreset } from './balance-chart';
 import { EmptyState } from './empty-state';
 import { HeroSection } from './hero-section';
 import { PeriodSegments } from './period-segments';
@@ -19,6 +19,8 @@ type BalancePageProps = {
   pageCount: number;
   // Gallery preset: the tolerance card starts open.
   toleranceOpen?: boolean;
+  // Gallery preset: a bar of the chart starts selected.
+  initialTooltip?: ChartTooltipPreset;
   // Off while a slider is dragged.
   scrollEnabled?: boolean;
   onShowData: () => void;
@@ -33,6 +35,7 @@ export function BalancePage({
   periodLabel,
   pageCount,
   toleranceOpen,
+  initialTooltip,
   scrollEnabled = true,
   onShowData,
   onPickCustom,
@@ -79,7 +82,11 @@ export function BalancePage({
             today={state.value.today}
             loadedAt={state.value.loadedAt}
           />
-          <BalanceChart chart={state.value.chart} />
+          <BalanceChart
+            chart={state.value.chart}
+            loadedAt={state.value.loadedAt}
+            initialTooltip={initialTooltip}
+          />
         </>
       ) : state.status === 'empty' ? (
         <EmptyState report={state.value} />

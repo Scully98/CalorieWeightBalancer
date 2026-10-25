@@ -29,6 +29,7 @@ function homeUi(ui: GalleryUi | undefined): HomeUi {
   return {
     toleranceOpen: ui?.tolerance?.open,
     sheet: ui?.sheet,
+    tooltip: ui?.tooltip,
     picker: ui?.picker && {
       from: key(ui.picker.fromDaysAgo),
       to: key(ui.picker.toDaysAgo),
