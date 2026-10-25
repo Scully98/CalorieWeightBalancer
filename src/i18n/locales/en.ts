@@ -122,11 +122,7 @@ export const en: typeof de = {
     daysWithoutFood_other: '{{count}} days without an entry counted as neutral',
     daysWithoutResting_one: '{{count}} day without resting energy left out',
     daysWithoutResting_other: '{{count}} days without resting energy left out',
-    empty_one:
-      'No food data on the last day. Does your tracker sync with Apple Health?',
-    empty_other:
-      'No food data in the last {{count}} days. Does your tracker sync with Apple Health?',
-    checkPermissions: 'Check permissions',
+    footer: 'Not medical advice. Your data stays on your iPhone.',
   },
   tolerance: {
     title: 'Include measurement error',
@@ -150,6 +146,95 @@ export const en: typeof de = {
     summaryFoodSpoken: 'food plus minus {{food}} percent',
     summaryBurnSpoken: 'burn minus {{burn}} percent',
   },
+  quality: {
+    complete_one: '{{complete}} of {{count}} day complete',
+    complete_other: '{{complete}} of {{count}} days complete',
+    restingEstimated: '{{count}} resting energy estimated',
+    noFood: '{{count}} without food',
+    lowFood: '{{count}} unusually little food',
+    noResting: '{{count}} without resting energy',
+    openHint: 'Shows the incomplete days',
+  },
+  incomplete: {
+    title: 'Incomplete days',
+    subtitle_one: '{{incomplete}} of {{count}} day · {{from}} – {{to}}',
+    subtitle_other: '{{incomplete}} of {{count}} days · {{from}} – {{to}}',
+    done: 'Done',
+    restingEstimated: {
+      title: 'Resting energy estimated',
+      body: 'No resting energy in Health, e.g. without an Apple Watch. Estimated after Mifflin-St Jeor.',
+    },
+    noFood: {
+      title: 'Without food',
+      bodyMaintenance:
+        'Nothing logged. Counts as a maintenance day with balance 0.',
+      bodyDeficit:
+        'Nothing logged. Counts with the full deficit because “Empty days = maintenance” is off.',
+    },
+    lowFood: {
+      title: 'Unusually little food',
+      body: 'Below {{percent}} % of the burn, probably not fully tracked.',
+    },
+    noResting: {
+      title: 'Without resting energy',
+      body: 'No resting energy in Health and no body data for the estimate. Not counted in the balance.',
+      link: 'Enter body data ›',
+    },
+    row: {
+      estimated:
+        'Resting {{resting}} {{mark}} · Active {{active}} · Balance {{balance}}',
+      noFoodMaintenance: 'Eaten – · Burned {{burn}} · counts as 0',
+      noFoodDeficit: 'Eaten – · Burned {{burn}} · Balance {{balance}}',
+      lowFood:
+        'Eaten {{food}} of {{burn}} burned ({{percent}} %) · Balance {{balance}}',
+      noResting: 'Eaten {{food}} · Active {{active}} · not counted',
+    },
+    mark: {
+      formula: '(formula)',
+      partial: '(partly formula)',
+      source: '(estimated)',
+    },
+    groupSpoken_one: '{{title}}, {{count}} day',
+    groupSpoken_other: '{{title}}, {{count}} days',
+    note: 'Add the missing entries. Once they are in Health, Kcalwaage recalculates the next time you open it.',
+  },
+  today: {
+    title: 'Today so far',
+    asOf: 'As of {{time}}',
+    balance: 'Balance',
+    food: 'Eaten',
+    burn: 'Burned',
+    unit: 'kcal',
+    maintenance: 'kcal · as maintenance',
+    burnDetail: 'Resting {{resting}} + Active {{active}}',
+    burnDetailFormula: 'Resting {{resting}} (formula) + Active {{active}}',
+    burnDetailPartial:
+      'Resting {{resting}} (partly formula) + Active {{active}}',
+    running: 'The day is still running; burn rises until midnight.',
+    excluded: 'Not counted in the balance above.',
+    included: 'Counted in the balance above.',
+    outside: 'Not in the chosen period.',
+  },
+  empty: {
+    noData: {
+      title: 'No data yet.',
+      body: 'Check in Health whether Kcalwaage may read.',
+    },
+    explain:
+      'iOS doesn’t tell apps whether access was denied. If entries are missing, your tracking or scale app probably doesn’t sync with Health.',
+    period: {
+      title: 'No food in this period.',
+      lastBefore:
+        'Last entry before: {{date}}. Choose a longer period or check in Health whether Kcalwaage may read.',
+      first:
+        'First entry: {{date}}. Choose another period or check in Health whether Kcalwaage may read.',
+    },
+    firstDay: {
+      title: 'Your balance starts tomorrow.',
+      body: 'Today is still running and counts from tomorrow. “Include today” in Settings counts it right away.',
+    },
+    open: 'Open Health permissions',
+  },
   // Dates spelled like the design („Sep 24“).
   date: {
     dayMonth: '{{month}} {{day}}',
@@ -161,7 +246,9 @@ export const en: typeof de = {
     // Monday first in both languages, like the ISO weeks of the chart.
     weekdaysShort: 'Mo Tu We Th Fr Sa Su',
     weekdays: 'Monday Tuesday Wednesday Thursday Friday Saturday Sunday',
+    weekdaysAbbr: 'Mon Tue Wed Thu Fri Sat Sun',
     dayFull: '{{weekday}}, {{month}} {{day}}, {{year}}',
+    weekdayDayMonth: '{{weekday}}, {{month}} {{day}}',
   },
   picker: {
     title: 'Custom period',
@@ -191,6 +278,12 @@ export const en: typeof de = {
     avgRange: 'average {{min}} to {{max}} kilocalories per day',
     fat: 'about {{value}} kilograms of body fat, theoretical',
     fatRange: 'about {{min}} to {{max}} kilograms of fat, theoretical',
+    todayHeader: 'Today so far, as of {{time}}',
+    todayBalance: 'Balance {{value}} kilocalories',
+    todayFood: 'Eaten {{value}} kilocalories',
+    todayBurn: 'Burned {{value}} kilocalories, {{detail}}',
+    todayUnknown: '{{label}} unknown',
+    plusWord: 'plus',
   },
   data: {
     title: 'Data from Health',

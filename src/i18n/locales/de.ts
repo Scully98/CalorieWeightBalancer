@@ -121,11 +121,7 @@ export const de = {
     daysWithoutResting_one: '{{count}} Tag ohne Grundumsatz nicht mitgerechnet',
     daysWithoutResting_other:
       '{{count}} Tage ohne Grundumsatz nicht mitgerechnet',
-    empty_one:
-      'Keine Nahrungsdaten am letzten Tag. Synchronisiert dein Tracker mit Apple Health?',
-    empty_other:
-      'Keine Nahrungsdaten in den letzten {{count}} Tagen. Synchronisiert dein Tracker mit Apple Health?',
-    checkPermissions: 'Berechtigungen prüfen',
+    footer: 'Keine medizinische Beratung. Daten bleiben auf deinem iPhone.',
   },
   tolerance: {
     title: 'Messfehler einrechnen',
@@ -149,6 +145,94 @@ export const de = {
     summaryFoodSpoken: 'Nahrung plus minus {{food}} Prozent',
     summaryBurnSpoken: 'Verbrauch minus {{burn}} Prozent',
   },
+  quality: {
+    complete_one: '{{complete}} von {{count}} Tag vollständig',
+    complete_other: '{{complete}} von {{count}} Tagen vollständig',
+    restingEstimated: '{{count}} Grundumsatz geschätzt',
+    noFood: '{{count}} ohne Nahrung',
+    lowFood: '{{count}} auffällig wenig Nahrung',
+    noResting: '{{count}} ohne Grundumsatz',
+    openHint: 'Zeigt die unvollständigen Tage',
+  },
+  incomplete: {
+    title: 'Unvollständige Tage',
+    subtitle_one: '{{incomplete}} von {{count}} Tag · {{from}} – {{to}}',
+    subtitle_other: '{{incomplete}} von {{count}} Tagen · {{from}} – {{to}}',
+    done: 'Fertig',
+    restingEstimated: {
+      title: 'Grundumsatz geschätzt',
+      body: 'Keine Ruheenergie in Health, z. B. ohne Apple Watch. Geschätzt nach Mifflin-St Jeor.',
+    },
+    noFood: {
+      title: 'Ohne Nahrung',
+      bodyMaintenance:
+        'Nichts eingetragen. Zählt als Erhaltungstag mit Bilanz 0.',
+      bodyDeficit:
+        'Nichts eingetragen. Zählt mit vollem Defizit, weil „Null-Tage = Erhaltung“ aus ist.',
+    },
+    lowFood: {
+      title: 'Auffällig wenig Nahrung',
+      body: 'Unter {{percent}} % des Verbrauchs, vermutlich nicht vollständig getrackt.',
+    },
+    noResting: {
+      title: 'Ohne Grundumsatz',
+      body: 'Keine Ruheenergie in Health und keine Körperdaten für die Schätzung. Zählt nicht zur Bilanz.',
+      link: 'Körperdaten eintragen ›',
+    },
+    row: {
+      estimated:
+        'Ruhe {{resting}} {{mark}} · Aktiv {{active}} · Bilanz {{balance}}',
+      noFoodMaintenance: 'Gegessen – · Verbraucht {{burn}} · zählt als 0',
+      noFoodDeficit: 'Gegessen – · Verbraucht {{burn}} · Bilanz {{balance}}',
+      lowFood:
+        'Gegessen {{food}} von {{burn}} verbraucht ({{percent}} %) · Bilanz {{balance}}',
+      noResting: 'Gegessen {{food}} · Aktiv {{active}} · zählt nicht',
+    },
+    mark: {
+      formula: '(Formel)',
+      partial: '(teils Formel)',
+      source: '(geschätzt)',
+    },
+    groupSpoken_one: '{{title}}, {{count}} Tag',
+    groupSpoken_other: '{{title}}, {{count}} Tage',
+    note: 'Fehlende Einträge nachtragen. Sobald sie in Health stehen, rechnet Kcalwaage beim nächsten Öffnen neu.',
+  },
+  today: {
+    title: 'Heute bisher',
+    asOf: 'Stand {{time}}',
+    balance: 'Bilanz',
+    food: 'Gegessen',
+    burn: 'Verbraucht',
+    unit: 'kcal',
+    maintenance: 'kcal · als Erhaltung',
+    burnDetail: 'Ruhe {{resting}} + Aktiv {{active}}',
+    burnDetailFormula: 'Ruhe {{resting}} (Formel) + Aktiv {{active}}',
+    burnDetailPartial: 'Ruhe {{resting}} (teils Formel) + Aktiv {{active}}',
+    running: 'Tag läuft noch, Verbrauch steigt bis Mitternacht.',
+    excluded: 'Zählt nicht zur Bilanz oben.',
+    included: 'Zählt zur Bilanz oben mit.',
+    outside: 'Nicht im gewählten Zeitraum.',
+  },
+  empty: {
+    noData: {
+      title: 'Noch keine Daten.',
+      body: 'Prüfe in Health, ob Kcalwaage lesen darf.',
+    },
+    explain:
+      'iOS zeigt Apps nicht an, ob ein Zugriff abgelehnt wurde. Fehlen Einträge, synchronisiert vermutlich deine Tracking- oder Waage-App nicht mit Health.',
+    period: {
+      title: 'Keine Nahrung in diesem Zeitraum.',
+      lastBefore:
+        'Letzter Eintrag davor: {{date}}. Wähle einen längeren Zeitraum oder prüfe in Health, ob Kcalwaage lesen darf.',
+      first:
+        'Erster Eintrag: {{date}}. Wähle einen anderen Zeitraum oder prüfe in Health, ob Kcalwaage lesen darf.',
+    },
+    firstDay: {
+      title: 'Deine Bilanz beginnt morgen.',
+      body: 'Heute läuft noch und zählt erst ab morgen. „Heute einrechnen“ in den Einstellungen nimmt ihn sofort mit.',
+    },
+    open: 'Health-Berechtigungen öffnen',
+  },
   // Dates spelled like the design („24. Sep“); Intl writes „24. Sept.“.
   date: {
     dayMonth: '{{day}}. {{month}}',
@@ -160,7 +244,9 @@ export const de = {
     // Monday first in both languages, like the ISO weeks of the chart.
     weekdaysShort: 'Mo Di Mi Do Fr Sa So',
     weekdays: 'Montag Dienstag Mittwoch Donnerstag Freitag Samstag Sonntag',
+    weekdaysAbbr: 'Mo Di Mi Do Fr Sa So',
     dayFull: '{{weekday}}, {{day}}. {{month}} {{year}}',
+    weekdayDayMonth: '{{weekday}}, {{day}}. {{month}}',
   },
   picker: {
     title: 'Eigener Zeitraum',
@@ -190,6 +276,12 @@ export const de = {
     avgRange: 'Durchschnitt {{min}} bis {{max}} Kilokalorien pro Tag',
     fat: 'etwa {{value}} Kilogramm Körperfett, theoretisch',
     fatRange: 'etwa {{min}} bis {{max}} Kilogramm Fett, theoretisch',
+    todayHeader: 'Heute bisher, Stand {{time}}',
+    todayBalance: 'Bilanz {{value}} Kilokalorien',
+    todayFood: 'Gegessen {{value}} Kilokalorien',
+    todayBurn: 'Verbraucht {{value}} Kilokalorien, {{detail}}',
+    todayUnknown: '{{label}} unbekannt',
+    plusWord: 'plus',
   },
   data: {
     title: 'Daten aus Health',
