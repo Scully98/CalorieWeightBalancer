@@ -91,9 +91,9 @@ Drei Screens (Bilanz, Analyse-Chart, Einstellungen) plus Widget.
 3. Null-Tage als Erhaltungstage (Schalter).
 4. Umrechnung in Körperfett unter der Bilanz.
 5./6. Toleranz Verbrauch / Nahrung, Bilanz zeigt dann Spanne.
-7. Balkenchart pro Tag (Plus oben, Minus unten), ab 32 Tagen Wochenbalken (ISO-Kalenderwochen, Ø kcal/Tag; erste Woche unter 3 Tagen an die nächste angehängt). Eine Woche erbt das schlechteste Flag ihrer Tage: wenig Nahrung > ohne Nahrung > ohne Grundumsatz > Grundumsatz geschätzt.
-8. Gewichtslinie auf zweiter Achse plus 7-Tage-Trend.
-9. Fett- und Magermasse-Linien mit Einordnungssatz (nur mit Messungen).
+7. Balkenchart pro Tag (Plus oben, Minus unten), ab 32 Tagen Wochenbalken (ISO-Kalenderwochen, Ø kcal/Tag; erste Woche unter 3 Tagen an die nächste angehängt). Tagesbalken nach dem schlechtesten Flag (wenig Nahrung > ohne Nahrung > ohne Grundumsatz > Grundumsatz geschätzt): Schraffur, Streifen, ohne Wert nur ✕ auf der Nulllinie; ohne Nahrung mit Wert (Null-Tage aus) gefüllt plus ✕. Wochenbalken schraffiert, sobald ein Tag unvollständig ist. Heute immer gestrichelter Umriss (zählt mit / zählt nicht). Tooltip per Tipp oder langem Drücken (0,3 s) und Ziehen; der Chart rechnet nichts, alle Werte kommen aus `report.chart` (ESLint).
+8. Gewichtslinie auf zweiter Achse (Δ kg seit Zeitraumbeginn) als 7-Tage-Trend, durchgezogen; Einzelmessungen als hohle Kreise.
+9. Fettmasse-Linie (7-Tage-Trend, gestrichelt) und „Fett laut Bilanz“ (gepunktet), Linien und Chips nur mit Messungen. Magermasse und Einordnung stehen in der Abgleich-Karte (P9).
 10. Widget klein/mittel: Zeitraum, Bilanz, Fett-Äquivalent; Spanne, wenn Toleranz aktiv.
 11. Daten-Seite (Wischen vom Bilanz-Screen): was aus Health ankommt, wie sich die Bilanz zusammensetzt, Link zu Health (Spec `docs/specs/2026-10-21-data-page.md`).
 
