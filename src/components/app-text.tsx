@@ -10,6 +10,8 @@ const MAX_FONT_SCALE: Partial<Record<TextVariant, number>> = {
   screenTitle: 2,
   sectionTitle: 2,
   number: 2,
+  numberMedium: 2,
+  emptyTitle: 2,
   numberLarge: 1.5,
   hero: 1.2,
   heroRange: 1.2,

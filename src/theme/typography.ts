@@ -36,9 +36,21 @@ export const typography = {
     fontVariant: TABULAR,
   },
   secondary: { fontSize: 15, lineHeight: 20, fontVariant: TABULAR },
+  // Detail lines in lists, e.g. a day in „Unvollständige Tage“.
+  detail: { fontSize: 14, lineHeight: 19, fontVariant: TABULAR },
   // iOS Footnote.
   footnote: { fontSize: 13, lineHeight: 18, fontVariant: TABULAR },
   caption: { fontSize: 12, lineHeight: 16, fontVariant: TABULAR },
+  // Small uppercase labels above a number, e.g. „BILANZ“. The text is
+  // uppercased by the style, the strings stay normal.
+  overline: {
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '600',
+    letterSpacing: 0.72,
+    textTransform: 'uppercase',
+    fontVariant: TABULAR,
+  },
   // Labels of compact segments, e.g. „30 T“.
   segment: {
     fontSize: 14,
@@ -51,6 +63,21 @@ export const typography = {
   number: {
     fontSize: 28,
     lineHeight: 34,
+    fontWeight: '700',
+    fontVariant: TABULAR,
+  },
+  // Values in cards, e.g. „1.420“ in „Heute bisher“; bold where it matters.
+  numberMedium: {
+    fontSize: 28,
+    lineHeight: 32,
+    fontWeight: '400',
+    letterSpacing: -0.5,
+    fontVariant: TABULAR,
+  },
+  // Title of the empty state, „Noch keine Daten.“
+  emptyTitle: {
+    fontSize: 24,
+    lineHeight: 29,
     fontWeight: '700',
     fontVariant: TABULAR,
   },
