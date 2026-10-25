@@ -16,7 +16,7 @@ Fragen, die die App beantwortet: Bin ich diesen Monat im Plus oder Minus? Wie la
 ## Rahmenbedingungen
 - Alles lokal: kein Backend, keine Accounts, kein Tracking, keine Analytics. Datenschutz-Label „Keine Daten erfasst“.
 - Einzige Datenquelle Apple HealthKit, nur Leserechte. Essen/Gewicht kommen aus MyFitnessPal, Yazio, Waage-App usw. per Health-Sync.
-- Einstellungen lokal in einer App Group (Widget liest mit).
+- Einstellungen lokal in einer App Group (Widget liest mit), über `SettingsStore` in `src/storage/` (Interface `KeyValueStore`, Tests mit In-Memory-Variante). Keys nur `introCompleted`, `profile.v1` (eingetragene Körperdaten), `settings.v1` (Zeitraum, Null-Tage, heute, Toleranz); nie Health-Werte. In die App Group schreibt nur `src/storage/app-group.ts` (ESLint).
 - V1: nur iPhone, Deutsch und Englisch.
 - Apple: Developer Program 99 USD/Jahr (Individual-Account), Richtlinie 5.1.3 (Health-Daten nicht für Werbung, nicht in iCloud), Datenschutz-URL Pflicht, Hinweis „Keine medizinische Beratung“, genug Funktionsumfang nach 4.2.
 
@@ -24,6 +24,8 @@ Fragen, die die App beantwortet: Bin ich diesen Monat im Plus oder Minus? Wie la
 - React Native mit Expo, Development Build (kein Expo Go), Build/Upload über EAS, TypeScript.
 - HealthKit: `@kingstinct/react-native-healthkit`.
 - Charts: `react-native-gifted-charts` oder `victory-native`.
+- SVG: `react-native-svg` für die Qualitäts-Muster (`src/components/quality-pattern.tsx`: `QualityPatternDefs`, `qualityFill`, `QualitySwatch`, `QualityCross`) und den Chart; der Chart füllt seine Balken mit denselben Mustern.
+- Toleranz-Slider: eigener Slider aus Views (`src/components/marked-slider.tsx`), Farben aus den Tokens. `@react-native-community/slider` lädt unter der neuen Architektur ohne Bridge kein Daumen-Bild.
 - Widget: SwiftUI-WidgetKit-Extension via `@bacons/apple-targets` (Ordner `targets/widget/`). Kein Flutter.
 - Die App rechnet und schreibt einen fertigen JSON-Datensatz (Zeitraum, Bilanz, Spanne, Fett in g, Zeitstempel) in die App-Group-`UserDefaults`, dann `WidgetCenter.reloadAllTimelines()` über ein kleines natives Modul. Das Widget fragt HealthKit nicht selbst ab (Daten bei gesperrtem Gerät verschlüsselt).
 - Hintergrund-Update per HealthKit Observer/Background Delivery; Fallback: Widget zeigt letzten Stand mit Uhrzeit.
@@ -37,31 +39,59 @@ Fragen, die die App beantwortet: Bin ich diesen Monat im Plus oder Minus? Wie la
 | Gewicht | `bodyMass` | letzter Wert | ja |
 | Körperfett | `bodyFatPercentage` | letzter Wert | ja |
 | Magermasse | `leanBodyMass` | letzter Wert | ja |
+| Größe | `height` | einmalig (neuester Wert), für Mifflin-St Jeor | ja |
+| Geburtsdatum | `dateOfBirth` (Merkmal) | einmalig, für Mifflin-St Jeor | ja |
+| Geschlecht | `biologicalSex` (Merkmal) | einmalig, für Mifflin-St Jeor | ja |
 | Periode | `menstrualFlow` | Tage | V2 |
 
-- Summen per `HKStatisticsCollectionQuery` pro Kalendertag (dedupliziert iPhone/Watch), keine Rohsamples summieren.
+- Nur Leserechte, genau die V1-Typen dieser Tabelle (Test `src/health/__tests__/authorization.test.ts`).
+- Summen per `HKStatisticsCollectionQuery` pro Kalendertag (dedupliziert iPhone/Watch), keine Rohsamples summieren. Rohsample-Abfragen erlaubt ESLint nur in `scan.ts` und `healthkit-source.ts` (Anzahl, erster oder letzter Eintrag).
 - Fehlt `leanBodyMass`: Magermasse = Gewicht × (1 − KFA), Fett = Gewicht × KFA.
-- Fehlt Ruheenergie (keine Watch): manuell eingegebener Grundumsatz als Ersatz.
+- Fehlt Ruheenergie (keine Watch, unter 6 h Tragezeit): Mifflin-St Jeor pro Tag. Gewicht = letzte Messung an/vor dem Tag, sonst erste danach, sonst Profilgewicht; Alter am jeweiligen Tag. Teiltage ab 6 h werden auf 24 h hochgerechnet und gelten als gemessen (außer dem laufenden Tag, siehe Rechenmodell).
 - iOS verrät nicht, ob Leserechte verweigert wurden: leere Daten immer mit „Berechtigungen prüfen“ erklären.
 
 ## Rechenmodell
 - Tagesbilanz `B = A − (R + K)` (A Nahrung, R Ruhe, K Aktiv). **Plus = mehr gegessen als verbraucht.**
-- Null-Tage-Schalter: Tag ohne Nahrungseintrag zählt mit B = 0 statt vollem Defizit; Anzahl betroffener Tage anzeigen.
-- Heutiger Tag: standardmäßig nicht in der Bilanz (im Chart markiert), per Schalter zuschaltbar.
-- Toleranzen standardmäßig aus; eingeschaltet wählt der Nutzer im Normbereich (Nahrung 5–20 %, Verbrauch 10–30 %, vorausgewählt der untere Rand). Angewendet auf Zeitraumsummen, nicht pro Tag:
+- Null-Tage-Schalter: Tag ohne Nahrungseintrag zählt mit B = 0 statt vollem Defizit; Anzahl betroffener Tage anzeigen. Null-Tage bleiben aus den Summen A und V, die Toleranz rechnet nur mit echten Einträgen.
+- Datenqualität je Tag (mehrere Flags möglich, „X von N vollständig“ = Tage ohne Flag): Grundumsatz geschätzt, ohne Nahrung, auffällig wenig Nahrung (A < 50 % von R + K), ohne Grundumsatz (auch Mifflin nicht möglich, Tag zählt nicht). Fehlende Aktivenergie zählt als K = 0 und ist kein Flag. Muster: Schraffur = Grundumsatz geschätzt, Streifen = wenig Nahrung, ✕ = ohne Nahrung und ohne Grundumsatz (kein Balken).
+- Heutiger Tag: standardmäßig nicht in der Bilanz (im Chart markiert), per Schalter zuschaltbar. Die Karte „Heute bisher“ zeigt ihn immer (Stand = Zeit des letzten Ladens).
+- Laufender Tag: nie auf 24 h hochgerechnet, Werte bis jetzt. Stunden ganz ohne Ruhe-Sample (ohne die letzten 2 Stunden, Sync-Verzögerung) werden mit Mifflin pro Stunde aufgefüllt, ohne jede Messung Mifflin anteilig; aufgefüllt = „Grundumsatz geschätzt“. Keine Flags „ohne Nahrung“/„wenig Nahrung“.
+- Leer = kein Tag des Zeitraums hat Nahrung. Varianten: keine Daten, Daten nur außerhalb des Zeitraums (letzter Eintrag davor), erster Tag („Deine Bilanz beginnt morgen.“).
+- Toleranzen standardmäßig aus (0 %). Slider auf der Homepage in ganzen Prozent, Nahrung 0–20 %, Verbrauch 0–30 %, 0 = aus; der Normbereich (Nahrung 5–20 %, Verbrauch 10–30 %) ist am Slider nur markiert. Angewendet auf Zeitraumsummen, nicht pro Tag:
   `Bmin = A(1 − tA) − V`, `Bmax = A(1 + tA) − V(1 − tV)` mit V = R + K. Verbrauch nur nach unten korrigiert.
 - Körperfett: Bilanz ÷ 7.700 kcal/kg Fettgewebe, beschriftet als „theoretisch“.
-- Analyse Bilanz vs. Messung: `E ≈ 9400·ΔFettmasse + 1800·ΔMagermasse` (Hall 2008), Start/Ende als 7-Tage-Mittel oder Trend. Erst ab 21 Tagen mit mindestens 6 Messungen.
-- Rechenkern als reines TypeScript-Modul mit Unit-Tests, unabhängig von HealthKit.
+- Anzeige: Einzelwert auf 10 kcal, Spannen-Enden auf 50 kcal, Ø pro Tag auf ganze kcal, kg auf 0,1. Beim Ziehen der Slider rechnet der Hero nur aus den Periodensummen (`toleranceRange`), gespeichert wird beim Loslassen.
+- Analyse Bilanz vs. Messung: `E ≈ 9400·ΔFettmasse + 1800·ΔMagermasse` (Hall 2008), Start/Ende als 7-Tage-Trend (Mittel der Messungen von Tag i−6 bis i, ohne Messung bis 34 Tage zurück erweitert; dieselben Werte wie die Chart-Linien). Fett = Gewicht × KFA, Magermasse = `leanBodyMass` oder Gewicht × (1 − KFA). Tatsächlicher Verbrauch = (Σ Nahrung − E) ÷ gezählte Tage, Null-Tage mit Nahrung = Verbrauch; Tracker = Σ Verbrauch ÷ Tage.
+- Zustände der Abgleich-Karte: `insufficient` unter 21 Tagen oder unter 6 Tagen mit Gewicht (Karte ausgegraut mit „Bisher: …“), `weightOnly` unter 6 Tagen mit KFA (nur Gewicht gegen „Bilanz, wenn alles Fett wäre“), `ok` bei |E − Bilanz| ≤ max(10 % der Bilanz, 400 kcal), sonst `deviation` (Waage zeigt weniger/mehr; Hinweis Magermasse ab +0,05 kg).
+- Rechenkern als reines TypeScript-Modul mit Unit-Tests, unabhängig von HealthKit (`src/core/`, Abdeckung ≥ 90 %). Er rechnet ungerundet, gerundet wird erst in der Anzeige.
+
+## Goldener Testfall
+Die Zahlen aus dem Design-Prompt passen zusammen, wenn man diese 30 Tage annimmt. Das ist der erste Test in P2 und P3 (Fixture `src/core/__fixtures__/golden-30.ts`, Test `src/core/__tests__/golden.test.ts`).
+
+| Eingabe (30 Tage) | Wert |
+|---|---|
+| Σ Nahrung A | 87.000 kcal (2.900/Tag) |
+| Σ Verbrauch V = R + K | 80.000 kcal (2.667/Tag) |
+| Toleranz Nahrung / Verbrauch | 5 % / 10 % |
+| Δ Fettmasse / Δ Magermasse | +0,4 kg / +0,3 kg |
+
+| Erwartetes Ergebnis | Wert |
+|---|---|
+| Bilanz | +7.000 kcal, Ø +233 kcal/Tag |
+| Fett theoretisch | ≈ +0,9 kg |
+| Spanne mit Toleranz | +2.650 bis +19.350 kcal, ≈ +0,3 bis +2,5 kg |
+| Laut Waage gespeichert | 9400 × 0,4 + 1800 × 0,3 = 4.300 kcal |
+| Geschätzter tatsächlicher Verbrauch | (87.000 − 4.300) ÷ 30 ≈ 2.760 kcal/Tag |
+| Tracker / Differenz | 2.670 kcal/Tag / +90 |
 
 ## Features V1
 Drei Screens (Bilanz, Analyse-Chart, Einstellungen) plus Widget.
 1. Große Bilanzzahl mit Zeitraum, Vorzeichen klar beschriftet.
-2. Zeitraum: 7 Tage, 30 Tage, dieser Monat, seit Trackingbeginn, eigener.
+2. Zeitraum: 7, 30, 60, 90 Tage, Alles (seit erstem Datenpunkt), Eigener (laut Design; „dieser Monat“ geht über Eigener).
 3. Null-Tage als Erhaltungstage (Schalter).
 4. Umrechnung in Körperfett unter der Bilanz.
 5./6. Toleranz Verbrauch / Nahrung, Bilanz zeigt dann Spanne.
-7. Balkenchart pro Tag (Plus oben, Minus unten), bei langen Zeiträumen Wochenbalken.
+7. Balkenchart pro Tag (Plus oben, Minus unten), ab 32 Tagen Wochenbalken (ISO-Kalenderwochen, Ø kcal/Tag; erste Woche unter 3 Tagen an die nächste angehängt). Eine Woche erbt das schlechteste Flag ihrer Tage: wenig Nahrung > ohne Nahrung > ohne Grundumsatz > Grundumsatz geschätzt.
 8. Gewichtslinie auf zweiter Achse plus 7-Tage-Trend.
 9. Fett- und Magermasse-Linien mit Einordnungssatz (nur mit Messungen).
 10. Widget klein/mittel: Zeitraum, Bilanz, Fett-Äquivalent; Spanne, wenn Toleranz aktiv.
@@ -70,7 +100,7 @@ Drei Screens (Bilanz, Analyse-Chart, Einstellungen) plus Widget.
 Nicht in V1: Farbwahl, Widget-Konfiguration, Zyklus, Zielkalorien, iPad, Schreiben nach HealthKit.
 
 ## Design
-Schwarz auf weiß, Dark Mode invertiert, keine Akzentfarbe. Plus/Minus über Vorzeichen, Balkenrichtung und Beschriftung, nicht Rot/Grün. Systemschrift mit Dynamic Type. Farben von Anfang an über wenige Tokens (Vordergrund, Hintergrund, Akzent, Plus, Minus), damit V2 sie für App und Widget wählbar machen kann.
+Schwarz auf weiß, Dark Mode invertiert, keine Akzentfarbe. Plus/Minus über Vorzeichen, Balkenrichtung und Beschriftung, nicht Rot/Grün. Das Vorzeichen steht immer da, auch bei 0 („±0 kcal“, `formatSigned`). Systemschrift mit Dynamic Type. Farben nur über sechs Tokens in `src/theme/colors.ts` (Vordergrund, Hintergrund, Nebentext, Akzent, Plus, Minus; Werte laut Design: hell #0B0B0B / #FFFFFF / #6B6B6B, dunkel #F4F4F4 / #000000 / #949494, Akzent, Plus und Minus = Vordergrund), damit V2 sie für App und Widget wählbar machen kann. Farb-Literale außerhalb der Token-Datei verbietet ESLint. Gestrichelt heißt vorläufig (Karte „Heute bisher“, Heute-Balken). Fußzeile der Bilanz-Seite: „Keine medizinische Beratung. Daten bleiben auf deinem iPhone.“ Keine App-Namen in Texten, die App liest nur Health.
 
 ## Plan
 0 Vorab (Name, Nebentätigkeit, Developer Account) · 1 Repo/Expo/EAS/CI · 2 Design-Grundlagen, zweisprachig · 3 Intro inkl. Datenschutzsatz und HealthKit-Anfrage · 4 HealthKit · 5 Rechenkern · 6 Bilanz-Screen und Einstellungen · 7 Chart · 8 Analyse · 9 Widget · 10 TestFlight · 11 Store (Datenschutzerklärung und Impressum z. B. auf GitHub Pages, Label, Screenshots) · 12 Einreichen · 13 V2 (Farben, Widget-Konfiguration, empirischer Erhaltungsbedarf, Zyklus-Band, „Wie lange bis ausgeglichen“).

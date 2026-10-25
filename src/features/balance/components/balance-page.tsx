@@ -1,128 +1,133 @@
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
+import { EmptyState } from './empty-state';
+import { HeroSection } from './hero-section';
+import { PeriodSegments } from './period-segments';
+import { QualityRow } from './quality-row';
+import { TodayCard } from './today-card';
 import { AppText } from '@/components/app-text';
-import { Button } from '@/components/button';
 import { LinkButton } from '@/components/link-button';
-import { fatKgFromKcal, type PeriodBalance } from '@/core/balance';
-import { formatSigned, roundKcal } from '@/core/format';
+import { PageIndicator } from '@/components/page-indicator';
 import type { BalanceState } from '@/features/balance/use-balance';
-import { openHealthApp } from '@/health/open-health-app';
-import { formatLocale } from '@/i18n';
-import { resetIntro } from '@/storage/settings';
 import { space } from '@/theme/spacing';
-
-type BalanceSummaryProps = {
-  // Without a balance (failed load) the empty state is shown.
-  balance?: PeriodBalance;
-  onShowData: () => void;
-};
-
-function BalanceSummary({ balance, onShowData }: BalanceSummaryProps) {
-  const { t } = useTranslation();
-  const locale = formatLocale();
-
-  // iOS reports denied read access as empty data, so a period without any
-  // food entries shows the empty state with a permissions hint instead of a
-  // balance.
-  if (!balance || balance.daysWithoutFood === balance.days) {
-    return (
-      <>
-        <AppText style={styles.center}>{t('home.empty')}</AppText>
-        <View style={styles.group}>
-          <Button
-            variant="secondary"
-            label={t('home.checkPermissions')}
-            onPress={openHealthApp}
-          />
-          <AppText variant="caption" tone="muted" style={styles.center}>
-            {t('common.permissionsPath')}
-          </AppText>
-        </View>
-      </>
-    );
-  }
-
-  return (
-    <>
-      <View style={styles.group}>
-        <AppText variant="numberLarge" style={styles.center}>
-          {t('home.kcal', {
-            value: formatSigned(roundKcal(balance.kcal), locale),
-          })}
-        </AppText>
-        <AppText variant="secondary" tone="muted" style={styles.center}>
-          {t('home.sign')}
-        </AppText>
-      </View>
-      <View style={styles.group}>
-        <AppText variant="number" style={styles.center}>
-          {t('home.fat', {
-            value: formatSigned(fatKgFromKcal(balance.kcal), locale, 1),
-          })}
-        </AppText>
-        <AppText variant="secondary" tone="muted" style={styles.center}>
-          {t('home.fatLabel')}
-        </AppText>
-      </View>
-      {balance.daysWithoutFood > 0 ? (
-        <AppText variant="caption" tone="muted" style={styles.center}>
-          {t('home.daysWithoutFood', { count: balance.daysWithoutFood })}
-        </AppText>
-      ) : null}
-      {balance.daysWithoutResting > 0 ? (
-        <AppText variant="caption" tone="muted" style={styles.center}>
-          {t('home.daysWithoutResting', { count: balance.daysWithoutResting })}
-        </AppText>
-      ) : null}
-      <LinkButton label={t('data.showData')} onPress={onShowData} />
-    </>
-  );
-}
 
 type BalancePageProps = {
   state: BalanceState;
+  periodLabel?: string;
+  pageCount: number;
+  // Gallery preset: the tolerance card starts open.
+  toleranceOpen?: boolean;
+  // Off while a slider is dragged.
+  scrollEnabled?: boolean;
   onShowData: () => void;
+  onPickCustom: () => void;
+  onOpenQuality: () => void;
 };
 
-export function BalancePage({ state, onShowData }: BalancePageProps) {
+// First page of the balance tab: period, the balance of that period, its
+// data quality and today so far. Chart (P8) and Abgleich (P9) follow below.
+export function BalancePage({
+  state,
+  periodLabel,
+  pageCount,
+  toleranceOpen,
+  scrollEnabled = true,
+  onShowData,
+  onPickCustom,
+  onOpenQuality,
+}: BalancePageProps) {
   const { t } = useTranslation();
 
   return (
-    <ScrollView contentContainerStyle={styles.content}>
-      <AppText variant="bodyStrong" style={styles.center}>
-        {t('home.period')}
-      </AppText>
+    <ScrollView
+      scrollEnabled={scrollEnabled}
+      contentContainerStyle={styles.content}
+    >
+      <View style={styles.top}>
+        <View style={styles.titleRow}>
+          <AppText variant="largeTitle" accessibilityRole="header">
+            {t('home.title')}
+          </AppText>
+          <PageIndicator
+            count={pageCount}
+            index={0}
+            accessibilityLabel={t('common.pageOf', {
+              current: 1,
+              count: pageCount,
+            })}
+          />
+        </View>
+        <PeriodSegments onPickCustom={onPickCustom} />
+        {periodLabel === undefined ? null : (
+          <AppText variant="secondary" tone="muted">
+            {periodLabel}
+          </AppText>
+        )}
+      </View>
       {state.status === 'done' ? (
-        <BalanceSummary balance={state.value.balance} onShowData={onShowData} />
+        <>
+          <View style={styles.data}>
+            <HeroSection
+              balance={state.value.balance}
+              initialOpen={toleranceOpen}
+            />
+            <QualityRow balance={state.value.balance} onOpen={onOpenQuality} />
+          </View>
+          <TodayCard
+            today={state.value.today}
+            loadedAt={state.value.loadedAt}
+          />
+        </>
+      ) : state.status === 'empty' ? (
+        <EmptyState report={state.value} />
       ) : state.status === 'error' ? (
-        <BalanceSummary onShowData={onShowData} />
+        <EmptyState />
       ) : (
-        <AppText variant="secondary" tone="muted" style={styles.center}>
+        <AppText variant="secondary" tone="muted">
           {t('home.loading')}
         </AppText>
       )}
-      {__DEV__ ? (
-        <LinkButton label="Reset intro (dev)" onPress={resetIntro} />
-      ) : null}
+      <View style={styles.end}>
+        <View style={styles.link}>
+          <LinkButton label={t('data.showData')} onPress={onShowData} />
+        </View>
+        <AppText variant="caption" tone="muted" style={styles.footer}>
+          {t('home.footer')}
+        </AppText>
+      </View>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   content: {
-    flexGrow: 1,
+    paddingHorizontal: 20,
+    paddingTop: 6,
+    paddingBottom: space.xxl,
+    gap: 28,
+  },
+  top: {
+    gap: space.m,
+  },
+  titleRow: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: space.xl,
-    paddingVertical: space.xl,
+    justifyContent: 'space-between',
+    gap: space.m,
+  },
+  data: {
+    gap: 14,
+  },
+  end: {
     gap: space.xl,
   },
-  group: {
-    alignItems: 'center',
-    gap: space.xs,
+  link: {
+    alignItems: 'flex-start',
   },
-  center: {
+  footer: {
     textAlign: 'center',
+    paddingHorizontal: space.m,
+    lineHeight: 17,
   },
 });

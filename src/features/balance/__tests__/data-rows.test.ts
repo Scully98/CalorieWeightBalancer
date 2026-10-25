@@ -7,11 +7,13 @@ import {
   buildEstimateLines,
 } from '../data-rows';
 import type { BalanceReport } from '../use-balance';
-import { periodBreakdown } from '@/core/balance';
+import { dayBalances } from '@/core/day-balance';
+import type { DayRecord } from '@/core/day-record';
+import { periodBalance } from '@/core/period-balance';
+import type { RestingProfile } from '@/core/resting';
 import { de } from '@/i18n/locales/de';
 
 jest.mock('@kingstinct/react-native-healthkit', () => ({}));
-jest.mock('@/storage/settings', () => ({}));
 jest.mock('@/health/daily-energy', () => ({}));
 
 const i18n = createInstance();
@@ -23,27 +25,76 @@ i18n.init({
 const t = i18n.t;
 
 const watch = {
-  source: { name: "Julius' Watch", bundleIdentifier: 'com.apple.health' },
+  source: {
+    name: "Julius' Watch",
+    bundleIdentifier: 'com.apple.health.4D5E6F70',
+  },
   operatingSystemVersion: '11.0',
   productType: 'Watch6,1',
 };
 
+const scale = {
+  source: { name: 'Withings', bundleIdentifier: 'com.withings.wiScaleNG' },
+  operatingSystemVersion: '26.0',
+  productType: 'iPhone17,1',
+};
+
+// Resting energy after Mifflin-St Jeor: 10 × 70 + 6.25 × 160 − 5 × 40 + 5
+// = 1,505 kcal.
+const PROFILE: RestingProfile = {
+  heightCm: 160,
+  sex: 'male',
+  ageYears: 40,
+  weightKg: 70,
+};
+
+function balance(
+  records: Omit<DayRecord, 'date'>[],
+  profile: RestingProfile = {},
+) {
+  const days = dayBalances(
+    records.map((record, i) => ({ date: `2026-10-0${i + 1}`, ...record })),
+    { zeroDaysAsMaintenance: true, profile },
+  );
+  return periodBalance(days, { foodPercent: 0, burnPercent: 0 });
+}
+
 function report(overrides: Partial<BalanceReport> = {}): BalanceReport {
   return {
-    balance: periodBreakdown([
+    balance: balance([
       { food: 2504, resting: 1800, active: 400 },
       { food: 2000, resting: 1800 },
       { resting: 1800, active: 300 },
     ]),
-    daysWithData: { food: 2, resting: 3, active: 2 },
-    sources: { food: undefined, resting: watch, active: watch },
+    days: [],
+    chart: {
+      buckets: [],
+      lines: { points: [], hasWeight: false, hasFat: false },
+    },
+    analysis: { state: 'insufficient', days: 3, measurements: 0 },
+    daysWithData: { food: 2, resting: 3, active: 2, weight: 2, bodyFat: 0 },
+    sources: {
+      food: undefined,
+      resting: watch,
+      active: watch,
+      weight: scale,
+      bodyFat: undefined,
+    },
+    today: {
+      day: dayBalances([{ date: '2026-10-04' }], {
+        zeroDaysAsMaintenance: true,
+        profile: {},
+      })[0],
+      placement: 'excluded',
+    },
+    loadedAt: new Date(2026, 9, 4, 14, 32),
     ...overrides,
   };
 }
 
 function values(r: BalanceReport) {
   return Object.fromEntries(
-    buildCalcLines(r.balance, r.fallback, t, 'de-DE').map((line) => [
+    buildCalcLines(r.balance, t, 'de-DE').map((line) => [
       line.key,
       [line.value, line.detail],
     ]),
@@ -65,33 +116,24 @@ describe('buildCalcLines', () => {
 
   it('names switched-off active energy', () => {
     const r = report({
-      balance: periodBreakdown([{ food: 2000, resting: 1800 }]),
+      balance: balance([{ food: 2000, resting: 1800 }]),
     });
     expect(values(r).active).toEqual(['0 kcal', 'fehlt, mit 0 gerechnet']);
   });
 
   it('says how missing resting energy was filled in', () => {
-    const days = [
-      { food: 2000, active: 100 },
-      { food: 2000, resting: 900, restingCoverage: 0.5 },
-    ];
-    const estimate = report({
-      balance: periodBreakdown(days, 1700),
-      fallback: {
-        kind: 'estimate',
-        kcal: 1700,
-        inputs: undefined as never,
-      },
+    const r = report({
+      balance: balance(
+        [
+          { food: 2000, active: 100 },
+          { food: 2000, resting: 1047.5, restingCoverage: 0.5 },
+        ],
+        PROFILE,
+      ),
     });
-    expect(values(estimate).resting[1]).toBe(
-      'Ø 1.750 kcal pro Tag · an 1 Tag geschätzt · 1 Teiltag hochgerechnet',
-    );
-    const typical = report({
-      balance: periodBreakdown(days, 1700),
-      fallback: { kind: 'typical', kcal: 1700 },
-    });
-    expect(values(typical).resting[1]).toContain(
-      'an 1 Tag mit deinem Median ergänzt',
+    // (1,505 + 2,095) ÷ 2.
+    expect(values(r).resting[1]).toBe(
+      'Ø 1.800 kcal pro Tag · an 1 Tag geschätzt · 1 Teiltag hochgerechnet',
     );
   });
 });
@@ -102,27 +144,50 @@ describe('buildCalcNotes', () => {
       '1 Tag ohne Eintrag als neutral gezählt',
       'Gerundet auf 10 kcal',
     ]);
+    const leftOut = balance([{ food: 2000, resting: 1800 }, { food: 2000 }]);
+    expect(buildCalcNotes(leftOut, t)).toEqual([
+      '1 Tag ohne Grundumsatz nicht mitgerechnet',
+      'Gerundet auf 10 kcal',
+    ]);
   });
 });
 
 describe('buildDataRows', () => {
   it('shows source and days with data, or what is missing', () => {
     const rows = buildDataRows(
-      report({ daysWithData: { food: 2, resting: 3, active: 0 } }),
+      report({
+        daysWithData: {
+          food: 2,
+          resting: 3,
+          active: 0,
+          weight: 2,
+          bodyFat: 0,
+        },
+      }),
       t,
     );
     expect(rows.map((row) => [row.key, row.status, row.detail])).toEqual([
-      ['food', 'found', '2 von 30 Tagen'],
-      ['resting', 'found', 'Apple Watch · 3 von 30 Tagen'],
+      ['food', 'found', '2 von 3 Tagen'],
+      ['resting', 'found', 'Apple Watch · 3 von 3 Tagen'],
       ['active', 'missing', 'keine Daten · Zugriff prüfen'],
+      ['weight', 'found', 'Withings · 2 von 3 Tagen'],
+      ['bodyFat', 'missing', 'keine Messungen · Zugriff prüfen'],
     ]);
+    expect(rows[3].label).toBe('Gewicht');
+    expect(rows[4].label).toBe('Körperfett');
   });
 
   it('says when missing resting energy is estimated', () => {
     const rows = buildDataRows(
       report({
-        daysWithData: { food: 2, resting: 0, active: 2 },
-        fallback: { kind: 'estimate', kcal: 1700, inputs: undefined as never },
+        daysWithData: {
+          food: 2,
+          resting: 0,
+          active: 2,
+          weight: 0,
+          bodyFat: 0,
+        },
+        estimate: { days: 1, avgKcal: 1505 } as BalanceReport['estimate'],
       }),
       t,
     );
@@ -137,7 +202,9 @@ describe('buildEstimateLines', () => {
         weightKg: { value: 82.4, fromHealth: true },
         heightCm: { value: 182, fromHealth: false },
         ageYears: { value: 34, fromHealth: false },
-        sex: { value: 'male', fromHealth: true, shown: 'male' },
+        sex: { value: 'male', fromHealth: true },
+        days: 3,
+        avgKcal: 1796.5,
       },
       t,
       'de-DE',
