@@ -45,7 +45,7 @@ export const healthKitSource: HealthSource = {
     };
   },
 
-  // Raw samples are fine in the next two: one entry each (limit 1), nothing
+  // Raw samples are fine in the next three: one entry each (limit 1), nothing
   // is summed.
   async firstDataDate() {
     const [first] = await safe(
@@ -72,5 +72,19 @@ export const healthKitSource: HealthSource = {
       [],
     );
     return last?.quantity;
+  },
+
+  async foodBefore(date) {
+    const [last] = await safe(
+      () =>
+        queryQuantitySamples(QUANTITY.food, {
+          limit: 1,
+          ascending: false,
+          unit: 'kcal',
+          filter: { date: { endDate: date, strictEndDate: true } },
+        }),
+      [],
+    );
+    return last?.startDate;
   },
 };

@@ -42,6 +42,9 @@ const nothing: HealthSource = {
   async weightBefore() {
     return undefined;
   },
+  async foodBefore() {
+    return undefined;
+  },
 };
 
 // Food on the given days of the period (0 = first day); the load asks for
@@ -170,6 +173,127 @@ describe('buildReport', () => {
     // 6.25 kcal per cm.
     expect(tall.estimate!.avgKcal - short.estimate!.avgKcal).toBeCloseTo(62.5);
     expect(short.balance.excludedDays).toBe(0);
+  });
+});
+
+// The running day as in the design: 1,420 eaten, 1,090 resting, 290 active.
+function withToday(base: HealthSource): HealthSource & { calls: number[] } {
+  const calls: number[] = [];
+  return {
+    ...base,
+    calls,
+    async days(start, count) {
+      calls.push(count);
+      const days = await base.days(start, count);
+      return days.map((day) =>
+        day.date === toDateKey(NOW)
+          ? { date: day.date, food: 1420, resting: 1090, active: 290 }
+          : day,
+      );
+    },
+  };
+}
+
+describe('the running day', () => {
+  const custom = {
+    kind: 'custom' as const,
+    from: '2026-10-01',
+    to: '2026-10-19',
+  };
+
+  it('is the day after a period that ends yesterday', async () => {
+    const report = await loadBalance(
+      withToday(steady([])),
+      DEFAULT_SETTINGS,
+      NOW,
+    );
+    expect(report.today.placement).toBe('excluded');
+    expect(report.today.day).toMatchObject({
+      date: '2026-10-24',
+      kcal: 40,
+      running: true,
+    });
+    expect(report.days.at(-1)?.date).toBe('2026-10-23');
+    expect(report.chart.buckets.at(-1)).toMatchObject({ today: true });
+    expect(report.loadedAt).toBe(NOW);
+  });
+
+  it('is counted up to now with "include today"', async () => {
+    const report = await loadBalance(
+      withToday(steady([])),
+      { ...DEFAULT_SETTINGS, includeToday: true },
+      NOW,
+    );
+    expect(report.today.placement).toBe('included');
+    expect(report.days.at(-1)).toBe(report.today.day);
+    // 29 steady days of +200 and today +40, resting not scaled.
+    expect(report.balance.kcal).toBe(29 * 200 + 40);
+    expect(report.balance.completeDays).toBe(30);
+  });
+
+  it('is loaded on its own for a custom period that ends earlier', async () => {
+    const source = withToday(steady([]));
+    const report = await loadBalance(
+      source,
+      { ...DEFAULT_SETTINGS, period: custom },
+      NOW,
+    );
+    expect(report.today.placement).toBe('outside');
+    expect(report.today.day.kcal).toBe(40);
+    expect(source.calls).toContain(1);
+    expect(report.chart.buckets.some((bucket) => 'today' in bucket)).toBe(
+      false,
+    );
+  });
+
+  it('keeps an empty period empty when today has no food', async () => {
+    const value = await loadBalance(
+      nothing,
+      { ...DEFAULT_SETTINGS, includeToday: true },
+      NOW,
+    );
+    expect(value.today.day.flags).not.toContain('noFood');
+    expect(toBalanceState({ status: 'done', value }).status).toBe('empty');
+  });
+});
+
+describe('emptyInfo', () => {
+  it('is left out when the period has food', async () => {
+    const report = await loadBalance(withFood(5), DEFAULT_SETTINGS, NOW);
+    expect(report.emptyInfo).toBeUndefined();
+  });
+
+  it('gives the first and the last entry before the period', async () => {
+    const first = new Date(2026, 5, 26, 8);
+    const before = new Date(2026, 8, 12, 19);
+    const asked: Date[] = [];
+    const report = await loadBalance(
+      {
+        ...nothing,
+        async firstDataDate() {
+          return first;
+        },
+        async foodBefore(date) {
+          asked.push(date);
+          return before;
+        },
+      },
+      DEFAULT_SETTINGS,
+      NOW,
+    );
+    expect(report.emptyInfo).toEqual({
+      firstDataDate: first,
+      foodBefore: before,
+    });
+    expect(asked).toEqual([new Date(2026, 8, 24)]);
+  });
+
+  it('is empty without any data', async () => {
+    const report = await loadBalance(nothing, DEFAULT_SETTINGS, NOW);
+    expect(report.emptyInfo).toEqual({
+      firstDataDate: undefined,
+      foodBefore: undefined,
+    });
   });
 });
 

@@ -23,4 +23,6 @@ export interface HealthSource {
   // Newest weight in kg before `date` (local midnight), for the resting
   // energy estimate on the first days of a period.
   weightBefore(date: Date): Promise<number | undefined>;
+  // Start of the newest food sample before `date`, for the empty state.
+  foodBefore(date: Date): Promise<Date | undefined>;
 }

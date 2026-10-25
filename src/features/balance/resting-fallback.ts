@@ -67,6 +67,8 @@ export function estimateSummary(
   const formula = days.filter(
     (day) =>
       day.restingSource === 'formula' &&
+      // The running day has only a share of the day's estimate.
+      !day.running &&
       day.kcal !== undefined &&
       !day.maintenance,
   );

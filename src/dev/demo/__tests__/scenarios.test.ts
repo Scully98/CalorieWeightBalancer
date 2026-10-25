@@ -11,7 +11,6 @@ jest.mock('@kingstinct/react-native-healthkit', () => ({
   BiologicalSex: { notSet: 0, female: 1, male: 2, other: 3 },
 }));
 
-
 const NOW = new Date(2026, 9, 24, 14, 32);
 
 // E of the design data, rounded to 100 as on the card.
@@ -129,6 +128,35 @@ describe('demo scenarios through the balance load', () => {
     expect(Math.round(analysis.values.storedKcal / 100) * 100).toBe(
       STORED_NORMAL30,
     );
+  });
+
+  it('show today so far as in the design', async () => {
+    const { today } = await load('normal30');
+    expect(today.placement).toBe('excluded');
+    expect(today.day).toMatchObject({ food: 1420, resting: 1090, kcal: 40 });
+  });
+
+  it('start the balance tomorrow on the first day', async () => {
+    const report = await load('firstDay');
+    expect(report.emptyInfo?.firstDataDate).toEqual(new Date(2026, 9, 24));
+    expect(report.emptyInfo?.foodBefore).toBeUndefined();
+    expect(report.today.day.food).toBe(1420);
+  });
+
+  it('give the last entry before a paused period', async () => {
+    const report = await load('stale30');
+    expect(report.days.every((day) => day.food === undefined)).toBe(true);
+    expect(report.emptyInfo?.foodBefore).toEqual(new Date(2026, 8, 23));
+    expect(report.emptyInfo?.firstDataDate).toBeDefined();
+  });
+
+  it('leave the holiday without resting energy and body data', async () => {
+    const { balance } = await load('noProfileGaps30');
+    expect(balance.flagCounts.noResting).toBe(3);
+    // Without food they still count as zero days with the switch on, like
+    // the design's day without food.
+    expect(balance.excludedDays).toBe(0);
+    expect(balance.maintenanceDays).toBe(3 + 1);
   });
 
   it('list weight and body fat under arriving data', async () => {

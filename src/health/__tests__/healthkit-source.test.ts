@@ -53,6 +53,35 @@ describe('healthKitSource.weightBefore', () => {
   });
 });
 
+describe('healthKitSource.foodBefore', () => {
+  it('returns the start of the newest food sample before the date', async () => {
+    samples.mockResolvedValueOnce([
+      { startDate: new Date(2026, 8, 12, 19) },
+    ] as unknown as Awaited<ReturnType<typeof queryQuantitySamples>>);
+
+    expect(await healthKitSource.foodBefore(new Date(2026, 9, 18))).toEqual(
+      new Date(2026, 8, 12, 19),
+    );
+    expect(samples).toHaveBeenLastCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        limit: 1,
+        ascending: false,
+        filter: {
+          date: { endDate: new Date(2026, 9, 18), strictEndDate: true },
+        },
+      }),
+    );
+  });
+
+  it('returns undefined when the query fails or finds nothing', async () => {
+    samples.mockRejectedValueOnce(new Error('denied'));
+    expect(await healthKitSource.foodBefore(new Date())).toBeUndefined();
+    samples.mockResolvedValueOnce([]);
+    expect(await healthKitSource.foodBefore(new Date())).toBeUndefined();
+  });
+});
+
 describe('healthKitSource.latestSources', () => {
   const revision = (name: string) => ({
     source: { name, bundleIdentifier: `test.${name}` },

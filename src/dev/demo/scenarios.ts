@@ -9,7 +9,10 @@ export type ScenarioId =
   | 'gaps30'
   | 'noBodyFat30'
   | 'goodFit30'
-  | 'empty';
+  | 'empty'
+  | 'firstDay'
+  | 'stale30'
+  | 'noProfileGaps30';
 
 // Values of one series day; the date is added relative to today.
 export type DemoValues = Omit<DayRecord, 'date'>;
@@ -20,6 +23,11 @@ export type Scenario = {
   period: Period;
   // Oldest first; the last entry is yesterday.
   series: DemoValues[];
+  // The running day; the demo source's „Heute bisher“ values when left out.
+  today?: DemoValues;
+  // full (default): Health knows weight, height, age and sex · none: nothing ·
+  // noBody: only the weight, so the resting energy formula can't run.
+  profile?: 'full' | 'none' | 'noBody';
 };
 
 // Position in the last 30 days (0 = oldest, 29 = yesterday) → series index.
@@ -42,6 +50,10 @@ function toValues(day: DemoDay): DemoValues {
 
 function baseSeries(): DemoValues[] {
   return generateSeries().map(toValues);
+}
+
+function emptySeries(): DemoValues[] {
+  return Array.from({ length: SERIES_DAYS }, () => ({}));
 }
 
 const BODY_KEYS = ['weightKg', 'bodyFatFraction', 'leanMassKg'] as const;
@@ -109,7 +121,37 @@ export function buildScenario(id: ScenarioId): Scenario {
         id,
         name: 'Leer',
         period: days(30),
-        series: Array.from({ length: SERIES_DAYS }, () => ({})),
+        series: emptySeries(),
+        today: {},
+        profile: 'none',
+      };
+    // First entries today, nothing before.
+    case 'firstDay':
+      return {
+        id,
+        name: 'Erster Tag',
+        period: days(30),
+        series: emptySeries(),
+      };
+    // Tracking paused for the whole period, older data exists.
+    case 'stale30':
+      return {
+        id,
+        name: 'Pause seit 30 T',
+        period: days(30),
+        series: baseSeries().map((values, index) =>
+          index >= W(0) ? {} : values,
+        ),
+        today: {},
+      };
+    // The holiday of gaps30 has neither resting energy nor a formula.
+    case 'noProfileGaps30':
+      return {
+        id,
+        name: 'Lücken ohne Körperdaten',
+        period: days(30),
+        series: withGaps(baseSeries()),
+        profile: 'noBody',
       };
   }
 }
@@ -122,4 +164,7 @@ export const SCENARIO_IDS: readonly ScenarioId[] = [
   'noBodyFat30',
   'goodFit30',
   'empty',
+  'firstDay',
+  'stale30',
+  'noProfileGaps30',
 ];

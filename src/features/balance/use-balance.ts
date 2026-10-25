@@ -9,7 +9,7 @@ import {
 import { analyzeBalance, type Analysis } from '@/core/analysis';
 import { TREND_MAX_LOOKBACK_DAYS } from '@/core/body';
 import { chartBuckets, type ChartBucket } from '@/core/chart';
-import { addDays } from '@/core/dates';
+import { addDays, elapsedDayHours, startOfDay } from '@/core/dates';
 import { dayBalances, type DayBalance } from '@/core/day-balance';
 import { toDateKey, type DayRecord } from '@/core/day-record';
 import { chartLines, type ChartLines } from '@/core/lines';
@@ -49,6 +49,23 @@ export type BalanceReport = {
   daysWithData: Record<DataKey, number>;
   // Source of the most recent sample, per type.
   sources: Record<DataKey, SourceRevision | undefined>;
+  // The running day up to `loadedAt`, wherever it stands to the period.
+  today: { day: DayBalance; placement: TodayPlacement };
+  // When Health was asked.
+  loadedAt: Date;
+  // Only when no day of the period has food, for the empty state.
+  emptyInfo?: EmptyInfo;
+};
+
+// included: last day of the period · excluded: the day right after it, shown
+// but not counted · outside: a custom period that ends earlier.
+export type TodayPlacement = 'included' | 'excluded' | 'outside';
+
+export type EmptyInfo = {
+  // First day with food in Health; undefined without any.
+  firstDataDate?: Date;
+  // Newest food entry before the period.
+  foodBefore?: Date;
 };
 
 // `empty`: no day of the period has a food entry. iOS reports denied read
@@ -60,8 +77,8 @@ export type BalanceState =
 
 export function toBalanceState(state: LoadState<BalanceReport>): BalanceState {
   if (state.status !== 'done') return state;
-  const { balance } = state.value;
-  return balance.flagCounts.noFood === balance.days
+  // Not by the noFood flag: the running day never has it.
+  return state.value.days.every((day) => day.food === undefined)
     ? { status: 'empty', value: state.value }
     : state;
 }
@@ -85,14 +102,20 @@ const HAS_VALUE: Record<DataKey, (day: DayRecord) => boolean> = {
 // on return to the foreground or with another source; everything else is
 // computed from it on every change (`buildReport`).
 export type PeriodData = {
-  // Lead-in and period, without the running day.
+  // Lead-in and period; the running day only when the period includes it.
   history: DayRecord[];
   records: DayRecord[];
-  // The running day, when the period ends yesterday.
-  todayRecord?: DayRecord;
+  // The running day; with `included` also the last record.
+  todayRecord: DayRecord;
+  todayPlacement: TodayPlacement;
+  // Newest weight before today, for the estimate of an outside running day.
+  todayWeightBeforeKg?: number;
   health: HealthProfile;
   sources: Record<DataKey, SourceRevision | undefined>;
   weightBeforeKg?: number;
+  // The running day counts up to here.
+  loadedAt: Date;
+  emptyInfo?: EmptyInfo;
 };
 
 type LoadSettings = Pick<Settings, 'period' | 'includeToday'>;
@@ -115,29 +138,61 @@ export async function loadPeriodData(
     includeToday,
     firstDataDate,
   });
-  // The running day is loaded too when the period ends yesterday: as a bar
-  // marked „zählt nicht“.
-  const endsYesterday =
-    count > 0 && toDateKey(addDays(start, count)) === toDateKey(now);
-  const withToday = !includeToday && endsYesterday ? 1 : 0;
-  const [loaded, health, sources, weightBeforeKg] = await Promise.all([
-    source.days(
-      addDays(start, -LEAD_IN_DAYS),
-      LEAD_IN_DAYS + count + withToday,
-    ),
-    source.profile(),
-    source.latestSources(),
-    source.weightBefore(start),
-  ]);
+  const today = startOfDay(now);
+  const todayKey = toDateKey(today);
+  // The running day is always loaded: in the period, as the day after it
+  // (a bar marked „zählt nicht“), or on its own.
+  const todayPlacement: TodayPlacement =
+    count > 0 && toDateKey(addDays(start, count - 1)) === todayKey
+      ? 'included'
+      : toDateKey(addDays(start, count)) === todayKey
+        ? 'excluded'
+        : 'outside';
+  const withToday = todayPlacement === 'excluded' ? 1 : 0;
+  const outside = todayPlacement === 'outside';
+  const [loaded, health, sources, weightBeforeKg, ownToday] = await Promise.all(
+    [
+      source.days(
+        addDays(start, -LEAD_IN_DAYS),
+        LEAD_IN_DAYS + count + withToday,
+      ),
+      source.profile(),
+      source.latestSources(),
+      source.weightBefore(start),
+      outside
+        ? Promise.all([
+            source.days(today, 1),
+            source.weightBefore(addDays(today, 1)),
+          ])
+        : undefined,
+    ],
+  );
 
   const history = loaded.slice(0, LEAD_IN_DAYS + count);
+  const records = history.slice(LEAD_IN_DAYS);
+  // Why the period is empty: no data at all, or none in this period.
+  const emptyInfo = records.some((record) => record.food !== undefined)
+    ? undefined
+    : await Promise.all([
+        firstDataDate ?? source.firstDataDate(),
+        source.foodBefore(start),
+      ]).then(([first, before]) => ({
+        firstDataDate: first,
+        foodBefore: before,
+      }));
   return {
     history,
-    records: history.slice(LEAD_IN_DAYS),
-    todayRecord: withToday ? loaded[LEAD_IN_DAYS + count] : undefined,
+    records,
+    todayRecord: ownToday
+      ? ownToday[0][0]
+      : (loaded.at(-1) ?? { date: todayKey }),
+    todayPlacement,
+    todayWeightBeforeKg: ownToday?.[1],
     health,
     sources,
     weightBeforeKg,
+    loadedAt: now,
+    emptyInfo,
   };
 }
 
@@ -148,24 +203,40 @@ export function buildReport(
   { zeroDaysAsMaintenance, tolerance }: ComputeSettings,
   stored: StoredProfile,
 ): BalanceReport {
-  const { history, records, todayRecord, health, sources, weightBeforeKg } =
-    data;
+  const {
+    history,
+    records,
+    todayRecord,
+    todayPlacement,
+    todayWeightBeforeKg,
+    health,
+    sources,
+    weightBeforeKg,
+    loadedAt,
+    emptyInfo,
+  } = data;
   const inputs = restingInputs(health, stored);
   const options = {
     zeroDaysAsMaintenance,
     profile: inputs.profile,
     weightBeforeKg,
+    // Counted up to the load, never scaled to 24 hours.
+    runningDay: { date: todayRecord.date, ...elapsedDayHours(loadedAt) },
   };
   const days = dayBalances(records, options);
   const lastWeightKg = records
     .filter((record) => record.weightKg !== undefined)
     .at(-1)?.weightKg;
-  const [today] = todayRecord
-    ? dayBalances([todayRecord], {
-        ...options,
-        weightBeforeKg: lastWeightKg ?? weightBeforeKg,
-      })
-    : [];
+  const today =
+    todayPlacement === 'included'
+      ? (days.at(-1) as DayBalance)
+      : dayBalances([todayRecord], {
+          ...options,
+          weightBeforeKg:
+            todayPlacement === 'outside'
+              ? todayWeightBeforeKg
+              : (lastWeightKg ?? weightBeforeKg),
+        })[0];
 
   return {
     balance: periodBalance(days, tolerance),
@@ -174,7 +245,7 @@ export function buildReport(
     chart: {
       buckets: chartBuckets(days, {
         measured: records.map((record) => record.weightKg !== undefined),
-        today,
+        today: todayPlacement === 'excluded' ? today : undefined,
       }),
       lines: chartLines(history, days, LEAD_IN_DAYS),
     },
@@ -183,6 +254,9 @@ export function buildReport(
       DATA_KEYS.map((key) => [key, records.filter(HAS_VALUE[key]).length]),
     ) as Record<DataKey, number>,
     sources,
+    today: { day: today, placement: todayPlacement },
+    loadedAt,
+    emptyInfo,
   };
 }
 

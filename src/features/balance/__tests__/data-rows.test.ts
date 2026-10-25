@@ -80,6 +80,14 @@ function report(overrides: Partial<BalanceReport> = {}): BalanceReport {
       weight: scale,
       bodyFat: undefined,
     },
+    today: {
+      day: dayBalances([{ date: '2026-10-04' }], {
+        zeroDaysAsMaintenance: true,
+        profile: {},
+      })[0],
+      placement: 'excluded',
+    },
+    loadedAt: new Date(2026, 9, 4, 14, 32),
     ...overrides,
   };
 }
