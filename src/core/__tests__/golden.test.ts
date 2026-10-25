@@ -7,6 +7,7 @@ import {
   GOLDEN_TOLERANCE,
 } from '../__fixtures__/golden-30';
 import { analyzeBalance } from '../analysis';
+import { chartBuckets, type DayBucket } from '../chart';
 import { dayBalances } from '../day-balance';
 import {
   formatKcal,
@@ -130,5 +131,18 @@ describe('golden test case: balance against the scale', () => {
     expect(formatKcal(actual - tracker, LOCALE)).toBe(
       expected.formatted.differencePerDay,
     );
+  });
+
+  it('gives the chart one bar per day with the same balance', () => {
+    const days = dayBalances(GOLDEN_DAYS, {
+      zeroDaysAsMaintenance: true,
+      profile: {},
+    });
+    const buckets = chartBuckets(days) as DayBucket[];
+    expect(buckets).toHaveLength(30);
+    expect(buckets.reduce((sum, bucket) => sum + (bucket.kcal ?? 0), 0)).toBe(
+      EXPECTED.kcal,
+    );
+    expect(buckets[0]).toMatchObject({ food: 2900, restingSource: 'measured' });
   });
 });

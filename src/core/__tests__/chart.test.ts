@@ -138,14 +138,53 @@ describe('chartBuckets', () => {
     ]);
   });
 
-  it('appends the running day to day bars only', () => {
-    const today = day(new Date(2026, 9, 24), { kcal: 40 });
+  it('appends the running day to day bars only, not counted', () => {
+    const today = day(new Date(2026, 9, 24), { kcal: 40, running: true });
     const daily = chartBuckets(period(7), { today });
     expect(daily).toHaveLength(8);
-    expect(daily[7]).toMatchObject({ kind: 'day', today: true, kcal: 40 });
+    expect(daily[7]).toMatchObject({
+      kind: 'day',
+      today: { counted: false },
+      kcal: 40,
+    });
     expect(chartBuckets(period(60), { today }).some((b) => 'today' in b)).toBe(
       false,
     );
+  });
+
+  it('marks a counted running day as today', () => {
+    const days = period(7);
+    days[6] = { ...days[6], kcal: 40, running: true };
+    const buckets = chartBuckets(days);
+    expect(buckets[6]).toMatchObject({ today: { counted: true }, kcal: 40 });
+    expect(buckets.slice(0, 6).some((b) => 'today' in b)).toBe(false);
+  });
+
+  it('carries the values of the day for the tooltip', () => {
+    const days = period(2);
+    days[1] = {
+      ...days[1],
+      resting: 1750,
+      restingSource: 'formula',
+      flags: ['restingEstimated'],
+    };
+    const [measured, estimated] = chartBuckets(days, {
+      measured: [true, false],
+      body: [{ weightKg: 82.1, fatKg: 17.8, leanKg: 64.3 }, {}],
+    });
+    expect(measured).toMatchObject({
+      food: 2900,
+      resting: 1800,
+      restingSource: 'measured',
+      active: 800,
+      body: { weightKg: 82.1, fatKg: 17.8 },
+    });
+    expect(estimated).toMatchObject({
+      resting: 1750,
+      restingSource: 'formula',
+      worst: 'restingEstimated',
+    });
+    expect('body' in estimated).toBe(false);
   });
 });
 
