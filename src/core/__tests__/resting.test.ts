@@ -2,6 +2,7 @@ import {
   ageOn,
   dayResting,
   isEstimatedResting,
+  RUNNING_DAY_SYNC_LAG_HOURS,
   weightsByDay,
   type RestingProfile,
 } from '../resting';
@@ -70,6 +71,88 @@ describe('dayResting', () => {
   });
 });
 
+describe('dayResting on the running day', () => {
+  // 14:32: 14 full hours have passed.
+  const RUNNING = { elapsedHours: 14 + 32 / 60, hoursInDay: 24 };
+
+  it('keeps measured resting energy as it is, without scaling', () => {
+    expect(
+      dayResting(
+        { resting: 1090, restingCoverage: 14 / 24 },
+        82.4,
+        PROFILE,
+        DAY,
+        RUNNING,
+      ),
+    ).toEqual({ kcal: 1090, source: 'partial', filledHours: 0 });
+  });
+
+  it('fills hours without any sample, but not the last ones', () => {
+    // Watch on from 13:00: 2 hours measured, 14 − 2 − 2 = 10 filled.
+    expect(RUNNING_DAY_SYNC_LAG_HOURS).toBe(2);
+    const resting = dayResting(
+      { resting: 150, restingCoverage: 2 / 24 },
+      82.4,
+      PROFILE,
+      DAY,
+      RUNNING,
+    );
+    expect(resting.source).toBe('partial');
+    expect(resting.filledHours).toBe(10);
+    expect(resting.kcal).toBeCloseTo(150 + (1796.5 / 24) * 10);
+  });
+
+  it('never fills low values or an unknown coverage', () => {
+    expect(
+      dayResting(
+        { resting: 600, restingCoverage: 15 / 24 },
+        82.4,
+        PROFILE,
+        DAY,
+        RUNNING,
+      ),
+    ).toEqual({ kcal: 600, source: 'partial', filledHours: 0 });
+    expect(dayResting({ resting: 150 }, 82.4, PROFILE, DAY, RUNNING)).toEqual({
+      kcal: 150,
+      source: 'partial',
+      filledHours: 0,
+    });
+  });
+
+  it('keeps measured values without inputs for the formula', () => {
+    expect(
+      dayResting(
+        { resting: 150, restingCoverage: 2 / 24 },
+        82.4,
+        { ...PROFILE, heightCm: undefined },
+        DAY,
+        RUNNING,
+      ),
+    ).toEqual({ kcal: 150, source: 'partial', filledHours: 0 });
+  });
+
+  it('estimates the hours so far without measurement', () => {
+    const resting = dayResting({}, 82.4, PROFILE, DAY, RUNNING);
+    expect(resting.source).toBe('formula');
+    expect(resting.kcal).toBeCloseTo((1796.5 * RUNNING.elapsedHours) / 24);
+    expect(dayResting({}, undefined, PROFILE, DAY, RUNNING).source).toBe(
+      'missing',
+    );
+  });
+
+  it('keeps an estimate supplied by the source', () => {
+    expect(
+      dayResting(
+        { resting: 900, restingEstimated: true },
+        82.4,
+        PROFILE,
+        DAY,
+        RUNNING,
+      ),
+    ).toEqual({ kcal: 900, source: 'source' });
+  });
+});
+
 describe('ageOn', () => {
   it('uses the age on the day from the date of birth', () => {
     const profile = { ...PROFILE, dateOfBirth: new Date(1992, 9, 10) };
@@ -121,6 +204,7 @@ describe('isEstimatedResting', () => {
     expect(isEstimatedResting('source')).toBe(true);
     expect(isEstimatedResting('measured')).toBe(false);
     expect(isEstimatedResting('scaled')).toBe(false);
+    expect(isEstimatedResting('partial')).toBe(false);
     expect(isEstimatedResting('missing')).toBe(false);
   });
 });

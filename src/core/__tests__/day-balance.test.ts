@@ -138,3 +138,74 @@ describe('dayBalances', () => {
     expect(days[1].resting).toBe(days[2].resting);
   });
 });
+
+describe('dayBalances on the running day', () => {
+  const RUNNING = {
+    date: '2026-10-23',
+    elapsedHours: 14 + 32 / 60,
+    hoursInDay: 24,
+  };
+  const running = (record: Omit<DayRecord, 'date'>, options = ON) =>
+    one(record, { ...options, runningDay: RUNNING });
+
+  it('counts measured values so far without scaling or flags', () => {
+    const day = running({
+      food: 1420,
+      resting: 1090,
+      restingCoverage: 14 / 24,
+      active: 290,
+    });
+    expect(day.resting).toBe(1090);
+    expect(day.kcal).toBe(40);
+    expect(day.flags).toEqual([]);
+    expect(day.running).toBe(true);
+    expect(day.restingFilledHours).toBe(0);
+  });
+
+  it('marks filled hours as estimated', () => {
+    const day = running({
+      food: 1420,
+      resting: 150,
+      restingCoverage: 2 / 24,
+      active: 290,
+    });
+    expect(day.restingFilledHours).toBe(10);
+    expect(day.flags).toEqual(['restingEstimated']);
+  });
+
+  it('estimates the day so far without resting energy', () => {
+    const day = running({ food: 1420, active: 290 });
+    expect(day.resting).toBeCloseTo((1796.5 * RUNNING.elapsedHours) / 24);
+    expect(day.flags).toEqual(['restingEstimated']);
+    const missing = running(
+      { food: 1420 },
+      { ...ON, profile: { ...PROFILE, heightCm: undefined } },
+    );
+    expect(missing.kcal).toBeUndefined();
+    expect(missing.flags).toEqual(['noResting']);
+  });
+
+  it('has no food flags and follows the zero day switch', () => {
+    const empty = { resting: 1090, restingCoverage: 14 / 24, active: 290 };
+    expect(running(empty).flags).toEqual([]);
+    expect(running(empty).kcal).toBe(0);
+    expect(running(empty).maintenance).toBe(true);
+    expect(running(empty, OFF).kcal).toBe(-1380);
+    // 200 of 1,380 burned is below half, still no flag.
+    expect(running({ ...empty, food: 200 }).flags).toEqual([]);
+  });
+
+  it('leaves the other days alone', () => {
+    const [before] = dayBalances(
+      [
+        { date: '2026-10-22', resting: 900, restingCoverage: 0.5 },
+        { date: '2026-10-23', resting: 900, restingCoverage: 0.5 },
+      ],
+      { ...ON, runningDay: RUNNING },
+    );
+    expect(before.resting).toBe(1800);
+    expect(before.restingSource).toBe('scaled');
+    expect(before.running).toBeUndefined();
+    expect(before.flags).toEqual(['noFood']);
+  });
+});

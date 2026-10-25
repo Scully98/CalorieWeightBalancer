@@ -1,6 +1,6 @@
 # Homepage Mitte: Datenqualität, Heute bisher, Leerzustand, Fußzeile (P7)
 
-Stand 2026-10-25. Entwurf, nicht umgesetzt. Branch: `feature/home-page-base` (oder Folge-Branch). Voraussetzung P2 (Rechenkern) und P6 (Homepage oben) sind umgesetzt.
+Stand 2026-10-25. In Umsetzung (M1 erledigt). Branch: `feature/home-page-base` (oder Folge-Branch). Voraussetzung P2 (Rechenkern) und P6 (Homepage oben) sind umgesetzt.
 
 ## Overview
 
@@ -159,7 +159,7 @@ sequenceDiagram
 
 ---
 
-### Milestone 1 — Laufender Tag „bis jetzt“ im Kern
+### ✅ Milestone 1 — Laufender Tag „bis jetzt“ im Kern
 
 > Der Kern rechnet den laufenden Tag ohne Hochrechnung und ohne Nahrungs-Flags, getestet; der goldene Testfall bleibt unverändert.
 
@@ -177,16 +177,16 @@ sequenceDiagram
 
 #### To-Dos
 
-- 🔲 Add `elapsedDayHours(now)` → `{ elapsedHours: (now − local midnight) in h, hoursInDay: (next midnight − local midnight) in h }`; test 14:32 → 14,53 / 24, DST days in Europe/Berlin (23 h / 25 h)
-- 🔲 Add `'partial'` to `RestingSource` with comment („running day: measured so far, not scaled“); `isEstimatedResting('partial')` is false
-- 🔲 Add `RUNNING_DAY_SYNC_LAG_HOURS = 2` to `resting.ts` with comment („a watch syncs late; the last hours before loading are never filled“)
-- 🔲 Extend `dayResting` with `running?: { elapsedHours: number; hoursInDay: number }` (Key Decision 22): source estimate stays `'source'`; measured resting → `missing = max(0, floor(elapsedHours) − LAG − round(restingCoverage × hoursInDay))`; with coverage known, missing ≥ 1 and an estimate possible → `kcal = resting + mifflin / hoursInDay × missing`, else `kcal = resting`; source `'partial'`, return `filledHours`; without measured resting → Mifflin × `elapsedHours / hoursInDay` with source `'formula'`; else `'missing'`
-- 🔲 `dayFlags`: running day with `filledHours ≥ 1` gets `restingEstimated`; add `restingFilledHours` to `DayBalance` (0 otherwise) for the card text
-- 🔲 Add `runningDay` to `DayBalanceOptions`; the record with `date === runningDay.date` uses `running`; `dayFlags` skips `noFood` and `lowFood` for it (Key Decision 8); `maintenance` still follows `zeroDaysAsMaintenance`
-- 🔲 Test: running day at 14:32 with resting 1.090 and 14 hours with data (coverage 14/24), active 290, food 1.420 → nothing filled (14 − 2 − 14 < 0), resting 1.090, kcal +40, flags `[]`; watch from 13:00 (2 hours with data, resting 150) → 14 − 2 − 2 = 10 hours filled with Mifflin ÷ 24 each, flag `restingEstimated`, `restingFilledHours` 10; low resting with all hours present → nothing filled; coverage unknown → raw; without resting and with profile → Mifflin × 0,606, flag `restingEstimated`; without resting and without profile → `noResting`, kcal undefined; without food and switch on → kcal 0, maintenance, no `noFood`; switch off → kcal −burn so far; food < 50 % → no `lowFood`
-- 🔲 Test: other days unchanged (scaled partial day still scaled, golden test green without `runningDay`)
-- 🔲 Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0, core coverage ≥ 90 %
-- 🔲 Commit (`feat: count the running day only up to now`)
+- ✅ Add `elapsedDayHours(now)` _(Test in `period.test.ts` bei `isoWeek`)_ → `{ elapsedHours: (now − local midnight) in h, hoursInDay: (next midnight − local midnight) in h }`; test 14:32 → 14,53 / 24, DST days in Europe/Berlin (23 h / 25 h)
+- ✅ Add `'partial'` to `RestingSource` with comment („running day: measured so far, not scaled“); `isEstimatedResting('partial')` is false
+- ✅ Add `RUNNING_DAY_SYNC_LAG_HOURS = 2` to `resting.ts` with comment („a watch syncs late; the last hours before loading are never filled“)
+- ✅ Extend `dayResting` with `running?: { elapsedHours: number; hoursInDay: number }` (Key Decision 22): source estimate stays `'source'`; measured resting → `missing = max(0, floor(elapsedHours) − LAG − round(restingCoverage × hoursInDay))`; with coverage known, missing ≥ 1 and an estimate possible → `kcal = resting + mifflin / hoursInDay × missing`, else `kcal = resting`; source `'partial'`, return `filledHours`; without measured resting → Mifflin × `elapsedHours / hoursInDay` with source `'formula'`; else `'missing'`
+- ✅ `dayFlags`: running day with `filledHours ≥ 1` gets `restingEstimated`; add `restingFilledHours` to `DayBalance` (0 otherwise) for the card text _(`running: true` und `restingFilledHours` nur am laufenden Tag gesetzt, sonst fehlen beide, damit bestehende Erwartungen gleich bleiben)_
+- ✅ Add `runningDay` to `DayBalanceOptions`; the record with `date === runningDay.date` uses `running`; `dayFlags` skips `noFood` and `lowFood` for it (Key Decision 8); `maintenance` still follows `zeroDaysAsMaintenance`
+- ✅ Test: running day at 14:32 with resting 1.090 and 14 hours with data (coverage 14/24), active 290, food 1.420 → nothing filled (14 − 2 − 14 < 0), resting 1.090, kcal +40, flags `[]`; watch from 13:00 (2 hours with data, resting 150) → 14 − 2 − 2 = 10 hours filled with Mifflin ÷ 24 each, flag `restingEstimated`, `restingFilledHours` 10; low resting with all hours present → nothing filled; coverage unknown → raw; without resting and with profile → Mifflin × 0,606, flag `restingEstimated`; without resting and without profile → `noResting`, kcal undefined; without food and switch on → kcal 0, maintenance, no `noFood`; switch off → kcal −burn so far; food < 50 % → no `lowFood`
+- ✅ Test: other days unchanged (scaled partial day still scaled, golden test green without `runningDay`)
+- ✅ Run `npm run lint`, `npm run typecheck`, `npm test`; all exit 0, core coverage ≥ 90 %
+- ✅ Commit (`feat: count the running day only up to now`)
 
 #### Notes / Constraints
 

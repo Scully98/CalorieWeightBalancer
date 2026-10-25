@@ -25,3 +25,18 @@ export function isoWeek(date: Date): { year: number; week: number } {
   const week = Math.floor(daysBetween(new Date(year, 0, 1), thursday) / 7) + 1;
   return { year, week };
 }
+
+const HOUR_MS = 60 * 60 * 1000;
+
+// Hours since local midnight and hours of the day (23 or 25 on daylight
+// saving changes), for the running day.
+export function elapsedDayHours(now: Date): {
+  elapsedHours: number;
+  hoursInDay: number;
+} {
+  const start = startOfDay(now);
+  return {
+    elapsedHours: (now.getTime() - start.getTime()) / HOUR_MS,
+    hoursInDay: (addDays(start, 1).getTime() - start.getTime()) / HOUR_MS,
+  };
+}

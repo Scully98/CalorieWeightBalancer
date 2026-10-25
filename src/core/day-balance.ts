@@ -5,6 +5,7 @@ import {
   weightsByDay,
   type RestingProfile,
   type RestingSource,
+  type RunningDay,
 } from './resting';
 
 // Data quality of a day, in the order the app lists them. A day can have
@@ -36,6 +37,10 @@ export type DayBalance = {
   // No food, counted as maintenance (B = 0).
   maintenance: boolean;
   flags: DayFlag[];
+  // Only on the running day, counted up to now.
+  running?: true;
+  // Running day: hours without resting energy filled by the formula.
+  restingFilledHours?: number;
 };
 
 export type DayBalanceOptions = {
@@ -44,18 +49,24 @@ export type DayBalanceOptions = {
   profile: RestingProfile;
   // Last weight before the first record, from HealthSource.weightBefore.
   weightBeforeKg?: number;
+  // The day still running (YYYY-MM-DD): counted up to now, no food flags.
+  runningDay?: { date: string } & RunningDay;
 };
 
+// The running day gets no food flags: breakfast alone is always "little".
 function dayFlags(
   food: number | undefined,
   resting: number | undefined,
   source: RestingSource,
   active: number,
+  running: { filledHours: number } | undefined,
 ): DayFlag[] {
   const flags: DayFlag[] = [];
-  if (isEstimatedResting(source)) flags.push('restingEstimated');
-  if (food === undefined) flags.push('noFood');
+  if (isEstimatedResting(source) || (running?.filledHours ?? 0) > 0)
+    flags.push('restingEstimated');
+  if (food === undefined && !running) flags.push('noFood');
   if (
+    !running &&
     food !== undefined &&
     resting !== undefined &&
     food < LOW_FOOD_SHARE * (resting + active)
@@ -70,17 +81,22 @@ function dayFlags(
 // switch says.
 export function dayBalances(
   records: readonly DayRecord[],
-  { zeroDaysAsMaintenance, profile, weightBeforeKg }: DayBalanceOptions,
+  {
+    zeroDaysAsMaintenance,
+    profile,
+    weightBeforeKg,
+    runningDay,
+  }: DayBalanceOptions,
 ): DayBalance[] {
   const weights = weightsByDay(records, weightBeforeKg, profile.weightKg);
   return records.map((record, index) => {
     const day = fromDateKey(record.date) as Date;
-    const { kcal: resting, source } = dayResting(
-      record,
-      weights[index],
-      profile,
-      day,
-    );
+    const running = runningDay?.date === record.date ? runningDay : undefined;
+    const {
+      kcal: resting,
+      source,
+      filledHours = 0,
+    } = dayResting(record, weights[index], profile, day, running);
     const active = record.active ?? 0;
     const { food } = record;
     const maintenance = food === undefined && zeroDaysAsMaintenance;
@@ -99,7 +115,14 @@ export function dayBalances(
       activeMissing: record.active === undefined,
       kcal,
       maintenance,
-      flags: dayFlags(food, resting, source, active),
+      flags: dayFlags(
+        food,
+        resting,
+        source,
+        active,
+        running && { filledHours },
+      ),
+      ...(running && { running: true, restingFilledHours: filledHours }),
     };
   });
 }

@@ -1,4 +1,4 @@
-import { isoWeek } from '../dates';
+import { elapsedDayHours, isoWeek } from '../dates';
 import { fromDateKey, toDateKey } from '../day-record';
 import { periodDateKeys, resolvePeriod, type Period } from '../period';
 
@@ -231,5 +231,23 @@ describe('isoWeek', () => {
     expect(isoWeek(new Date(2027, 0, 3))).toEqual({ year: 2026, week: 53 });
     expect(isoWeek(new Date(2027, 0, 4))).toEqual({ year: 2027, week: 1 });
     expect(isoWeek(new Date(2025, 11, 29))).toEqual({ year: 2026, week: 1 });
+  });
+});
+
+describe('elapsedDayHours', () => {
+  it('counts hours since local midnight', () => {
+    const { elapsedHours, hoursInDay } = elapsedDayHours(
+      new Date(2026, 9, 23, 14, 32),
+    );
+    expect(elapsedHours).toBeCloseTo(14 + 32 / 60);
+    expect(hoursInDay).toBe(24);
+  });
+
+  it('has 23 and 25 hours on daylight saving days', () => {
+    // 14:32 on Sun 25 Oct 2026 is 15 h 32 min after midnight.
+    const fall = elapsedDayHours(new Date(2026, 9, 25, 14, 32));
+    expect(fall.hoursInDay).toBe(25);
+    expect(fall.elapsedHours).toBeCloseTo(15 + 32 / 60);
+    expect(elapsedDayHours(new Date(2026, 2, 29, 12)).hoursInDay).toBe(23);
   });
 });
