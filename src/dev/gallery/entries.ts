@@ -1,10 +1,12 @@
 import type { ScenarioId } from '@/dev/demo/scenarios';
 
-// What the screen should show besides the data. Tolerance and picker are
-// passed to the home screen; sheet, tooltip and part follow with their parts.
+// What the screen should show besides the data. Tolerance, picker, sheet and
+// „Heute einrechnen“ are passed to the home screen; tooltip and part follow
+// with their parts.
 export type GalleryUi = {
   colorScheme?: 'dark';
   tolerance?: { foodPercent: number; burnPercent: number; open: boolean };
+  includeToday?: boolean;
   sheet?: 'incompleteDays';
   tooltip?: 'lastEstimatedDay';
   // Days before today; „Bis“ is being edited.
@@ -90,10 +92,27 @@ export const GALLERY_ENTRIES: readonly GalleryEntry[] = [
     ui: { picker: { fromDaysAgo: 18, toDaysAgo: 4, editing: 'to' } },
   },
   { id: 'L1', title: 'Lücken (nicht im Design)', scenario: 'gaps30' },
+  { id: 'L2', title: 'Erster Tag (nicht im Design)', scenario: 'firstDay' },
+  {
+    id: 'L3',
+    title: 'Zeitraum leer, ältere Daten (nicht im Design)',
+    scenario: 'stale30',
+  },
+  {
+    id: 'L4',
+    title: 'Heute einrechnen (nicht im Design)',
+    scenario: 'normal30',
+    ui: { includeToday: true },
+  },
+  {
+    id: 'L5',
+    title: 'Ohne Grundumsatz (nicht im Design)',
+    scenario: 'noProfileGaps30',
+  },
 ];
 
 // Presets the current balance screen can't show yet.
 export function hasPendingUi(entry: GalleryEntry): boolean {
   const ui = entry.ui ?? {};
-  return Boolean(ui.sheet || ui.tooltip || ui.part);
+  return Boolean(ui.tooltip || ui.part);
 }

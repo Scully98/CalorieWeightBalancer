@@ -28,6 +28,7 @@ function homeUi(ui: GalleryUi | undefined): HomeUi {
   const key = (daysAgo: number) => toDateKey(addDays(now, -daysAgo));
   return {
     toleranceOpen: ui?.tolerance?.open,
+    sheet: ui?.sheet,
     picker: ui?.picker && {
       from: key(ui.picker.fromDaysAgo),
       to: key(ui.picker.toDaysAgo),
@@ -54,6 +55,7 @@ export function EntryScreen() {
       const tolerance = entry.ui?.tolerance;
       memory.updateSettings({
         period: buildScenario(entry.scenario).period,
+        includeToday: entry.ui?.includeToday ?? false,
         ...(tolerance && {
           tolerance: {
             foodPercent: tolerance.foodPercent,
