@@ -109,7 +109,10 @@ describe('demo scenarios through the balance load', () => {
   it('show day bars with the running day for 30 days', async () => {
     const { buckets, lines } = (await load('normal30')).chart;
     expect(buckets).toHaveLength(31);
-    expect(buckets[30]).toMatchObject({ kind: 'day', today: true });
+    expect(buckets[30]).toMatchObject({
+      kind: 'day',
+      today: { counted: false },
+    });
     expect(lines.points).toHaveLength(30);
     expect(lines.points.every((point) => point.weightTrend !== undefined)).toBe(
       true,
