@@ -61,15 +61,12 @@ describe('todayCard', () => {
       asOf: 'Stand 14:32',
       canInclude: true,
       collapsed: '+40 kcal',
-      balance: '+40',
-      balanceUnit: 'kcal',
-      food: '1.420',
-      burn: '1.380',
-      burnDetail: 'Ruhe 1.090 + Aktiv 290',
-      note: 'Tag läuft noch, Verbrauch steigt bis Mitternacht. Zählt nicht zur Bilanz oben.',
+      food: '+1.420 kcal',
+      burn: '−1.380 kcal',
+      burnDetail: 'Ruhe 1.090 · Aktiv 290',
+      note: 'Tag läuft noch, Verbrauch steigt bis Mitternacht. Wird nicht zur Bilanz des Zeitraums gezählt.',
       labels: {
         header: 'Heute, Stand 14:32, Bilanz plus 40 Kilokalorien',
-        balance: 'Bilanz plus 40 Kilokalorien',
         food: 'Gegessen 1.420 Kilokalorien',
         burn: 'Verbraucht 1.380 Kilokalorien, Ruhe 1.090 plus Aktiv 290',
       },
@@ -105,7 +102,7 @@ describe('todayCard', () => {
     const note = (placement: 'included' | 'outside') =>
       todayCard({ day, placement }, LOADED, 'de-DE', tDe).note;
     expect(note('included')).toBe(
-      'Tag läuft noch, Verbrauch steigt bis Mitternacht. Zählt zur Bilanz oben mit.',
+      'Tag läuft noch, Verbrauch steigt bis Mitternacht. Wird zur Bilanz des Zeitraums gezählt.',
     );
     expect(note('outside')).toBe(
       'Tag läuft noch, Verbrauch steigt bis Mitternacht. Nicht im gewählten Zeitraum.',
@@ -120,7 +117,7 @@ describe('todayCard', () => {
       tDe,
     );
     // 1,796.5 × 14.53 / 24 ≈ 1,088.
-    expect(formula.burnDetail).toBe('Ruhe 1.090 (Formel) + Aktiv 290');
+    expect(formula.burnDetail).toBe('Ruhe 1.090 (Formel) · Aktiv 290');
 
     const partial = todayCard(
       {
@@ -150,9 +147,9 @@ describe('todayCard', () => {
       tDe,
     );
     expect(card).toMatchObject({
-      balance: '–',
-      food: '–',
-      burn: '–',
+      collapsed: '– kcal',
+      food: '– kcal',
+      burn: '– kcal',
       burnDetail: undefined,
     });
     expect(card.labels.burn).toBe('Verbraucht unbekannt');
@@ -165,8 +162,10 @@ describe('todayCard', () => {
       'de-DE',
       tDe,
     );
-    expect(card.balance).toBe('±0');
-    expect(card.balanceUnit).toBe('kcal · als Erhaltung');
+    expect(card.collapsed).toBe('±0 kcal');
+    expect(card.note).toBe(
+      'Tag läuft noch, Verbrauch steigt bis Mitternacht. Ohne Eintrag als Erhaltung gezählt. Wird zur Bilanz des Zeitraums gezählt.',
+    );
   });
 
   it('speaks English', () => {
@@ -177,7 +176,8 @@ describe('todayCard', () => {
       tEn,
     );
     expect(card.asOf).toMatch(/^As of 2:32\sPM$/);
-    expect(card.food).toBe('1,420');
-    expect(card.labels.balance).toBe('Balance plus 40 kilocalories');
+    expect(card.food).toBe('+1,420 kcal');
+    expect(card.burn).toBe('−1,380 kcal');
+    expect(card.labels.header).toMatch(/Balance plus 40 kilocalories$/);
   });
 });

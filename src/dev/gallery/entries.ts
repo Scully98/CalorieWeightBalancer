@@ -105,7 +105,7 @@ export const GALLERY_ENTRIES: readonly GalleryEntry[] = [
     id: 'L4',
     title: 'Heute einrechnen (nicht im Design)',
     scenario: 'normal30',
-    ui: { includeToday: true },
+    ui: { includeToday: true, todayOpen: true },
   },
   {
     id: 'L5',

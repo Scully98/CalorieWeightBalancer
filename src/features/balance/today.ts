@@ -16,14 +16,12 @@ export type TodayCardModel = {
   canInclude: boolean;
   // „+40 kcal“ in the folded row.
   collapsed: string;
-  balance: string;
-  // „kcal“, or „kcal · als Erhaltung“ for a zero day.
-  balanceUnit: string;
+  // With sign and unit: food adds to the balance, burn takes away.
   food: string;
   burn: string;
   burnDetail?: string;
   note: string;
-  labels: { header: string; balance: string; food: string; burn: string };
+  labels: { header: string; food: string; burn: string };
 };
 
 const NONE = '–';
@@ -37,6 +35,7 @@ export function todayCard(
   t: TFunction,
 ): TodayCardModel {
   const kcal = (value: number) => formatNumber(roundKcal(value), locale);
+  const signed = (value: number) => formatSigned(roundKcal(value), locale);
   const time = formatTime(loadedAt, locale);
   const burnKcal =
     day.resting === undefined ? undefined : day.resting + day.active;
@@ -50,8 +49,7 @@ export function todayCard(
     day.resting === undefined
       ? undefined
       : t(detailKey, { resting: kcal(day.resting), active: kcal(day.active) });
-  const balance =
-    day.kcal === undefined ? NONE : formatSigned(roundKcal(day.kcal), locale);
+  const balance = day.kcal === undefined ? NONE : signed(day.kcal);
   const unknown = (label: string) => t('a11y.todayUnknown', { label });
   const balanceLabel =
     day.kcal === undefined
@@ -64,15 +62,20 @@ export function todayCard(
     asOf: t('today.asOf', { time }),
     canInclude: placement !== 'outside',
     collapsed: t('home.kcal', { value: balance }),
-    balance,
-    balanceUnit: day.maintenance ? t('today.maintenance') : t('today.unit'),
-    food: day.food === undefined ? NONE : kcal(day.food),
-    burn: burnKcal === undefined ? NONE : kcal(burnKcal),
+    food: t('home.kcal', {
+      value: day.food === undefined ? NONE : signed(day.food),
+    }),
+    burn: t('home.kcal', {
+      value: burnKcal === undefined ? NONE : signed(-burnKcal),
+    }),
     burnDetail,
-    note: `${t('today.running')} ${t(`today.${placement}`)}`,
+    note: [
+      t('today.running'),
+      ...(day.maintenance ? [t('today.maintenance')] : []),
+      t(`today.${placement}`),
+    ].join(' '),
     labels: {
       header: t('a11y.todayHeader', { time, balance: balanceLabel }),
-      balance: balanceLabel,
       food:
         day.food === undefined
           ? unknown(t('today.food'))
@@ -83,7 +86,7 @@ export function todayCard(
           : t('a11y.todayBurn', {
               value: kcal(burnKcal),
               // „Ruhe 1.090 plus Aktiv 290“.
-              detail: burnDetail.replace('+', t('a11y.plusWord')),
+              detail: burnDetail.replace('·', t('a11y.plusWord')),
             }),
     },
   };

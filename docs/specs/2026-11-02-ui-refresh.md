@@ -381,7 +381,7 @@ Keine App-Kürzel (Key Decision 16).
 
 #### Notes / Constraints
 
-> - Gestrichelt heißt vorläufig: Die Heute-Karte bleibt gestrichelt, eingeklappt und offen.
+> - Die Heute-Karte ist gestrichelt, solange heute nicht zählt, und durchgezogen, sobald das Plus an ist, eingeklappt wie offen (Julius 2026-11-02). Ohne Plus (`outside`) bleibt sie gestrichelt. Offen zeigt sie nach Julius' Vorlage vom 2026-11-02 Zeilen statt Spalten: „Gegessen +1.420 kcal“, „Verbraucht −1.380 kcal“, „Ruhe 1.090 · Aktiv 290“, Hinweis. Mit Plus an steht ein Häkchen im gefüllten Kreis. Ohne Eintrag steht „Ohne Eintrag als Erhaltung gezählt.“ im Hinweis.
 > - Der Offen-Zustand von Heute und Toleranz ist lokal, startet zu und wird nicht gespeichert (`settings.v1` hat feste Keys).
 > - `hero`-Typo (68/600) bleibt; bei großen Werten bricht die Spanne um.
 > - Luftiger entsteht durch weniger Inhalt und zentrierten Hero. Seitenabstand 28 und Karten-Innenabstände bleiben, außer die Screenshots verlangen im Vergleich etwas anderes (M6).
@@ -690,10 +690,13 @@ Waage                    ≈ −1.400 kcal
 Lücke 3.400 kcal
 ```
 
+Nulllinie: eine durchgehende Linie mit „0“ durch beide Zeilen, hinter den Balken. Die Balken enden 2,5 pt davor, damit sie neben gefüllten Balken sichtbar bleibt (Julius 2026-11-02).
+
 **Component tree:**
 ComparisonBars
 ├── Label row
-├── Bar[] (center line, Segment[])
+├── ZeroLine
+├── Bar[] (Segment[])
 └── Legend (ohne Muster bei der Lücke)
 
 #### 📐 Wireframe — AnalysisCard, `weightOnly`

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import Svg, { Line, Rect } from 'react-native-svg';
+import Svg, { Rect } from 'react-native-svg';
 
 import type {
   BarSegment,
@@ -22,6 +22,8 @@ const BAR_HEIGHT = 20;
 // So a small share stays visible; its number is in the legend.
 const MIN_SEGMENT = 2;
 const SWATCH = 11;
+// Bars stop short of the zero line, so it stays visible next to solid bars.
+const ZERO_GAP = 2.5;
 
 type Rectangle = { kind: BarSegment['kind']; x: number; width: number };
 
@@ -32,9 +34,9 @@ function layoutBar(
   width: number,
   diverging: boolean,
 ): Rectangle[] {
-  const unit = diverging ? width / 2 : width;
-  let right = diverging ? width / 2 : 0;
-  let left = width / 2;
+  const unit = diverging ? width / 2 - ZERO_GAP : width;
+  let right = diverging ? width / 2 + ZERO_GAP : 0;
+  let left = width / 2 - ZERO_GAP;
   const rectangles: Rectangle[] = [];
   for (const { kind, share } of segments) {
     if (share === 0) continue;
@@ -102,16 +104,6 @@ function Bar({ row, diverging }: { row: ComparisonRow; diverging: boolean }) {
                 />
               ),
           )}
-          {diverging ? (
-            <Line
-              x1={width / 2}
-              x2={width / 2}
-              y1={0}
-              y2={BAR_HEIGHT}
-              stroke={colors.foreground}
-              strokeWidth={border.thin}
-            />
-          ) : null}
         </Svg>
       ) : null}
     </View>
@@ -155,6 +147,21 @@ function LegendMark({ kind }: { kind: LegendEntry['kind'] }) {
   );
 }
 
+// The zero of diverging bars: one line through both rows, behind them.
+function ZeroLine() {
+  const colors = useColors();
+  return (
+    <View
+      pointerEvents="none"
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
+      style={styles.zero}
+    >
+      <View style={[styles.zeroLine, { backgroundColor: colors.foreground }]} />
+    </View>
+  );
+}
+
 // „Bilanz vs. Waage“: two bars and what they are made of. The bars are
 // decoration for VoiceOver, each row reads as its numbers.
 export function ComparisonBars({ model }: { model: ComparisonModel }) {
@@ -174,8 +181,11 @@ export function ComparisonBars({ model }: { model: ComparisonModel }) {
           ) : null}
         </View>
       ) : null}
-      <Row row={model.balance} diverging={diverging} />
-      <Row row={model.scale} diverging={diverging} />
+      <View style={styles.rows}>
+        {diverging ? <ZeroLine /> : null}
+        <Row row={model.balance} diverging={diverging} />
+        <Row row={model.scale} diverging={diverging} />
+      </View>
       {model.legend.length > 0 ? (
         <View style={styles.legend}>
           {model.legend.map((entry) => (
@@ -206,6 +216,21 @@ const styles = StyleSheet.create({
   },
   summary: {
     flexShrink: 1,
+  },
+  rows: {
+    gap: space.m,
+  },
+  zero: {
+    position: 'absolute',
+    top: 0,
+    bottom: -space.xs,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+  },
+  zeroLine: {
+    flex: 1,
+    width: border.medium,
   },
   row: {
     gap: 6,

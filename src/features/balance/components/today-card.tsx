@@ -1,6 +1,7 @@
 import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
+import Svg, { Path } from 'react-native-svg';
 
 import { todayCard } from '../today';
 import type { BalanceReport } from '../use-balance';
@@ -15,15 +16,15 @@ type TodayCardProps = Pick<BalanceReport, 'today' | 'loadedAt'> & {
 };
 
 const PLUS = { circle: 28, length: 12, stroke: 2 };
+const CHECK_SIZE = 14;
 
-// Plus in a circle: hollow when today stays out of the balance, filled when it
-// counts. Next to the toggle, not inside it, so a tap here never folds the
+// Plus in a hollow circle when today stays out of the balance, check in a
+// filled one when it counts. Next to the toggle, not inside it, so a tap here never folds the
 // card and VoiceOver reaches both.
 function IncludeToday({ label }: { label: string }) {
   const colors = useColors();
   const store = useSettingsStore();
   const { includeToday } = useSettings();
-  const mark = includeToday ? colors.background : colors.foreground;
 
   return (
     <Pressable
@@ -42,15 +43,40 @@ function IncludeToday({ label }: { label: string }) {
           },
         ]}
       >
-        <View style={[styles.plusBar, { backgroundColor: mark }]} />
-        <View style={[styles.plusStem, { backgroundColor: mark }]} />
+        {includeToday ? (
+          <Svg
+            width={CHECK_SIZE}
+            height={CHECK_SIZE}
+            accessible={false}
+            importantForAccessibility="no-hide-descendants"
+          >
+            <Path
+              d="M2 7.5 L5.5 11 L12 3.5"
+              fill="none"
+              stroke={colors.background}
+              strokeWidth={2.2}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </Svg>
+        ) : (
+          <>
+            <View
+              style={[styles.plusBar, { backgroundColor: colors.foreground }]}
+            />
+            <View
+              style={[styles.plusStem, { backgroundColor: colors.foreground }]}
+            />
+          </>
+        )}
       </View>
     </Pressable>
   );
 }
 
-// „Heute“: the running day up to the last load, folded to one row. Dashed like
-// everything provisional; the plus decides whether it counts in the balance.
+// „Heute“: the running day up to the last load, folded to one row. The plus
+// decides whether it counts in the balance: solid when it does, otherwise
+// dashed like everything provisional.
 export const TodayCard = memo(function TodayCard({
   today,
   loadedAt,
@@ -58,34 +84,20 @@ export const TodayCard = memo(function TodayCard({
 }: TodayCardProps) {
   const colors = useColors();
   const { t } = useTranslation();
+  const { includeToday } = useSettings();
   const [open, setOpen] = useState(initialOpen);
   const card = todayCard(today, loadedAt, formatLocale(), t);
 
-  const column = (
-    label: string,
-    value: string,
-    unit: string,
-    spoken: string,
-    strong = false,
-  ) => (
-    <View accessible accessibilityLabel={spoken} style={styles.column}>
-      <AppText variant="overline" tone="muted">
-        {label}
-      </AppText>
-      <AppText
-        variant="numberMedium"
-        style={strong ? styles.strong : undefined}
-      >
-        {value}
-      </AppText>
-      <AppText variant="footnote" tone="muted">
-        {unit}
-      </AppText>
-    </View>
-  );
-
   return (
-    <View style={[styles.card, { borderColor: colors.foreground }]}>
+    <View
+      style={[
+        styles.card,
+        {
+          borderColor: colors.foreground,
+          borderStyle: includeToday && card.canInclude ? 'solid' : 'dashed',
+        },
+      ]}
+    >
       <View style={styles.row}>
         {card.canInclude ? <IncludeToday label={t('today.include')} /> : null}
         <Pressable
@@ -113,28 +125,28 @@ export const TodayCard = memo(function TodayCard({
       </View>
       {open ? (
         <View style={styles.body}>
-          <View style={[styles.grid, { borderTopColor: colors.separator }]}>
-            {column(
-              t('today.balance'),
-              card.balance,
-              card.balanceUnit,
-              card.labels.balance,
-              true,
-            )}
-            {column(
-              t('today.food'),
-              card.food,
-              t('today.unit'),
-              card.labels.food,
-            )}
-            {column(
-              t('today.burn'),
-              card.burn,
-              card.burnDetail ?? t('today.unit'),
-              card.labels.burn,
-            )}
+          <View accessible accessibilityLabel={card.labels.food}>
+            <View style={styles.line}>
+              <AppText variant="secondary">{t('today.food')}</AppText>
+              <AppText variant="secondary" style={styles.value}>
+                {card.food}
+              </AppText>
+            </View>
           </View>
-          <AppText variant="footnote" tone="muted">
+          <View accessible accessibilityLabel={card.labels.burn}>
+            <View style={styles.line}>
+              <AppText variant="secondary">{t('today.burn')}</AppText>
+              <AppText variant="secondary" style={styles.value}>
+                {card.burn}
+              </AppText>
+            </View>
+            {card.burnDetail ? (
+              <AppText variant="footnote" tone="muted">
+                {card.burnDetail}
+              </AppText>
+            ) : null}
+          </View>
+          <AppText variant="footnote" tone="muted" style={styles.note}>
             {card.note}
           </AppText>
         </View>
@@ -146,7 +158,6 @@ export const TodayCard = memo(function TodayCard({
 const styles = StyleSheet.create({
   card: {
     borderWidth: border.medium,
-    borderStyle: 'dashed',
     borderRadius: 16,
     paddingVertical: space.xs,
     paddingHorizontal: 14,
@@ -209,23 +220,21 @@ const styles = StyleSheet.create({
     transform: [{ translateY: 2 }, { rotate: '-135deg' }],
   },
   body: {
-    gap: 10,
+    gap: space.s,
+    paddingTop: space.xs,
     paddingBottom: space.m,
   },
-  // Three columns; at large text sizes they wrap.
-  grid: {
+  // At large text sizes the value wraps below the label.
+  line: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: space.m,
-    borderTopWidth: 1,
-    paddingTop: space.m,
+    justifyContent: 'space-between',
+    columnGap: space.m,
   },
-  column: {
-    flexGrow: 1,
-    flexBasis: 92,
-    gap: space.xs,
+  value: {
+    marginLeft: 'auto',
   },
-  strong: {
-    fontWeight: '600',
+  note: {
+    marginTop: space.xs,
   },
 });
