@@ -17,6 +17,14 @@ Stand 2026-11-02. Gehört zu Milestone 1 von `docs/specs/2026-11-02-wcag-a11y.md
 
 Das Senden von Tasten an den Simulator scheitert an der macOS-Berechtigung für `osascript` (Fehler 1002). Die folgenden Fragen brauchen einen Menschen mit Tastatur.
 
+## Erster Befund (2026-11-02, Julius, Simulator)
+
+Im Leerzustand der Bilanz-Seite erreicht Tab die Radiogruppe, aber nicht den Button „Health-Berechtigungen öffnen“.
+
+Vermutung, nicht bestätigt: Das ist das Gruppenmodell von iOS, kein Fehler am Button. Tab springt zwischen Fokusgruppen (`focusGroupIdentifier`) und landet auf dem ersten Element der Gruppe, Pfeiltasten bewegen sich innerhalb der Gruppe, Ctrl+Tab geht durch alle Elemente. Der Inhalt der ScrollView wäre dann eine einzige Gruppe. Dafür sprechen nur Berichte aus den Apple Developer Forums, und der Button hat dieselbe Rolle wie die Radios.
+
+Prüfung: Von „30 T“ aus Pfeil nach unten und Ctrl+Tab drücken. Erreicht einer davon den Button, ist 2.1.1 erfüllt. Soll Tab selbst alle Aktionen erreichen, braucht es eigene Gruppen, was der Core nicht bietet (`KeyboardFocusGroup` in `react-native-external-keyboard@2`).
+
 ## Offen am Gerät
 
 Aufbau: `npx expo run:ios`, FKA unter Einstellungen → Bedienungshilfen → Tastaturen an, hell und dunkel.
