@@ -14,12 +14,18 @@ export type FoundRow = {
   accessibilityLabel: string;
 };
 
-// Apple devices carry the personal device name ("Julius' iPhone"), so they are
-// shown by device type instead.
+// Apple's own sources carry the personal device name ("Julius' iPhone"), so
+// they are shown by device type instead. Apps such as Yazio or Withings run on
+// the iPhone too and keep their name; only the bundle tells them apart.
 export function sourceLabel(revision: SourceRevision | undefined): string {
+  const bundle = revision?.source.bundleIdentifier.toLowerCase() ?? '';
   const productType = revision?.productType ?? '';
-  if (productType.startsWith('iPhone')) return 'iPhone';
-  if (productType.startsWith('Watch')) return 'Apple Watch';
+  // Device sources are com.apple.health.<id>; manual entries in the Health
+  // app (com.apple.Health) keep the name „Health“.
+  if (bundle.startsWith('com.apple.health.')) {
+    if (productType.startsWith('iPhone')) return 'iPhone';
+    if (productType.startsWith('Watch')) return 'Apple Watch';
+  }
   return revision?.source.name ?? '';
 }
 

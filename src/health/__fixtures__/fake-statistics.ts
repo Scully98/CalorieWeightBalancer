@@ -5,6 +5,8 @@ export type Interval = { day?: number; hour?: number };
 export type FakeBucket = {
   startDate: Date;
   sumQuantity?: { quantity: number };
+  // Same value, for discrete types queried with 'mostRecent'.
+  mostRecentQuantity?: { quantity: number };
 };
 
 export function fakeBuckets(
@@ -25,9 +27,11 @@ export function fakeBuckets(
     : new Date(start.getFullYear(), start.getMonth(), start.getDate());
   while (current < end) {
     const quantity = kcal(current);
+    const value = quantity === undefined ? undefined : { quantity };
     buckets.push({
       startDate: current,
-      sumQuantity: quantity === undefined ? undefined : { quantity },
+      sumQuantity: value,
+      mostRecentQuantity: value,
     });
     current = interval.hour
       ? new Date(current.getTime() + 60 * 60 * 1000)

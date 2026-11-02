@@ -51,9 +51,27 @@ describe('queryDailyEnergy', () => {
     const days = await queryDailyEnergy(new Date(2026, 2, 1), 3);
 
     expect(days).toEqual([
-      { food: 2000, resting: 1800, active: 400, restingCoverage: 1 },
-      { food: undefined, resting: 1800, active: 400, restingCoverage: 1 },
-      { food: 2000, resting: 1800, active: 400, restingCoverage: 1 },
+      {
+        date: '2026-03-01',
+        food: 2000,
+        resting: 1800,
+        active: 400,
+        restingCoverage: 1,
+      },
+      {
+        date: '2026-03-02',
+        food: undefined,
+        resting: 1800,
+        active: 400,
+        restingCoverage: 1,
+      },
+      {
+        date: '2026-03-03',
+        food: 2000,
+        resting: 1800,
+        active: 400,
+        restingCoverage: 1,
+      },
     ]);
   });
 
@@ -103,6 +121,7 @@ describe('queryDailyEnergy', () => {
     const [day] = await queryDailyEnergy(new Date(2026, 2, 1), 1);
 
     expect(day).toEqual({
+      date: '2026-03-01',
       food: 1800,
       resting: 1800,
       active: 1800,

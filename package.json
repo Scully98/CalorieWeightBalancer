@@ -20,7 +20,8 @@
     "react-native": "0.86.3",
     "react-native-nitro-modules": "0.37.1",
     "react-native-safe-area-context": "~5.7.0",
-    "react-native-screens": "~4.26.0"
+    "react-native-screens": "~4.26.0",
+    "react-native-svg": "15.15.4"
   },
   "devDependencies": {
     "@types/jest": "29.5.14",
@@ -39,7 +40,9 @@
     "lint": "expo lint",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
-    "test": "jest"
+    "test": "jest",
+    "check:release-bundle": "scripts/check-release-bundle.sh",
+    "test:coverage": "jest --coverage"
   },
   "private": true,
   "license": "PolyForm-Noncommercial-1.0.0",
@@ -54,6 +57,14 @@
       "!src/**/*.d.ts",
       "!src/i18n/locales/**",
       "!src/**/__fixtures__/**"
-    ]
+    ],
+    "coverageThreshold": {
+      "./src/core/": {
+        "statements": 90,
+        "branches": 90,
+        "functions": 90,
+        "lines": 90
+      }
+    }
   }
 }
