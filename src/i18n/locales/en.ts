@@ -19,9 +19,6 @@ export const en: typeof de = {
     zeroDays: 'Empty days = maintenance',
     zeroDaysDetail:
       'Days without food entries count as 0 instead of a full deficit.',
-    includeToday: 'Include today',
-    includeTodayDetail:
-      "The day isn't over; your burn keeps rising until midnight.",
     data: 'Data',
     restingEstimate: 'Resting energy estimate',
     restingMissing: 'missing',
@@ -53,11 +50,11 @@ export const en: typeof de = {
     },
     zeroDays: {
       title: 'Days without entries',
-      body: 'With “Empty days = maintenance” on, a day without food entries counts as 0 instead of a full deficit. The number of such days is shown below the balance. Days with less than {{lowFood}} % of the burn count as unusually little food.',
+      body: 'With “Empty days = maintenance” on, a day without food entries counts as 0 instead of a full deficit. The number of such days is shown under “Data from Health”. Days with less than {{lowFood}} % of the burn count as unusually little food.',
     },
     today: {
       title: 'Today',
-      body: 'The running day doesn’t count by default, because food and burn are still missing. “Include today” adds it.',
+      body: 'The running day doesn’t count by default, because food and burn are still missing. The plus next to “Today” adds it on top.',
     },
     tolerance: {
       title: 'Measurement error',
@@ -292,7 +289,7 @@ export const en: typeof de = {
     },
     firstDay: {
       title: 'Your balance starts tomorrow.',
-      body: 'Today is still running and counts from tomorrow. “Include today” in Settings counts it right away.',
+      body: 'Today is still running and counts from tomorrow. The plus next to “Today” counts it right away.',
     },
     open: 'Open Health permissions',
   },
@@ -434,7 +431,6 @@ export const en: typeof de = {
   },
   data: {
     title: 'Data from Health',
-    showData: 'Where does the number come from? ›',
     loading: 'Reading data …',
     error: "We couldn't read your Health data just now.",
     calcTitle: 'How your balance adds up',
@@ -445,6 +441,7 @@ export const en: typeof de = {
       active: '− Active energy',
       total: '= Balance',
     },
+    avgTotal: 'avg. {{value}} kcal per day',
     avgDays_one: 'avg. {{value}} kcal on {{count}} day',
     avgDays_other: 'avg. {{value}} kcal on {{count}} days',
     avg: 'avg. {{value}} kcal per day',

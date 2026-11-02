@@ -1,5 +1,7 @@
 import { useTranslation } from 'react-i18next';
+import { router } from 'expo-router';
 import { ScrollView, StyleSheet, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppText } from '@/components/app-text';
 import { Button } from '@/components/button';
@@ -7,7 +9,7 @@ import { Card } from '@/components/card';
 import { Divider } from '@/components/divider';
 import { Headline } from '@/components/headline';
 import { InfoRow } from '@/components/info-row';
-import { PageIndicator } from '@/components/page-indicator';
+import { LinkButton } from '@/components/link-button';
 import { StatusRow } from '@/components/status-row';
 import { formatNumber, roundKcal } from '@/core/format';
 import {
@@ -18,14 +20,14 @@ import {
   summedDays,
   type CalcLine,
 } from '@/features/balance/data-rows';
+import { periodSpan, periodSubtitle } from '@/features/balance/period-subtitle';
 import { formatTime } from '@/features/balance/today';
-import type {
-  BalanceReport,
-  BalanceState,
-} from '@/features/balance/use-balance';
+import { useBalance, type BalanceReport } from '@/features/balance/use-balance';
 import { openHealthApp } from '@/health/open-health-app';
 import { formatLocale } from '@/i18n';
+import { useSettings } from '@/storage/settings-context';
 import { space } from '@/theme/spacing';
+import { useColors } from '@/theme/use-colors';
 
 function CalcRow({ line }: { line: CalcLine }) {
   const variant = line.key === 'total' ? 'bodyStrong' : 'body';
@@ -123,23 +125,22 @@ function Report({ report }: { report: BalanceReport }) {
   );
 }
 
-// Second page: what arrives from Health and how the balance adds up.
-export function DataPage({
-  state,
-  periodLabel,
-  pageCount,
-}: {
-  state: BalanceState;
-  // Undefined while a period like "all" is loading.
-  periodLabel?: string;
-  pageCount: number;
-}) {
+// Settings → Daten aus Health: what arrives from Health and how the balance
+// adds up. Loads on its own, for the period chosen on the balance page.
+export function DataPage() {
+  const colors = useColors();
   const { t } = useTranslation();
+  const { period, includeToday } = useSettings();
+  const state = useBalance();
+  const now = new Date();
+  const span = periodSpan(period, includeToday, now);
+  const periodLabel = span && periodSubtitle(span, includeToday, now, t);
 
   return (
-    <ScrollView contentContainerStyle={styles.content}>
-      <View style={styles.titleRow}>
-        <View style={styles.title}>
+    <SafeAreaView style={[styles.flex, { backgroundColor: colors.background }]}>
+      <ScrollView contentContainerStyle={styles.content}>
+        <LinkButton label={t('settings.back')} onPress={router.back} />
+        <View>
           <Headline title={t('data.title')} subline={periodLabel} />
           {state.status === 'done' || state.status === 'empty' ? (
             <AppText variant="secondary" tone="muted">
@@ -149,52 +150,39 @@ export function DataPage({
             </AppText>
           ) : null}
         </View>
-        <PageIndicator
-          count={pageCount}
-          index={1}
-          accessibilityLabel={t('common.pageOf', {
-            current: 2,
-            count: pageCount,
-          })}
-        />
-      </View>
-      {state.status === 'done' || state.status === 'empty' ? (
-        <Report report={state.value} />
-      ) : state.status === 'error' ? (
-        <AppText>{t('data.error')}</AppText>
-      ) : (
-        <AppText variant="secondary" tone="muted">
-          {t('data.loading')}
-        </AppText>
-      )}
-      <View style={styles.health}>
-        <Button
-          variant="secondary"
-          label={t('data.openHealth')}
-          onPress={openHealthApp}
-        />
-        <AppText variant="caption" tone="muted">
-          {t('common.permissionsPath')}
-        </AppText>
-      </View>
-    </ScrollView>
+        {state.status === 'done' || state.status === 'empty' ? (
+          <Report report={state.value} />
+        ) : state.status === 'error' ? (
+          <AppText>{t('data.error')}</AppText>
+        ) : (
+          <AppText variant="secondary" tone="muted">
+            {t('data.loading')}
+          </AppText>
+        )}
+        <View style={styles.health}>
+          <Button
+            variant="secondary"
+            label={t('data.openHealth')}
+            onPress={openHealthApp}
+          />
+          <AppText variant="caption" tone="muted">
+            {t('common.permissionsPath')}
+          </AppText>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  flex: {
+    flex: 1,
+  },
   content: {
     paddingHorizontal: space.xl,
     paddingTop: space.l,
     paddingBottom: space.xl,
     gap: space.l,
-  },
-  titleRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: space.m,
-  },
-  title: {
-    flex: 1,
   },
   calcRow: {
     flexDirection: 'row',

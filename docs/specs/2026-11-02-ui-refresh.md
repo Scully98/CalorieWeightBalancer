@@ -245,7 +245,7 @@ Keine App-Kürzel (Key Decision 16).
 
 ---
 
-### Milestone 2 — Daten-Seite in die Einstellungen
+### ✅ Milestone 2 — Daten-Seite in die Einstellungen
 
 > Die Bilanz-Seite wird eine einfache Scroll-Seite, bevor ihr Inhalt umgebaut wird.
 
@@ -272,15 +272,15 @@ Keine App-Kürzel (Key Decision 16).
 
 #### To-Dos
 
-- 🔲 Create the route `/settings/data` and register it in the stack
-- 🔲 Add the row „Daten aus Health“ to the section „Daten“ in the settings
-- 🔲 Update `DataPage` to load through `useBalance` and build its period label itself
-- 🔲 Add `Ø pro Tag` to the total line of the data page (key `data.avgTotal`) and test it with the golden case („Ø +233 kcal pro Tag“)
-- 🔲 Remove the pager, page dots and data link from the home screen and the balance page
-- 🔲 Remove the switch „Heute einrechnen“ from the settings
-- 🔲 Update the texts in `de.ts` and `en.ts`; check `calculation.zeroDays.body` („steht unter der Bilanz“) and point it to the data page
-- 🔲 Test by hand: slider drag still locks the page scroll; chart gesture still scrolls the page
-- 🔲 Commit (`feat: move the data page into the settings`)
+- ✅ Create the route `/settings/data` and register it in the stack
+- ✅ Add the row „Daten aus Health“ to the section „Daten“ in the settings
+- ✅ Update `DataPage` to load through `useBalance` and build its period label itself
+- ✅ Add `Ø pro Tag` to the total line of the data page (key `data.avgTotal`) and test it with the golden case („Ø +233 kcal pro Tag“)
+- ✅ Remove the pager, page dots and data link from the home screen and the balance page
+- ✅ Remove the switch „Heute einrechnen“ from the settings
+- ✅ Update the texts in `de.ts` and `en.ts`; check `calculation.zeroDays.body` („steht unter der Bilanz“) and point it to the data page
+- 🔲 Test by hand: slider drag still locks the page scroll; chart gesture still scrolls the page _(am Gerät, offen für M6)_
+- ✅ Commit (`feat: move the data page into the settings`)
 
 #### Notes / Constraints
 

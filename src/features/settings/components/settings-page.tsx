@@ -97,16 +97,12 @@ export function SettingsPage() {
               store.updateSettings({ zeroDaysAsMaintenance: value })
             }
           />
-          <SwitchRow
-            label={t('settings.includeToday')}
-            detail={t('settings.includeTodayDetail')}
-            value={settings.includeToday}
-            onValueChange={(value) =>
-              store.updateSettings({ includeToday: value })
-            }
-          />
         </Section>
         <Section title={t('settings.data')}>
+          <NavRow
+            label={t('data.title')}
+            onPress={() => router.push('/settings/data')}
+          />
           <NavRow
             label={t('settings.restingEstimate')}
             value={estimateText}

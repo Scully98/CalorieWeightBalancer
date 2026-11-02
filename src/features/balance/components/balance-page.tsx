@@ -9,36 +9,30 @@ import { PeriodSegments } from './period-segments';
 import { QualityRow } from './quality-row';
 import { TodayCard } from './today-card';
 import { AppText } from '@/components/app-text';
-import { LinkButton } from '@/components/link-button';
-import { PageIndicator } from '@/components/page-indicator';
 import type { BalanceState } from '@/features/balance/use-balance';
 import { space } from '@/theme/spacing';
 
 type BalancePageProps = {
   state: BalanceState;
   periodLabel?: string;
-  pageCount: number;
   // Gallery preset: the tolerance card starts open.
   toleranceOpen?: boolean;
   // Gallery preset: a bar of the chart starts selected.
   initialTooltip?: ChartTooltipPreset;
   // Off while a slider is dragged.
   scrollEnabled?: boolean;
-  onShowData: () => void;
   onPickCustom: () => void;
   onOpenQuality: () => void;
 };
 
-// First page of the balance tab: period, the balance of that period, its
+// The balance tab: period, the balance of that period, its
 // data quality, today so far, the chart and the Abgleich with the scale.
 export function BalancePage({
   state,
   periodLabel,
-  pageCount,
   toleranceOpen,
   initialTooltip,
   scrollEnabled = true,
-  onShowData,
   onPickCustom,
   onOpenQuality,
 }: BalancePageProps) {
@@ -50,19 +44,9 @@ export function BalancePage({
       contentContainerStyle={styles.content}
     >
       <View style={styles.top}>
-        <View style={styles.titleRow}>
-          <AppText variant="largeTitle" accessibilityRole="header">
-            {t('home.title')}
-          </AppText>
-          <PageIndicator
-            count={pageCount}
-            index={0}
-            accessibilityLabel={t('common.pageOf', {
-              current: 1,
-              count: pageCount,
-            })}
-          />
-        </View>
+        <AppText variant="largeTitle" accessibilityRole="header">
+          {t('home.title')}
+        </AppText>
         <PeriodSegments onPickCustom={onPickCustom} />
         {periodLabel === undefined ? null : (
           <AppText variant="secondary" tone="muted">
@@ -102,14 +86,9 @@ export function BalancePage({
           {t('home.loading')}
         </AppText>
       )}
-      <View style={styles.end}>
-        <View style={styles.link}>
-          <LinkButton label={t('data.showData')} onPress={onShowData} />
-        </View>
-        <AppText variant="caption" tone="muted" style={styles.footer}>
-          {t('home.footer')}
-        </AppText>
-      </View>
+      <AppText variant="caption" tone="muted" style={styles.footer}>
+        {t('home.footer')}
+      </AppText>
     </ScrollView>
   );
 }
@@ -124,20 +103,8 @@ const styles = StyleSheet.create({
   top: {
     gap: space.m,
   },
-  titleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: space.m,
-  },
   data: {
     gap: 14,
-  },
-  end: {
-    gap: space.xl,
-  },
-  link: {
-    alignItems: 'flex-start',
   },
   footer: {
     textAlign: 'center',

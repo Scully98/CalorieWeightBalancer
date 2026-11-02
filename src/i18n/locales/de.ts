@@ -17,9 +17,6 @@ export const de = {
     zeroDays: 'Null-Tage = Erhaltung',
     zeroDaysDetail:
       'Tage ohne Nahrungseintrag zählen mit Bilanz 0 statt mit vollem Defizit.',
-    includeToday: 'Heute einrechnen',
-    includeTodayDetail:
-      'Der Tag läuft noch, der Verbrauch steigt bis Mitternacht.',
     data: 'Daten',
     restingEstimate: 'Grundumsatz-Schätzung',
     restingMissing: 'fehlt',
@@ -51,11 +48,11 @@ export const de = {
     },
     zeroDays: {
       title: 'Tage ohne Eintrag',
-      body: 'Ist „Null-Tage = Erhaltung“ an, zählt ein Tag ohne Nahrungseintrag mit 0 statt mit vollem Defizit. Wie viele Tage das betrifft, steht unter der Bilanz. Tage mit weniger als {{lowFood}} % des Verbrauchs gelten als auffällig wenig Nahrung.',
+      body: 'Ist „Null-Tage = Erhaltung“ an, zählt ein Tag ohne Nahrungseintrag mit 0 statt mit vollem Defizit. Wie viele Tage das betrifft, steht unter „Daten aus Health“. Tage mit weniger als {{lowFood}} % des Verbrauchs gelten als auffällig wenig Nahrung.',
     },
     today: {
       title: 'Heute',
-      body: 'Der laufende Tag zählt standardmäßig nicht, weil Essen und Verbrauch noch fehlen. „Heute einrechnen“ nimmt ihn mit.',
+      body: 'Der laufende Tag zählt standardmäßig nicht, weil Essen und Verbrauch noch fehlen. Das Plus bei „Heute“ nimmt ihn zusätzlich mit.',
     },
     tolerance: {
       title: 'Messfehler',
@@ -290,7 +287,7 @@ export const de = {
     },
     firstDay: {
       title: 'Deine Bilanz beginnt morgen.',
-      body: 'Heute läuft noch und zählt erst ab morgen. „Heute einrechnen“ in den Einstellungen nimmt ihn sofort mit.',
+      body: 'Heute läuft noch und zählt erst ab morgen. Das Plus bei „Heute“ nimmt ihn sofort mit.',
     },
     open: 'Health-Berechtigungen öffnen',
   },
@@ -433,7 +430,6 @@ export const de = {
   },
   data: {
     title: 'Daten aus Health',
-    showData: 'Woher kommt die Zahl? ›',
     loading: 'Lese Daten …',
     error: 'Wir konnten deine Health-Daten gerade nicht lesen.',
     calcTitle: 'So entsteht deine Bilanz',
@@ -445,6 +441,7 @@ export const de = {
       active: '− Aktivenergie',
       total: '= Bilanz',
     },
+    avgTotal: 'Ø {{value}} kcal pro Tag',
     avgDays_one: 'Ø {{value}} kcal an {{count}} Tag',
     avgDays_other: 'Ø {{value}} kcal an {{count}} Tagen',
     avg: 'Ø {{value}} kcal pro Tag',

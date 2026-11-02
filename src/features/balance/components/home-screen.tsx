@@ -1,17 +1,11 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  ScrollView,
-  StyleSheet,
-  useWindowDimensions,
-  View,
-} from 'react-native';
+import { StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import type { ChartTooltipPreset } from './balance-chart';
 import { BalancePage } from './balance-page';
 import { DateRangeSheet } from './date-range-sheet';
-import { DataPage } from './data-page';
 import { IncompleteDaysSheet } from './incomplete-days-sheet';
 import type { DateRangeSelection } from '../date-range';
 import { periodSpan, periodSubtitle } from '../period-subtitle';
@@ -22,8 +16,6 @@ import { ScrollLockContext } from '@/hooks/scroll-lock';
 import { useSettings, useSettingsStore } from '@/storage/settings-context';
 import { useColors } from '@/theme/use-colors';
 
-const PAGES = 2;
-
 // Start state for the development gallery; the app never passes it.
 export type HomeUi = {
   toleranceOpen?: boolean;
@@ -32,22 +24,19 @@ export type HomeUi = {
   tooltip?: ChartTooltipPreset;
 };
 
-// Balance on the first page, the Health data behind it one swipe to the right.
-// Both pages read the same load, so their numbers always match.
+// The balance page with its two sheets.
 export function HomeScreen({ initialUi }: { initialUi?: HomeUi } = {}) {
   const colors = useColors();
   const { t } = useTranslation();
-  const { width } = useWindowDimensions();
   const { period, includeToday, zeroDaysAsMaintenance } = useSettings();
   const state = useBalance();
   const now = new Date();
   const span = periodSpan(period, includeToday, now);
   const periodLabel = span && periodSubtitle(span, includeToday, now, t);
-  const pager = useRef<ScrollView>(null);
   const store = useSettingsStore();
   // Open while „Eigener“ is being picked.
   const [picking, setPicking] = useState(initialUi?.picker);
-  // A slider is being dragged: neither the pager nor the page may scroll.
+  // A slider is being dragged: the page may not scroll.
   const [scrollLocked, setScrollLocked] = useState(false);
   // „Unvollständige Tage“ is open.
   const [qualityOpen, setQualityOpen] = useState(
@@ -60,51 +49,27 @@ export function HomeScreen({ initialUi }: { initialUi?: HomeUi } = {}) {
       ? state.value.days
       : undefined;
 
-  function showPage(index: number) {
-    pager.current?.scrollTo({ x: index * width, animated: true });
-  }
-
   return (
     <SafeAreaView
       edges={['top']}
       style={[styles.flex, { backgroundColor: colors.background }]}
     >
       <ScrollLockContext value={setScrollLocked}>
-        <ScrollView
-          ref={pager}
-          horizontal
-          pagingEnabled
+        <BalancePage
+          state={state}
+          periodLabel={periodLabel}
+          toleranceOpen={initialUi?.toleranceOpen}
+          initialTooltip={initialUi?.tooltip}
           scrollEnabled={!scrollLocked}
-          showsHorizontalScrollIndicator={false}
-          style={styles.flex}
-        >
-          <View style={{ width }}>
-            <BalancePage
-              state={state}
-              periodLabel={periodLabel}
-              pageCount={PAGES}
-              toleranceOpen={initialUi?.toleranceOpen}
-              initialTooltip={initialUi?.tooltip}
-              scrollEnabled={!scrollLocked}
-              onShowData={() => showPage(1)}
-              onOpenQuality={() => setQualityOpen(true)}
-              onPickCustom={() =>
-                setPicking({
-                  from: span?.first ?? toDateKey(addDays(now, -30)),
-                  to: span?.last ?? toDateKey(addDays(now, -1)),
-                  editing: 'from',
-                })
-              }
-            />
-          </View>
-          <View style={{ width }}>
-            <DataPage
-              state={state}
-              periodLabel={periodLabel}
-              pageCount={PAGES}
-            />
-          </View>
-        </ScrollView>
+          onOpenQuality={() => setQualityOpen(true)}
+          onPickCustom={() =>
+            setPicking({
+              from: span?.first ?? toDateKey(addDays(now, -30)),
+              to: span?.last ?? toDateKey(addDays(now, -1)),
+              editing: 'from',
+            })
+          }
+        />
       </ScrollLockContext>
       {picking ? (
         <DateRangeSheet
