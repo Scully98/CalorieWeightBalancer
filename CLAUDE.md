@@ -117,3 +117,4 @@ Schwarz auf weiß, Dark Mode invertiert, keine Akzentfarbe. Plus/Minus über Vor
 2. Health-Sync von MyFitnessPal/Yazio prüfen.
 3. Nebentätigkeitsklausel prüfen.
 4. Entwurf Impressum und Datenschutzerklärung.
+5. WCAG-Konformität, in einem eigenen Branch. Dazu gehört eine Lösung für die Tastatur-Bedienung: In React Native 0.86.3 ist auf iOS keine RN-View per Full Keyboard Access fokussierbar (`_focusable` wird in `RCTViewComponentView.mm` nur unter `TARGET_OS_TV` gesetzt), erreichbar sind nur native Elemente wie die Tab-Leiste. −/+-Buttons am Slider lösen das nicht. Zu prüfen: RN patchen, `react-native-external-keyboard` oder RN-Upgrade (0.88 laut einem Bericht behoben, ungeprüft).
