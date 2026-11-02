@@ -18,6 +18,7 @@ import {
   usePatternPrefix,
 } from '@/components/quality-pattern';
 import type { ThemeColors } from '@/theme/colors';
+import { DIMMED_OPACITY } from '@/theme/colors';
 import { useColors } from '@/theme/use-colors';
 
 // Axis labels keep their size at every Dynamic Type step, like the chart.
@@ -53,9 +54,6 @@ function barFill(bar: ChartBar, prefix: string, colors: ThemeColors) {
     prefix,
   );
 }
-
-// Opacity of the other bars while one is selected (design).
-const DIMMED = 0.3;
 
 type LayerProps = { model: ChartModel };
 
@@ -100,7 +98,9 @@ const Bars = memo(function Bars({
           stroke={bar.kind === 'full' ? undefined : colors.foreground}
           strokeWidth={1}
           strokeDasharray={bar.kind === 'today' ? '2.5 2' : undefined}
-          opacity={selected === undefined || selected === bar.slot ? 1 : DIMMED}
+          opacity={
+            selected === undefined || selected === bar.slot ? 1 : DIMMED_OPACITY
+          }
         />
       ))}
       {model.crosses.map((x) => (

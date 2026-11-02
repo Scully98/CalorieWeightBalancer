@@ -69,6 +69,11 @@ export function calculationSections(
       }),
     },
     {
+      key: 'keyboard',
+      title: t('calculation.keyboard.title'),
+      body: t('calculation.keyboard.body'),
+    },
+    {
       key: 'medical',
       title: t('calculation.medical.title'),
       body: t('calculation.medical.body'),

@@ -1,6 +1,7 @@
 import { createInstance } from 'i18next';
 
 import {
+  cappedChartWidth,
   chartModel,
   PLOT,
   selectionAfterTap,
@@ -399,5 +400,21 @@ describe('chartModel without buckets', () => {
     const m = model([], lines(0));
     expect(m.slots).toEqual([]);
     expect(m.subtitle).toBe('');
+  });
+});
+
+describe('cappedChartWidth', () => {
+  it('leaves the width alone in portrait', () => {
+    expect(cappedChartWidth(353, 852)).toBe(353);
+  });
+
+  it('keeps the height inside a low window', () => {
+    const width = cappedChartWidth(700, 393);
+    expect(width).toBeLessThan(700);
+    expect((width * VIEW.height) / VIEW.width).toBeLessThan(393);
+  });
+
+  it('never goes below the design width', () => {
+    expect(cappedChartWidth(700, 200)).toBe(VIEW.width);
   });
 });

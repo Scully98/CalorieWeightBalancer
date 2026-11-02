@@ -44,7 +44,7 @@ export function IntroLayout({
 
   return (
     <SafeAreaView
-      edges={['top', 'bottom']}
+      edges={['top', 'bottom', 'left', 'right']}
       style={[styles.flex, { backgroundColor: colors.background }]}
     >
       <KeyboardAvoidingView behavior="padding" style={styles.flex}>

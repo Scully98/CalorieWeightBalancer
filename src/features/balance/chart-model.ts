@@ -10,6 +10,16 @@ import type { ChartLines, LinePoint } from '@/core/lines';
 // Coordinates are in the design's viewBox; the canvas scales it to its width.
 
 export const VIEW = { width: 350, height: 232 } as const;
+// Room the page keeps around the chart in a low window: bars, title and tab bar.
+const WINDOW_RESERVE = 80;
+
+// The chart's height follows its width; in landscape it would outgrow the
+// window, so the width stops where the height still fits.
+export function cappedChartWidth(width: number, windowHeight: number): number {
+  const fitting = ((windowHeight - WINDOW_RESERVE) * VIEW.width) / VIEW.height;
+  return Math.min(width, Math.max(VIEW.width, fitting));
+}
+
 export const PLOT = {
   left: 40,
   right: 316,

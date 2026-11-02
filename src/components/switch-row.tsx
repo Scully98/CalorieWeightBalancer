@@ -9,7 +9,12 @@ import {
 } from 'react-native';
 
 import { AppText } from './app-text';
-import { space, STACKED_FONT_SCALE, touchTarget } from '@/theme/spacing';
+import {
+  border,
+  space,
+  STACKED_FONT_SCALE,
+  touchTarget,
+} from '@/theme/spacing';
 import { useColors } from '@/theme/use-colors';
 
 const TRACK = { width: 51, height: 31 };
@@ -47,7 +52,11 @@ function SwitchMark({ value }: { value: boolean }) {
     <View
       style={[
         styles.track,
-        { backgroundColor: value ? colors.foreground : colors.separator },
+        {
+          backgroundColor: value ? colors.foreground : colors.separator,
+          // The separator alone is too faint to show the control's edge.
+          borderColor: value ? colors.foreground : colors.muted,
+        },
       ]}
     >
       <Animated.View
@@ -131,7 +140,8 @@ const styles = StyleSheet.create({
     width: TRACK.width,
     height: TRACK.height,
     borderRadius: TRACK.height / 2,
-    padding: THUMB_INSET,
+    borderWidth: border.medium,
+    padding: THUMB_INSET - border.medium,
   },
   thumb: {
     width: THUMB,

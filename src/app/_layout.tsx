@@ -33,6 +33,7 @@ export function ErrorBoundary({ retry }: ErrorBoundaryProps) {
 
 export default function RootLayout() {
   const colors = useColors();
+  const { t } = useTranslation();
   const introCompleted = useIntroCompleted();
   const baseTheme = useColorScheme() === 'dark' ? DarkTheme : DefaultTheme;
   const theme = {
@@ -44,10 +45,19 @@ export default function RootLayout() {
     <ThemeProvider value={theme}>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Protected guard={introCompleted}>
-          <Stack.Screen name="(tabs)" />
-          <Stack.Screen name="settings/resting-estimate" />
-          <Stack.Screen name="settings/calculation" />
-          <Stack.Screen name="settings/data" />
+          <Stack.Screen name="(tabs)" options={{ title: t('home.title') }} />
+          <Stack.Screen
+            name="settings/resting-estimate"
+            options={{ title: t('settings.restingEstimate') }}
+          />
+          <Stack.Screen
+            name="settings/calculation"
+            options={{ title: t('calculation.title') }}
+          />
+          <Stack.Screen
+            name="settings/data"
+            options={{ title: t('data.title') }}
+          />
         </Stack.Protected>
         {/* Development only; the routes are empty in release builds. */}
         <Stack.Protected guard={__DEV__ && introCompleted}>
@@ -56,7 +66,10 @@ export default function RootLayout() {
           <Stack.Screen name="dev/day-values" />
         </Stack.Protected>
         <Stack.Protected guard={!introCompleted}>
-          <Stack.Screen name="intro" />
+          <Stack.Screen
+            name="intro"
+            options={{ title: t('common.introTitle') }}
+          />
         </Stack.Protected>
       </Stack>
       <StatusBar style="auto" />

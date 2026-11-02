@@ -104,6 +104,7 @@ export const TodayCard = memo(function TodayCard({
           accessibilityRole="button"
           accessibilityLabel={card.labels.header}
           accessibilityState={{ expanded: open }}
+          accessibilityValue={open ? undefined : { text: t('a11y.collapsed') }}
           onPress={() => setOpen(!open)}
           style={styles.toggle}
         >

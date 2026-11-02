@@ -81,7 +81,7 @@ export function SettingsPage() {
 
   return (
     <SafeAreaView
-      edges={['top']}
+      edges={['top', 'left', 'right']}
       style={[styles.flex, { backgroundColor: colors.background }]}
     >
       <ScrollView contentContainerStyle={styles.content}>

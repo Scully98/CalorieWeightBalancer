@@ -74,6 +74,7 @@ export function ToleranceCard({
         accessibilityRole="button"
         accessibilityLabel={`${t('tolerance.title')}, ${summary.spoken}`}
         accessibilityState={{ expanded: open }}
+        accessibilityValue={open ? undefined : { text: t('a11y.collapsed') }}
         onPress={onToggle}
         style={styles.header}
       >

@@ -19,7 +19,7 @@ describe('calculationSections', () => {
     const sections = calculationSections(translator('de'), 'de-DE');
     const body = (key: string) =>
       sections.find((section) => section.key === key)?.body;
-    expect(sections).toHaveLength(8);
+    expect(sections).toHaveLength(9);
     expect(body('fat')).toContain('7.700 kcal');
     expect(body('tolerance')).toContain('bis 20 %');
     expect(body('tolerance')).toContain('bis 30 %');
