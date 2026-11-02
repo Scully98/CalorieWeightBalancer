@@ -70,9 +70,9 @@ export function DateRangeSheet({
   // Until the first data point is known, nothing before the start is open.
   const bounds =
     firstData.status === 'done'
-      ? pickerBounds(firstData.date, now, includeToday)
+      ? pickerBounds(firstData.date, now)
       : {
-          ...pickerBounds(undefined, now, includeToday),
+          ...pickerBounds(undefined, now),
           min: initial.from,
         };
   const selection = clampSelection(picked, bounds);

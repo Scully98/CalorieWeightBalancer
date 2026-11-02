@@ -5,7 +5,7 @@ import { selectionAfterTap, slotAt, VIEW, type ChartSlot } from './chart-model';
 import { useScrollLock } from '@/hooks/scroll-lock';
 
 // Held this long without moving, the finger drags the selection; before
-// that the page scrolls and the pager swipes as usual.
+// that the page scrolls as usual.
 export const LONG_PRESS_MS = 300;
 // Movement that still counts as holding still (pt).
 const MOVE_SLOP = 8;

@@ -47,7 +47,7 @@ const VALUES: AnalysisValues = {
   differencePerDay: 90,
 };
 const COUNTS = { days: 30, measurements: 18 };
-const COMPARED = { from: '2026-09-24', to: '2026-10-23' };
+const COMPARED = { from: '2026-09-24', to: '2026-10-23', days: 30 };
 
 const ok = (expected: Expected, composition?: Composition): Analysis => ({
   ...COUNTS,
@@ -77,7 +77,10 @@ function composition(model: AnalysisCardModel) {
   return model.body;
 }
 const verdictOf = (analysis: Analysis, t = tKey) =>
-  composition(analysisCardModel(analysis, DAYS, 'de-DE', t)).verdict;
+  composition(analysisCardModel(analysis, DAYS, 'de-DE', t)).disclosure.verdict;
+const bodyOf = (analysis: Analysis, t = tDe) =>
+  composition(analysisCardModel(analysis, DAYS, 'de-DE', t));
+const summaryOf = (analysis: Analysis) => bodyOf(analysis).comparison.summary;
 
 describe('analysisCardModel', () => {
   it('shows the golden case like the design', () => {
@@ -89,27 +92,133 @@ describe('analysisCardModel', () => {
     const model = analysisCardModel(analysis, days, 'de-DE', tDe);
     const body = composition(model);
 
-    expect(model.title).toBe('Passt die Bilanz zur Waage?');
-    expect(model.subtitle).toMatch(/ – .* · 15 Messungen$/);
+    expect(model.title).toBe('Dein tatsächlicher Verbrauch');
+    expect(model.subtitle).toMatch(
+      /^aus Bilanz und Waage · .* – .* · 30 Tage · 15 Messungen$/,
+    );
     expect(model.locked).toBeUndefined();
     expect(model.dimmed).toBe(false);
-    expect(body.balance.value).toBe('+7.000 kcal');
-    expect(body.balance.lines[0].text).toBe('≈ +0,9 kg Fett');
-    expect(body.scale.value).toBe('≈ +4.300 kcal');
-    expect(body.scale.lines.map((line) => line.text)).toEqual([
-      'gespeichert',
-      'Fett +0,4 kg',
-      'Magermasse +0,3 kg',
-    ]);
     expect(body.burn.value).toBe('2.760');
     expect(body.burn.unit).toBe('kcal/Tag');
-    expect(body.burn.detail).toBe('Tracker: 2.670 kcal/Tag · Differenz +90');
-    expect(body.verdict).toBe(
+    expect(body.burn.difference).toEqual({
+      kind: 'line',
+      difference: '+90 kcal/Tag',
+      lower: { label: 'Tracker', value: '2.670', actual: false },
+      upper: { label: 'tatsächlich', value: '2.760', actual: true },
+    });
+    const { comparison } = body;
+    expect(comparison.title).toBe('Bilanz vs. Waage');
+    expect(comparison.summary).toBe('Waage zeigt 61 % der Bilanz');
+    expect(comparison.layout).toBe('aligned');
+    expect(comparison.balance.value).toBe('+7.000 kcal');
+    expect(comparison.balance.segments[0]).toEqual({
+      kind: 'solid',
+      share: 1,
+    });
+    expect(comparison.scale.value).toBe('≈ +4.300 kcal');
+    expect(comparison.scale.segments.map(({ kind }) => kind)).toEqual([
+      'solid',
+      'hatch',
+      'gap',
+    ]);
+    expect(comparison.legend).toEqual([
+      { kind: 'solid', text: 'Fett +0,4 kg' },
+      { kind: 'hatch', text: 'Magermasse +0,3 kg' },
+      { kind: 'gap', text: 'Lücke 2.700 kcal' },
+    ]);
+    expect(body.disclosure.toggle).toBe(
+      'Du verbrauchst etwas mehr, als dein Tracker misst.',
+    );
+    expect(body.disclosure.verdict).toBe(
       'Die Waage zeigt weniger Zuwachs als die Bilanz. Wahrscheinlich verbrauchst du etwas mehr, als der Tracker misst, oder hast weniger gegessen als eingetragen. Etwa 40 % des Zuwachses sind Magermasse (z. B. Muskeln oder Wasser).',
     );
-    expect(body.explanation.formula).toBe(
+    expect(body.disclosure.formula).toBe(
       '(Nahrung − 9.400 × Δ Fett − 1.800 × Δ Magermasse) ÷ Tage. Start und Ende als 7-Tage-Trend.',
     );
+  });
+
+  it('shows a target and „ungefähr gleich“ when balance and scale fit', () => {
+    const values = {
+      ...VALUES,
+      fatChangeKg: 0.7,
+      leanChangeKg: 0.1,
+      storedKcal: 6900,
+      actualBurnPerDay: 2670,
+      trackerBurnPerDay: 2666.7,
+    };
+    const body = bodyOf({
+      ...COUNTS,
+      state: 'ok',
+      compared: COMPARED,
+      values,
+      expected: 'gain',
+    });
+    expect(body.burn.difference).toEqual({
+      kind: 'match',
+      tracker: 'Tracker 2.670 kcal',
+    });
+    expect(body.comparison.summary).toBe('ungefähr gleich');
+    expect(body.comparison.legend[2].text).toBe('Lücke 100 kcal');
+    expect(body.disclosure.toggle).toBe(
+      'Bilanz und Waage passen gut zusammen.',
+    );
+  });
+
+  it('keeps the line when an ok state differs from the tracker', () => {
+    expect(bodyOf(ok('gain')).burn.difference.kind).toBe('line');
+  });
+
+  it('puts the actual burn on the left when it is the lower value', () => {
+    const values = {
+      ...VALUES,
+      actualBurnPerDay: 2500,
+      trackerBurnPerDay: 2666.7,
+    };
+    const { difference } = bodyOf(
+      deviation('more', 'gain', undefined, values),
+    ).burn;
+    expect(difference).toMatchObject({
+      difference: '−170 kcal/Tag',
+      lower: { label: 'tatsächlich', value: '2.500' },
+      upper: { label: 'Tracker', value: '2.670' },
+    });
+  });
+
+  it('picks the short sentence by direction', () => {
+    const toggle = (analysis: Analysis) =>
+      bodyOf(analysis, tKey).disclosure.toggle;
+    expect(toggle(ok('gain'))).toBe('analysis.short.ok');
+    expect(toggle(deviation('less', 'gain'))).toBe('analysis.short.less');
+    expect(toggle(deviation('more', 'loss'))).toBe('analysis.short.more');
+  });
+
+  it('says a share only with the same sign and a balance away from zero', () => {
+    expect(summaryOf(deviation('less', 'gain'))).toBe(
+      'Waage zeigt 61 % der Bilanz',
+    );
+    expect(summaryOf(deviation('less', 'even'))).toBe('Waage zeigt weniger');
+    expect(summaryOf(deviation('more', 'even'))).toBe('Waage zeigt mehr');
+    const opposite = { ...VALUES, storedKcal: -1000, fatChangeKg: -0.1 };
+    expect(summaryOf(deviation('less', 'gain', undefined, opposite))).toBe(
+      'Waage zeigt in die andere Richtung',
+    );
+  });
+
+  it('draws opposite directions from the center, the gap only as a number', () => {
+    const values = {
+      ...VALUES,
+      balanceKcal: 2000,
+      storedKcal: -1380,
+      fatChangeKg: -0.3,
+      leanChangeKg: 0.8,
+    };
+    const { comparison } = bodyOf(deviation('less', 'gain', undefined, values));
+    expect(comparison.layout).toBe('diverging');
+    expect(comparison.scale.segments[0]).toEqual({ kind: 'solid', share: -1 });
+    expect(comparison.legend[2]).toEqual({
+      kind: 'plain',
+      text: 'Lücke 3.400 kcal',
+    });
   });
 
   it('picks the verdict by state, direction and expected change', () => {
@@ -182,13 +291,17 @@ describe('analysisCardModel', () => {
       tDe,
     );
     const body = composition(model);
+    expect(model.title).toBe('Dein tatsächlicher Verbrauch');
+    expect(model.subtitle).toMatch(/ · 7 Tage · 4 Messungen$/);
     expect(model.dimmed).toBe(true);
     expect(model.locked).toEqual({
       hint: 'Für den Abgleich brauchst du mindestens 21 Tage und 6 Messungen.',
       soFar: 'Bisher: 7 Tage, 4 Messungen.',
     });
-    expect(body.verdict).toBeUndefined();
-    expect(body.balance.value).toBe('+7.000 kcal');
+    expect(body.disclosure.verdict).toBeUndefined();
+    expect(body.disclosure.toggle).toBe('Wie wird das berechnet?');
+    expect(body.comparison.summary).toBeUndefined();
+    expect(body.comparison.balance.value).toBe('+7.000 kcal');
     expect(body.burn.value).toBe('2.760');
   });
 
@@ -201,13 +314,17 @@ describe('analysisCardModel', () => {
         tDe,
       ),
     );
-    expect(body.balance.value).toBe('– kcal');
-    expect(body.scale.value).toBe('≈ – kcal');
+    expect(body.comparison.balance.value).toBe('– kcal');
+    expect(body.comparison.balance.segments).toEqual([]);
+    expect(body.comparison.scale.value).toBe('≈ – kcal');
+    expect(body.comparison.legend[2].text).toBe('Lücke – kcal');
     expect(body.burn.value).toBe('–');
-    expect(body.burn.detail).toBe('Tracker: – kcal/Tag · Differenz –');
-    expect(body.burn.spoken).toBe(
-      'Geschätzter tatsächlicher Verbrauch unbekannt',
-    );
+    expect(body.burn.difference).toMatchObject({
+      difference: '– kcal/Tag',
+      lower: { value: '–' },
+      upper: { value: '–' },
+    });
+    expect(body.burn.spoken).toBe('Dein tatsächlicher Verbrauch unbekannt');
   });
 
   it('names only the measurements from 21 days on', () => {
@@ -220,7 +337,7 @@ describe('analysisCardModel', () => {
       );
     expect(model(30, 4).locked?.soFar).toBe('Bisher: 4 Messungen.');
     expect(model(1, 1).locked?.soFar).toBe('Bisher: 1 Tag, 1 Messung.');
-    expect(model(30, 1).subtitle).toMatch(/· 1 Messung$/);
+    expect(model(30, 1).subtitle).toMatch(/· 30 Tage · 1 Messung$/);
     expect(model(30, 6, 6).locked?.soFar).toBe(
       'Bisher: 6 Messungen, die 6 Tage abdecken.',
     );
@@ -233,13 +350,15 @@ describe('analysisCardModel', () => {
         state: 'ok',
         expected: 'gain',
         values: VALUES,
-        compared: { from: '2026-10-01', to: '2026-10-23' },
+        compared: { from: '2026-10-01', to: '2026-10-23', days: 23 },
       },
       DAYS,
       'de-DE',
       tDe,
     );
-    expect(model.subtitle).toMatch(/^1\. Okt – 23\. Okt/);
+    expect(model.subtitle).toBe(
+      'aus Bilanz und Waage · 1. Okt – 23. Okt · 23 Tage · 18 Messungen',
+    );
   });
 
   it('compares the weight only, with a note by body fat days', () => {
@@ -262,14 +381,20 @@ describe('analysisCardModel', () => {
     );
     const none = analysisCardModel(weightOnly(0), DAYS, 'de-DE', tDe);
     if (none.body.kind !== 'weightOnly') throw new Error(none.body.kind);
+    expect(none.title).toBe('Bilanz vs. Waage');
     expect(none.dimmed).toBe(false);
-    expect(none.body.balance.value).toBe('≈ +0,9 kg');
-    expect(none.body.balance.lines[0]).toEqual({
-      text: 'wenn alles Fett wäre',
-      small: true,
+    const { comparison } = none.body;
+    expect(comparison.title).toBeUndefined();
+    expect(comparison.legend).toEqual([]);
+    expect(comparison.balance).toMatchObject({
+      value: '≈ +0,9 kg',
+      note: 'wenn alles Fett wäre',
     });
-    expect(none.body.scale.value).toBe('+0,7 kg');
-    expect(none.body.scale.lines[0].text).toBe('Gewicht, 7-Tage-Trend');
+    expect(comparison.scale).toMatchObject({
+      value: '+0,7 kg',
+      note: 'Gewicht, 7-Tage-Trend',
+    });
+    expect(comparison.scale.segments[0].share).toBeCloseTo(0.7 / 0.9);
     expect(none.body.note).toMatch(/^Keine Körperfett-Daten in Health\./);
 
     const few = analysisCardModel(weightOnly(3), DAYS, 'de-DE', tDe);
@@ -279,34 +404,17 @@ describe('analysisCardModel', () => {
     );
   });
 
-  it('shows ±0 when actual and tracker burn round alike', () => {
-    const values = {
-      ...VALUES,
-      actualBurnPerDay: 2668,
-      trackerBurnPerDay: 2666.7,
-    };
-    const body = composition(
-      analysisCardModel(
-        deviation('less', 'gain', undefined, values),
-        DAYS,
-        'de-DE',
-        tDe,
-      ),
-    );
-    expect(body.burn.detail).toBe('Tracker: 2.670 kcal/Tag · Differenz ±0');
-  });
-
   it('labels the card for VoiceOver', () => {
     const model = analysisCardModel(ok('gain'), DAYS, 'de-DE', tDe);
     const body = composition(model);
     expect(model.headerLabel).toBe(
-      'Passt die Bilanz zur Waage? 24. Sep bis 23. Okt, 18 Messungen',
+      'Dein tatsächlicher Verbrauch 24. Sep bis 23. Okt, 30 Tage, 18 Messungen',
     );
-    expect(body.balance.spoken).toBe(
-      'Laut Bilanz: plus 7.000 Kilokalorien, etwa plus 0,9 Kilogramm Fett',
+    expect(body.comparison.balance.spoken).toBe(
+      'Bilanz: plus 7.000 Kilokalorien',
     );
-    expect(body.scale.spoken).toBe(
-      'Laut Waage: etwa plus 4.300 Kilokalorien gespeichert. Fett plus 0,4 Kilogramm, Körperfett plus 0,3 Prozentpunkte. Magermasse plus 0,3 Kilogramm.',
+    expect(body.comparison.scale.spoken).toBe(
+      'Waage: etwa plus 4.300 Kilokalorien. Fett plus 0,4 Kilogramm, Magermasse plus 0,3 Kilogramm.',
     );
     expect(body.burn.spoken).toBe(
       'Geschätzter tatsächlicher Verbrauch 2.760 Kilokalorien pro Tag. Tracker 2.670, Differenz plus 90.',
@@ -321,9 +429,12 @@ describe('analysisCardModel', () => {
       tEn,
     );
     const body = composition(model);
-    expect(model.title).toBe('Does the balance match the scale?');
+    expect(model.title).toBe('Your actual burn');
     expect(body.burn.value).toBe('2,760');
-    expect(body.verdict).toBe(
+    expect(body.disclosure.toggle).toBe(
+      'You burn a bit less than your tracker measures.',
+    );
+    expect(body.disclosure.verdict).toBe(
       'The scale shows less loss than the balance. You probably burn less than the tracker measures, or ate more than you logged. You gained 0.4 kg of fat and lost 0.3 kg of lean mass (e.g. muscle or water).',
     );
   });

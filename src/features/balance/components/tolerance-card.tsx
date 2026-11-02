@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { toleranceSummary } from '../hero';
+import { toleranceSummary, type HeroModel } from '../hero';
 import { AppText } from '@/components/app-text';
 import { MarkedSlider } from '@/components/marked-slider';
 import {
@@ -17,15 +17,19 @@ type Side = keyof Tolerance;
 
 type ToleranceCardProps = {
   tolerance: Tolerance;
+  // The hero is out of sight down here, so the card repeats the range.
+  hero: HeroModel;
   open: boolean;
   onToggle: () => void;
   onChange: (tolerance: Tolerance) => void;
   onComplete: (tolerance: Tolerance) => void;
 };
 
-// „Messfehler einrechnen“: folds open to two sliders, food ± and burn −.
+// „Messfehler einrechnen“: folds open to the live range and two sliders, food
+// ± and burn −.
 export function ToleranceCard({
   tolerance,
+  hero,
   open,
   onToggle,
   onChange,
@@ -90,6 +94,20 @@ export function ToleranceCard({
           <AppText variant="secondary" tone="muted">
             {t('tolerance.explain')}
           </AppText>
+          {hero.kind === 'range' ? (
+            <View
+              accessible
+              accessibilityLabel={`${hero.label}, ${hero.fatLabel}`}
+              style={styles.range}
+            >
+              <AppText variant="cardValue">
+                {t('tolerance.range', { min: hero.kcal[0], max: hero.kcal[1] })}
+              </AppText>
+              <AppText variant="secondary" tone="muted">
+                {hero.fat}
+              </AppText>
+            </View>
+          ) : null}
           {slider('foodPercent')}
           {slider('burnPercent')}
         </View>
@@ -133,6 +151,9 @@ const styles = StyleSheet.create({
   },
   chevronUp: {
     transform: [{ translateY: 2 }, { rotate: '-135deg' }],
+  },
+  range: {
+    gap: 2,
   },
   body: {
     paddingTop: 2,

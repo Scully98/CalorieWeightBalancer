@@ -78,7 +78,7 @@ function QualitySample() {
 // Type at the largest sizes. Texts must wrap, never truncate.
 const SAMPLES: Record<TextVariant, string> = {
   largeTitle: 'Bilanz',
-  screenTitle: 'Passt die Bilanz zur Waage?',
+  screenTitle: 'Dein tatsächlicher Verbrauch',
   sectionTitle: 'Unvollständige Tage',
   body: '24 von 30 Tagen vollständig',
   bodyStrong: 'Messfehler einrechnen',

@@ -23,7 +23,7 @@ type PeriodSegmentsProps = {
   onPickCustom: () => void;
 };
 
-// 7 T · 30 T · 60 T · 90 T · Alles · Eigener. A preset is stored at once and
+// 7 T · 30 T · 60 T · 90 T · Eigener. A preset is stored at once and
 // reloads the period from Health.
 export function PeriodSegments({ onPickCustom }: PeriodSegmentsProps) {
   const { t } = useTranslation();
@@ -32,12 +32,6 @@ export function PeriodSegments({ onPickCustom }: PeriodSegmentsProps) {
 
   const options: SegmentOption<SegmentValue>[] = PERIOD_PRESETS.map(
     (preset) => {
-      if (preset === 'all')
-        return {
-          value: 'all',
-          label: t('home.segments.all'),
-          accessibilityLabel: t('home.segments.allSpoken'),
-        };
       if (preset === 'custom')
         return {
           value: 'custom',
@@ -55,10 +49,7 @@ export function PeriodSegments({ onPickCustom }: PeriodSegmentsProps) {
   function select(value: SegmentValue) {
     if (value === 'custom') return onPickCustom();
     store.updateSettings({
-      period:
-        value === 'all'
-          ? { kind: 'all' }
-          : { kind: 'days', days: Number(value) as PresetDays },
+      period: { kind: 'days', days: Number(value) as PresetDays },
     });
   }
 

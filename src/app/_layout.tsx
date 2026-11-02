@@ -47,6 +47,7 @@ export default function RootLayout() {
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="settings/resting-estimate" />
           <Stack.Screen name="settings/calculation" />
+          <Stack.Screen name="settings/data" />
         </Stack.Protected>
         {/* Development only; the routes are empty in release builds. */}
         <Stack.Protected guard={__DEV__ && introCompleted}>

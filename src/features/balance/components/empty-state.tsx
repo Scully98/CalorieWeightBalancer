@@ -19,7 +19,7 @@ type EmptyStateProps = {
 
 // No food in the period (design 1f). Without any data, or with data only
 // elsewhere, it points to the Health permissions; on the first day it shows
-// what has arrived today.
+// what has arrived today. Where data exists, the card keeps the plus reachable.
 export function EmptyState({ report }: EmptyStateProps) {
   const colors = useColors();
   const { t } = useTranslation();
@@ -63,6 +63,11 @@ export function EmptyState({ report }: EmptyStateProps) {
       <AppText variant="caption" tone="muted">
         {t('common.permissionsPath')}
       </AppText>
+      {model.kind === 'period' &&
+      report &&
+      report.today.placement !== 'outside' ? (
+        <TodayCard today={report.today} loadedAt={report.loadedAt} />
+      ) : null}
     </View>
   );
 }

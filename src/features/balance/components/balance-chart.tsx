@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { memo, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, useWindowDimensions, View } from 'react-native';
 
@@ -48,7 +48,7 @@ type BalanceChartProps = {
 
 // „Bilanz pro Tag/Woche“: bars per day or week on the balance page. Gets the
 // finished series of the core and only draws them.
-export function BalanceChart({
+export const BalanceChart = memo(function BalanceChart({
   chart,
   loadedAt,
   initialTooltip,
@@ -177,7 +177,7 @@ export function BalanceChart({
       />
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   section: {

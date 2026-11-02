@@ -1,4 +1,11 @@
-import { analyzeBalance, bodyComposition, expectedChange } from '../analysis';
+import {
+  analyzeBalance,
+  bodyComposition,
+  comparisonBars,
+  expectedChange,
+  weightBars,
+  type AnalysisValues,
+} from '../analysis';
 import { addDays } from '../dates';
 import type { DayBalance } from '../day-balance';
 import { toDateKey, type DayRecord } from '../day-record';
@@ -367,5 +374,124 @@ describe('bodyComposition', () => {
   it('says nothing up to 0.05 kg of lean mass', () => {
     expect(bodyComposition(0.4, 0.05)).toBeUndefined();
     expect(bodyComposition(0.4, -0.05)).toBeUndefined();
+  });
+});
+
+describe('comparisonBars', () => {
+  const values = (
+    balanceKcal: number,
+    fatChangeKg: number,
+    leanChangeKg: number,
+  ) =>
+    ({
+      balanceKcal,
+      fatChangeKg,
+      leanChangeKg,
+      storedKcal: 9400 * fatChangeKg + 1800 * leanChangeKg,
+    }) as AnalysisValues;
+
+  it('splits the golden case by energy, with the gap on the scale', () => {
+    const bars = comparisonBars(values(7000, 0.4, 0.3));
+    expect(bars).toMatchObject({
+      layout: 'aligned',
+      opposite: false,
+      balance: 1,
+      gapOnBalance: 0,
+    });
+    expect(bars.fat).toBeCloseTo(3760 / 7000);
+    expect(bars.lean).toBeCloseTo(540 / 7000);
+    expect(bars.gapOnScale).toBeCloseTo(2700 / 7000);
+    expect(bars.fat + bars.lean + bars.gapOnScale).toBeCloseTo(1);
+  });
+
+  it('puts the gap on the balance when the scale is longer', () => {
+    const bars = comparisonBars(values(2150, 0.4, 0.3));
+    expect(bars.balance).toBeCloseTo(0.5);
+    expect(bars.fat + bars.lean).toBeCloseTo(1);
+    expect(bars.gapOnBalance).toBeCloseTo(0.5);
+    expect(bars.gapOnScale).toBe(0);
+  });
+
+  it('shows a loss on both sides by magnitude from the left', () => {
+    const bars = comparisonBars(values(-7000, -0.4, -0.3));
+    expect(bars.layout).toBe('aligned');
+    expect(bars.balance).toBe(1);
+    expect(bars.fat).toBeCloseTo(3760 / 7000);
+    expect(bars.lean).toBeCloseTo(540 / 7000);
+  });
+
+  it('diverges when balance and scale go in opposite directions', () => {
+    const bars = comparisonBars(values(2000, -0.1, -0.1));
+    expect(bars).toMatchObject({
+      layout: 'diverging',
+      opposite: true,
+      balance: 1,
+      gapOnBalance: 0,
+      gapOnScale: 0,
+    });
+    expect(bars.fat).toBeCloseTo(-940 / 2000);
+    expect(bars.lean).toBeCloseTo(-180 / 2000);
+  });
+
+  it('diverges when fat and lean mass go in opposite directions', () => {
+    const bars = comparisonBars(values(-500, -0.3, 0.8));
+    expect(bars.layout).toBe('diverging');
+    expect(bars.opposite).toBe(false);
+    expect(bars.fat).toBe(-1);
+    expect(bars.lean).toBeCloseTo(1440 / 2820);
+    expect(bars.balance).toBeCloseTo(-500 / 2820);
+  });
+
+  it('leaves out a tiny part against the direction of the whole', () => {
+    const lean = comparisonBars(values(7000, 0.4, -0.04));
+    expect(lean.layout).toBe('aligned');
+    expect(lean.lean).toBe(0);
+    expect(lean.fat).toBeCloseTo((3760 - 72) / 7000);
+    const fat = comparisonBars(values(7000, -0.04, 0.8));
+    expect(fat.layout).toBe('aligned');
+    expect(fat.fat).toBe(0);
+    expect(fat.lean).toBeCloseTo((1440 - 376) / 7000);
+  });
+
+  it('has empty bars when nothing changed', () => {
+    expect(comparisonBars(values(0, 0, 0))).toEqual({
+      layout: 'aligned',
+      opposite: false,
+      balance: 0,
+      fat: 0,
+      lean: 0,
+      gapOnBalance: 0,
+      gapOnScale: 0,
+    });
+  });
+
+  it('shows a balance of zero as a gap', () => {
+    const bars = comparisonBars(values(0, 0.1, 0));
+    expect(bars).toMatchObject({ balance: 0, fat: 1, gapOnBalance: 1 });
+  });
+});
+
+describe('weightBars', () => {
+  it('compares magnitudes in the same direction', () => {
+    expect(weightBars(0.9, 0.45)).toEqual({
+      layout: 'aligned',
+      opposite: false,
+      balance: 1,
+      scale: 0.5,
+    });
+    expect(weightBars(-0.9, -0.45)).toMatchObject({ balance: 1, scale: 0.5 });
+  });
+
+  it('diverges in opposite directions', () => {
+    expect(weightBars(0.9, -0.45)).toEqual({
+      layout: 'diverging',
+      opposite: true,
+      balance: 1,
+      scale: -0.5,
+    });
+  });
+
+  it('has empty bars without any change', () => {
+    expect(weightBars(0, 0)).toMatchObject({ balance: 0, scale: 0 });
   });
 });

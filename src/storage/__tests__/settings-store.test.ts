@@ -169,13 +169,18 @@ describe('parseSettings', () => {
     });
   });
 
-  it('keeps every preset, "all" and the slider ends', () => {
+  it('falls back to 30 days for the removed "all" period', () => {
+    expect(
+      parseSettings(JSON.stringify({ period: { kind: 'all' } })).period,
+    ).toEqual({ kind: 'days', days: 30 });
+  });
+
+  it('keeps every preset and the slider ends', () => {
     const periodOf = (period: unknown) =>
       parseSettings(JSON.stringify({ period })).period;
     for (const days of [7, 30, 60, 90]) {
       expect(periodOf({ kind: 'days', days })).toEqual({ kind: 'days', days });
     }
-    expect(periodOf({ kind: 'all' })).toEqual({ kind: 'all' });
     expect(periodOf({ kind: 'week' })).toEqual(DEFAULT_SETTINGS.period);
     expect(
       parseSettings(

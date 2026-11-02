@@ -99,6 +99,9 @@ export function buildCalcLines(
       value: t('home.kcal', {
         value: formatSigned(roundKcal(balance.kcal), locale),
       }),
+      detail: t('data.avgTotal', {
+        value: formatSigned(balance.avgKcal, locale),
+      }),
     },
   ];
 }

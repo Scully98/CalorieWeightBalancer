@@ -32,17 +32,11 @@ const selection = (
 
 describe('pickerBounds', () => {
   it('runs from the first data point to yesterday', () => {
-    expect(pickerBounds(new Date(2026, 5, 26, 8), NOW, false)).toEqual(BOUNDS);
-  });
-
-  it('ends today when today counts', () => {
-    expect(pickerBounds(new Date(2026, 5, 26), NOW, true).max).toBe(
-      '2026-10-24',
-    );
+    expect(pickerBounds(new Date(2026, 5, 26, 8), NOW)).toEqual(BOUNDS);
   });
 
   it('goes back 365 days without a first data point', () => {
-    expect(pickerBounds(undefined, NOW, false)).toEqual({
+    expect(pickerBounds(undefined, NOW)).toEqual({
       min: '2025-10-23',
       max: '2026-10-23',
     });

@@ -169,6 +169,8 @@ module.exports = defineConfig([
                 'KCAL_PER_KG_LEAN',
                 'MIN_ANALYSIS_DAYS',
                 'MIN_MEASUREMENTS',
+                'comparisonBars',
+                'weightBars',
               ],
               allowTypeImports: true,
               message: ANALYSIS_CARD_MESSAGE,

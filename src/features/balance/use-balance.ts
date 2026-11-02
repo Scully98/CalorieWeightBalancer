@@ -132,12 +132,7 @@ export async function loadPeriodData(
   { period, includeToday }: LoadSettings,
   now: Date,
 ): Promise<PeriodData> {
-  const firstDataDate =
-    period.kind === 'all' ? await source.firstDataDate() : undefined;
-  const { start, days: count } = resolvePeriod(period, now, {
-    includeToday,
-    firstDataDate,
-  });
+  const { start, days: count } = resolvePeriod(period, now, { includeToday });
   const today = startOfDay(now);
   const todayKey = toDateKey(today);
   // The running day is always loaded: in the period, as the day after it
@@ -174,7 +169,7 @@ export async function loadPeriodData(
   const emptyInfo = records.some((record) => record.food !== undefined)
     ? undefined
     : await Promise.all([
-        firstDataDate ?? source.firstDataDate(),
+        source.firstDataDate(),
         source.foodBefore(start),
       ]).then(([first, before]) => ({
         firstDataDate: first,

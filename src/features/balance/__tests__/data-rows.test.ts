@@ -7,6 +7,7 @@ import {
   buildEstimateLines,
 } from '../data-rows';
 import type { BalanceReport } from '../use-balance';
+import { GOLDEN_DAYS } from '@/core/__fixtures__/golden-30';
 import { dayBalances } from '@/core/day-balance';
 import type { DayRecord } from '@/core/day-record';
 import { periodBalance } from '@/core/period-balance';
@@ -110,7 +111,23 @@ describe('buildCalcLines', () => {
         '400 kcal',
         'Ø 200 kcal pro Tag · an 1 Tag ohne Wert, mit 0 gerechnet',
       ],
-      total: ['+500 kcal', undefined],
+      total: ['+500 kcal', 'Ø +168 kcal pro Tag'],
+    });
+  });
+
+  it('shows the average per day of the golden case', () => {
+    const days = dayBalances(GOLDEN_DAYS, {
+      zeroDaysAsMaintenance: true,
+      profile: {},
+    });
+    const total = buildCalcLines(
+      periodBalance(days, { foodPercent: 0, burnPercent: 0 }),
+      t,
+      'de-DE',
+    ).at(-1);
+    expect(total).toMatchObject({
+      value: '+7.000 kcal',
+      detail: 'Ø +233 kcal pro Tag',
     });
   });
 
