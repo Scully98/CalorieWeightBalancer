@@ -342,22 +342,23 @@ export const de = {
     todayBurn: 'Verbraucht {{value}} Kilokalorien, {{detail}}',
     todayUnknown: '{{label}} unbekannt',
     plusWord: 'plus',
-    analysisHeader: '{{title}} {{from}} bis {{to}}, {{measurements}}',
-    analysisBalance:
-      'Laut Bilanz: {{kcal}} Kilokalorien, etwa {{fat}} Kilogramm Fett',
+    analysisHeader: '{{title}} {{from}} bis {{to}}, {{days}}, {{measurements}}',
+    analysisBalance: 'Bilanz: {{kcal}} Kilokalorien',
     analysisScale:
-      'Laut Waage: etwa {{kcal}} Kilokalorien gespeichert. Fett {{fat}} Kilogramm, Körperfett {{points}} Prozentpunkte. Magermasse {{lean}} Kilogramm.',
+      'Waage: etwa {{kcal}} Kilokalorien. Fett {{fat}} Kilogramm, Magermasse {{lean}} Kilogramm.',
     analysisBalanceWeightOnly:
-      'Laut Bilanz: etwa {{fat}} Kilogramm, wenn alles Fett wäre',
-    analysisScaleWeightOnly: 'Laut Waage: {{weight}} Kilogramm, {{trend}}',
+      'Bilanz: etwa {{fat}} Kilogramm, wenn alles Fett wäre',
+    analysisScaleWeightOnly: 'Waage: {{weight}} Kilogramm, {{trend}}',
     analysisBurn:
       'Geschätzter tatsächlicher Verbrauch {{actual}} Kilokalorien pro Tag. Tracker {{tracker}}, Differenz {{difference}}.',
   },
-  // Abgleich-Karte „Passt die Bilanz zur Waage?“ (P9). The core only gives
+  // Karte „Dein tatsächlicher Verbrauch“. The core only gives
   // the state; the card picks these words.
   analysis: {
-    title: 'Passt die Bilanz zur Waage?',
-    subtitle: '{{from}} – {{to}} · {{measurements}}',
+    title: 'Dein tatsächlicher Verbrauch',
+    titleWeightOnly: 'Bilanz vs. Waage',
+    subtitle:
+      'aus Bilanz und Waage · {{from}} – {{to}} · {{days}} · {{measurements}}',
     measurements_one: '{{count}} Messung',
     measurements_other: '{{count}} Messungen',
     days_one: '{{count}} Tag',
@@ -368,15 +369,28 @@ export const de = {
       soFar: 'Bisher: {{measurements}}.',
       soFarSpan: 'Bisher: {{measurements}}, die {{days}} abdecken.',
     },
-    balance: 'Laut Bilanz',
-    scale: 'Laut Waage',
+    balance: 'Bilanz',
+    scale: 'Waage',
     kcal: '{{value}} kcal',
     approxKcal: '≈ {{value}} kcal',
-    balanceFat: '≈ {{value}} kg Fett',
-    stored: 'gespeichert',
-    fat: 'Fett {{value}} kg',
-    fatPoints: '(Körperfett {{value}} %-Pkt.)',
-    lean: 'Magermasse {{value}} kg',
+    compare: {
+      title: 'Bilanz vs. Waage',
+      equal: 'ungefähr gleich',
+      share: 'Waage zeigt {{percent}} % der Bilanz',
+      more: 'Waage zeigt mehr',
+      less: 'Waage zeigt weniger',
+      opposite: 'Waage zeigt in die andere Richtung',
+    },
+    legend: {
+      fat: 'Fett {{value}} kg',
+      lean: 'Magermasse {{value}} kg',
+      gap: 'Lücke {{value}} kcal',
+    },
+    short: {
+      ok: 'Bilanz und Waage passen gut zusammen.',
+      less: 'Du verbrauchst etwas mehr, als dein Tracker misst.',
+      more: 'Du verbrauchst etwas weniger, als dein Tracker misst.',
+    },
     verdict: {
       gain: {
         ok: 'Passt gut. Die Waage zeigt ungefähr den Zuwachs, den die Bilanz erwarten lässt. Einträge und Tracker sind stimmig.',
@@ -409,9 +423,11 @@ export const de = {
         'Dabei hast du {{fat}} kg Fett zugelegt und {{lean}} kg Magermasse verloren (z. B. Muskeln oder Wasser).',
     },
     burn: {
-      label: 'Geschätzter tatsächlicher Verbrauch',
       unit: 'kcal/Tag',
-      detail: 'Tracker: {{tracker}} kcal/Tag · Differenz {{difference}}',
+      tracker: 'Tracker',
+      actual: 'tatsächlich',
+      difference: '{{value}} kcal/Tag',
+      matchTracker: 'Tracker {{value}} kcal',
     },
     explanation: {
       toggle: 'Wie wird das berechnet?',

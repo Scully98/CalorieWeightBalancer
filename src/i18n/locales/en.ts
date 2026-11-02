@@ -344,21 +344,22 @@ export const en: typeof de = {
     todayBurn: 'Burned {{value}} kilocalories, {{detail}}',
     todayUnknown: '{{label}} unknown',
     plusWord: 'plus',
-    analysisHeader: '{{title}} {{from}} to {{to}}, {{measurements}}',
-    analysisBalance:
-      'By balance: {{kcal}} kilocalories, about {{fat}} kilograms of fat',
+    analysisHeader: '{{title}} {{from}} to {{to}}, {{days}}, {{measurements}}',
+    analysisBalance: 'Balance: {{kcal}} kilocalories',
     analysisScale:
-      'By scale: about {{kcal}} kilocalories stored. Fat {{fat}} kilograms, body fat {{points}} percentage points. Lean mass {{lean}} kilograms.',
+      'Scale: about {{kcal}} kilocalories. Fat {{fat}} kilograms, lean mass {{lean}} kilograms.',
     analysisBalanceWeightOnly:
-      'By balance: about {{fat}} kilograms, if it were all fat',
+      'Balance: about {{fat}} kilograms, if it were all fat',
     analysisScaleWeightOnly: 'By scale: {{weight}} kilograms, {{trend}}',
     analysisBurn:
       'Estimated actual burn {{actual}} kilocalories a day. Tracker {{tracker}}, difference {{difference}}.',
   },
   // Abgleich card „Does the balance match the scale?“ (P9).
   analysis: {
-    title: 'Does the balance match the scale?',
-    subtitle: '{{from}} – {{to}} · {{measurements}}',
+    title: 'Your actual burn',
+    titleWeightOnly: 'Balance vs. scale',
+    subtitle:
+      'from balance and scale · {{from}} – {{to}} · {{days}} · {{measurements}}',
     measurements_one: '{{count}} measurement',
     measurements_other: '{{count}} measurements',
     days_one: '{{count}} day',
@@ -369,15 +370,28 @@ export const en: typeof de = {
       soFar: 'So far: {{measurements}}.',
       soFarSpan: 'So far: {{measurements}} covering {{days}}.',
     },
-    balance: 'By balance',
-    scale: 'By scale',
+    balance: 'Balance',
+    scale: 'Scale',
     kcal: '{{value}} kcal',
     approxKcal: '≈ {{value}} kcal',
-    balanceFat: '≈ {{value}} kg fat',
-    stored: 'stored',
-    fat: 'Fat {{value}} kg',
-    fatPoints: '(body fat {{value}} pts)',
-    lean: 'Lean mass {{value}} kg',
+    compare: {
+      title: 'Balance vs. scale',
+      equal: 'about equal',
+      share: 'Scale shows {{percent}} % of the balance',
+      more: 'Scale shows more',
+      less: 'Scale shows less',
+      opposite: 'Scale points the other way',
+    },
+    legend: {
+      fat: 'Fat {{value}} kg',
+      lean: 'Lean mass {{value}} kg',
+      gap: 'Gap {{value}} kcal',
+    },
+    short: {
+      ok: 'Balance and scale fit well together.',
+      less: 'You burn a bit more than your tracker measures.',
+      more: 'You burn a bit less than your tracker measures.',
+    },
     verdict: {
       gain: {
         ok: 'A good fit. The scale shows about the gain the balance suggests. Your entries and tracker agree.',
@@ -410,9 +424,11 @@ export const en: typeof de = {
         'You gained {{fat}} kg of fat and lost {{lean}} kg of lean mass (e.g. muscle or water).',
     },
     burn: {
-      label: 'Estimated actual burn',
       unit: 'kcal/day',
-      detail: 'Tracker: {{tracker}} kcal/day · difference {{difference}}',
+      tracker: 'Tracker',
+      actual: 'actual',
+      difference: '{{value}} kcal/day',
+      matchTracker: 'Tracker {{value}} kcal',
     },
     explanation: {
       toggle: 'How is this calculated?',

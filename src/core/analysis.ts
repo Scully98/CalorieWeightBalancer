@@ -54,7 +54,31 @@ export type Composition =
 type Verdict = { expected: Expected; composition?: Composition };
 
 // The days the comparison covers, both included (YYYY-MM-DD).
-export type ComparedDays = { from: string; to: string };
+export type ComparedDays = { from: string; to: string; days: number };
+
+// Bar lengths for the card, as shares of the longest bar.
+export type ComparisonBars = {
+  // aligned: magnitudes from the left edge. diverging: signed from a center
+  // line, because balance and scale, or fat and lean mass, go in opposite
+  // directions.
+  layout: 'aligned' | 'diverging';
+  // Balance and scale differ in sign.
+  opposite: boolean;
+  balance: number;
+  fat: number;
+  lean: number;
+  // Only aligned: the part of the shorter bar that is missing.
+  gapOnBalance: number;
+  gapOnScale: number;
+};
+
+// The same for the weight only: balance as fat against the weight change.
+export type WeightBars = {
+  layout: ComparisonBars['layout'];
+  opposite: boolean;
+  balance: number;
+  scale: number;
+};
 
 export type Analysis =
   | (Counts & {
@@ -144,7 +168,7 @@ function comparedDays(
   days: readonly DayBalance[],
   { start, end }: Span,
 ): ComparedDays {
-  return { from: days[start].date, to: days[end].date };
+  return { from: days[start].date, to: days[end].date, days: end - start + 1 };
 }
 
 function trendEnds(
@@ -204,6 +228,83 @@ function analysisValues(
     trackerBurnPerDay,
     differencePerDay: actualBurnPerDay - trackerBurnPerDay,
   };
+}
+
+export function comparisonBars({
+  balanceKcal: balance,
+  storedKcal: stored,
+  fatChangeKg,
+  leanChangeKg,
+}: AnalysisValues): ComparisonBars {
+  const fat = KCAL_PER_KG_FAT_TISSUE * fatChangeKg;
+  const lean = KCAL_PER_KG_LEAN * leanChangeKg;
+  const opposite = balance * stored < 0;
+  if (
+    opposite ||
+    bodyComposition(fatChangeKg, leanChangeKg)?.kind === 'shift'
+  ) {
+    const longest = Math.max(Math.abs(balance), Math.abs(fat), Math.abs(lean));
+    return {
+      layout: 'diverging',
+      opposite,
+      balance: balance / longest,
+      fat: fat / longest,
+      lean: lean / longest,
+      gapOnBalance: 0,
+      gapOnScale: 0,
+    };
+  }
+
+  const scale = Math.abs(stored);
+  const longest = Math.max(Math.abs(balance), scale);
+  if (longest === 0)
+    return {
+      layout: 'aligned',
+      opposite,
+      balance: 0,
+      fat: 0,
+      lean: 0,
+      gapOnBalance: 0,
+      gapOnScale: 0,
+    };
+  // A tiny part against the direction of the whole is left out; the other
+  // part then carries the whole, so the segments still add up to the scale.
+  const fatPart =
+    fat * stored < 0 ? 0 : lean * stored < 0 ? scale : Math.abs(fat);
+  const leanPart =
+    lean * stored < 0 ? 0 : fat * stored < 0 ? scale : Math.abs(lean);
+  return {
+    layout: 'aligned',
+    opposite,
+    balance: Math.abs(balance) / longest,
+    fat: fatPart / longest,
+    lean: leanPart / longest,
+    gapOnBalance: Math.max(0, scale - Math.abs(balance)) / longest,
+    gapOnScale: Math.max(0, Math.abs(balance) - scale) / longest,
+  };
+}
+
+export function weightBars(
+  balanceFatKg: number,
+  weightChangeKg: number,
+): WeightBars {
+  const opposite = balanceFatKg * weightChangeKg < 0;
+  const longest = Math.max(Math.abs(balanceFatKg), Math.abs(weightChangeKg));
+  if (longest === 0)
+    return { layout: 'aligned', opposite, balance: 0, scale: 0 };
+  return opposite
+    ? {
+        layout: 'diverging',
+        opposite,
+        balance: balanceFatKg / longest,
+        scale: weightChangeKg / longest,
+      }
+    : {
+        layout: 'aligned',
+        opposite,
+        balance: Math.abs(balanceFatKg) / longest,
+        scale: Math.abs(weightChangeKg) / longest,
+      };
 }
 
 // Compares the balance with the change the scale measured: E = 9,400 · Δ fat

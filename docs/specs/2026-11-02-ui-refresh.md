@@ -354,13 +354,14 @@ Keine App-Kürzel (Key Decision 16).
 | `a11y.fatRange` | etwa {{min}} bis {{max}} Kilogramm Körperfett, berechnet |
 | `today.title` | Heute |
 | `today.include` | Heute in die Bilanz einrechnen |
-| `today.toggle` | Heute, {{balance}} Kilokalorien, Stand {{time}} |
+| `a11y.todayHeader` | Heute, Stand {{time}}, {{balance}} _(statt `today.toggle`, Gesprochenes liegt unter `a11y`)_ |
+| `tolerance.range` | {{min}} bis {{max}} kcal _(🆕 für die Spanne in der Karte)_ |
 
 #### To-Dos
 
 - ✅ Create `BalanceContent` with the order: hero, today, analysis card, chart, quality row, tolerance, and the tolerance draft
 - ✅ Wrap chart, cards and quality row in `memo` so a slider drag renders only hero and tolerance
-- ✅ Verify with the React profiler that the chart doesn't render during a drag
+- 🔲 Verify with the React profiler that the chart doesn't render during a drag _(am Gerät, offen; `memo` ist gesetzt)_
 - ✅ Update the hero: centered, words with „kcal“, range without unit, „ca.“ line
 - ✅ Remove `avg`, `avgLabel` and `fatNote` from `heroModel` and their keys (`home.hero.avg*`, `home.hero.fatNote`, `home.hero.fatRangeNote`, `a11y.avg*`); `toleranceRange` in the core stays unchanged
 - ✅ Keep the spoken label free of a doubled unit
@@ -374,7 +375,7 @@ Keine App-Kürzel (Key Decision 16).
 - ✅ Stack the quality entries vertically
 - ✅ Test `todayCard` with each placement and the unknown balance („–“)
 - ✅ Test `heroModel` with the golden case: „+7.000“, „ca. +0,9 kg Körperfett“, range „+2.650“/„+19.350“, „ca. +0,3 bis +2,5 kg Körperfett“
-- ✅ Check large Dynamic Type: hero wraps, today's row wraps, nothing is cut off
+- 🔲 Check large Dynamic Type: hero wraps, today's row wraps, nothing is cut off _(am Gerät, offen)_
 - ✅ Commit (`feat: rebuild the balance page in the new order`)
 
 #### Notes / Constraints
@@ -461,7 +462,7 @@ Keine App-Kürzel (Key Decision 16).
 
 ---
 
-### Milestone 4 — Karte: Kern und Modell
+### ✅ Milestone 4 — Karte: Kern und Modell
 
 > Kern und Modell liefern alle Zahlen und Texte der neuen Karte, getestet am goldenen Testfall, bevor gezeichnet wird.
 
@@ -509,6 +510,8 @@ export type BurnDifference =
   | { kind: 'match'; tracker: string };
 ```
 
+🆕 `ComparedDays` bekommt `days` für den Untertitel. `ComparisonRow.segments` statt der Skizze: das Modell gibt der Komponente Segmente mit Art und Anteil.
+
 Rechnung `comparisonBars`, Goldener Testfall: Bilanz 7.000, E = 3.760 Fett + 540 Magermasse = 4.300. Längster Balken 7.000. Ergebnis `balance` 1, `fat` ≈ 0,537, `lean` ≈ 0,077, `gapOnScale` ≈ 0,386.
 
 | Fall | Layout | Regel |
@@ -547,20 +550,20 @@ Unverändert bleiben `analysis.verdict.*`, `analysis.composition.*`, `analysis.e
 
 #### To-Dos
 
-- 🔲 Add `comparisonBars` to the core
-- 🔲 Add `weightBars` for `weightOnly` and test same and opposite directions
-- 🔲 Test the golden case: 1, ≈ 0,537, ≈ 0,077, gap on scale ≈ 0,386
-- 🔲 Test E > B (gap on balance), negative balance and scale (aligned), opposite signs, `shift`, tiny opposite segment, both zero
-- 🔲 Update the model: title, subtitle with days, big number, difference, comparison, legend, short sentence, details
-- 🔲 Add the difference: `line` ordered by value, `match` when the rounded difference is 0, for `ok` and `deviation`
-- 🔲 Add the comparison label by Key Decision 13 and test every branch
-- 🔲 Round the percentage to whole percent; take the gap from the rounded balance and rounded stored value
-- 🔲 Add `insufficient`: same model with `preview` or „–“ and no sentence; `weightOnly`: bars in kg, no big number, no chevron
-- 🔲 Update spoken labels: burn, comparison, legend; „Differenz“ with `spokenSigned`
-- 🔲 Test the golden case: „2.760“, „+90 kcal/Tag“, Tracker 2.670, „Waage zeigt 61 % der Bilanz“, „+7.000 kcal“, „≈ +4.300 kcal“, „Fett +0,4 kg“, „Magermasse +0,3 kg“, „Lücke 2.700 kcal“
-- 🔲 Test the screenshot `card-ok`: difference 0 gives `match`, label „ungefähr gleich“
-- 🔲 Update the `analysis.*` keys in `de.ts` and `en.ts`
-- 🔲 Commit (`feat: model the actual burn card with bars and difference`)
+- ✅ Add `comparisonBars` to the core
+- ✅ Add `weightBars` for `weightOnly` and test same and opposite directions
+- ✅ Test the golden case: 1, ≈ 0,537, ≈ 0,077, gap on scale ≈ 0,386
+- ✅ Test E > B (gap on balance), negative balance and scale (aligned), opposite signs, `shift`, tiny opposite segment, both zero
+- ✅ Update the model: title, subtitle with days, big number, difference, comparison, legend, short sentence, details
+- ✅ Add the difference: `line` ordered by value, `match` when the rounded difference is 0, for `ok` and `deviation`
+- ✅ Add the comparison label by Key Decision 13 and test every branch
+- ✅ Round the percentage to whole percent; take the gap from the rounded balance and rounded stored value
+- ✅ Add `insufficient`: same model with `preview` or „–“ and no sentence; `weightOnly`: bars in kg, no big number, no chevron
+- ✅ Update spoken labels: burn, comparison, legend; „Differenz“ with `spokenSigned`
+- ✅ Test the golden case: „2.760“, „+90 kcal/Tag“, Tracker 2.670, „Waage zeigt 61 % der Bilanz“, „+7.000 kcal“, „≈ +4.300 kcal“, „Fett +0,4 kg“, „Magermasse +0,3 kg“, „Lücke 2.700 kcal“
+- ✅ Test the screenshot `card-ok`: difference 0 gives `match`, label „ungefähr gleich“
+- ✅ Update the `analysis.*` keys in `de.ts` and `en.ts`
+- ✅ Commit _(zusammen mit M5 in `feat: redesign the analysis card as actual burn`: das neue Modell bricht die alte Komponente, einzeln wäre der Commit rot)_
 
 #### Notes / Constraints
 
@@ -575,7 +578,7 @@ Keine App-Kürzel (Key Decision 16). Keine UI in diesem Milestone.
 
 ---
 
-### Milestone 5 — Karte: Komponente
+### ✅ Milestone 5 — Karte: Komponente
 
 > Die neue Karte steht in allen Zuständen auf der Seite, hell und dunkel, ohne Farb-Literale.
 
@@ -588,23 +591,22 @@ Keine App-Kürzel (Key Decision 16). Keine UI in diesem Milestone.
 | 🟢 | `src/features/balance/components/comparison-bars.tsx` | Balken `aligned` und `diverging`, Legende. SVG mit `QualityPatternDefs`, Lücke gestrichelt |
 | 🟢 | `src/features/balance/components/burn-difference.tsx` | Linie mit zwei Punkten oder Zielscheibe |
 | 🟠 | `src/features/balance/components/analysis-card.tsx` | Neues Layout, Spalten und Trenner raus, Chevron-Zeile |
-| 🟠 | `src/theme/typography.ts` | Nur falls nötig: Maße aus den Screenshots |
-| 🟠 | `src/components/app-text.tsx` | Nur falls nötig: `MAX_FONT_SCALE` |
+| — | `src/theme/typography.ts`, `src/components/app-text.tsx` | Nicht nötig: `burnUnit` trägt auch den Titel „Bilanz vs. Waage“ |
 
 #### To-Dos
 
-- 🔲 Create `ComparisonBars` with the label row, value row, bar and legend; the aligned scale from the screenshots
-- 🔲 Add the `diverging` layout with the center line; hide the gap swatch but keep its number
-- 🔲 Use `qualityFill` hatch for lean mass and the dashed outline for the gap
-- 🔲 Create `BurnDifference`: hollow and filled circle on a fixed line, target when equal
-- 🔲 Update `AnalysisCard`: header, big number centered, difference, comparison, short sentence with chevron
-- 🔲 Put verdict, composition, explanation and formula below the chevron
-- 🔲 Add the `insufficient` body dimmed at 0,3 and hidden from VoiceOver; keep the dashed hint
-- 🔲 Add the `weightOnly` body: two solid bars in kg and the dashed note
-- 🔲 Make each bar group one accessibility element with its spoken text; hide the SVG itself
-- 🔲 Set `accessibilityRole="button"` and `expanded` on the chevron row, 44 pt
-- 🔲 Check large Dynamic Type: values wrap under the label, the card grows, nothing is cut off
-- 🔲 Commit (`feat: redesign the analysis card as actual burn`)
+- ✅ Create `ComparisonBars` with the label row, value row, bar and legend; the aligned scale from the screenshots
+- ✅ Add the `diverging` layout with the center line; hide the gap swatch but keep its number
+- ✅ Use `qualityFill` hatch for lean mass and the dashed outline for the gap
+- ✅ Create `BurnDifference`: hollow and filled circle on a fixed line, target when equal
+- ✅ Update `AnalysisCard`: header, big number centered, difference, comparison, short sentence with chevron
+- ✅ Put verdict, composition, explanation and formula below the chevron
+- ✅ Add the `insufficient` body dimmed at 0,3 and hidden from VoiceOver; keep the dashed hint
+- ✅ Add the `weightOnly` body: two solid bars in kg and the dashed note
+- ✅ Make each bar group one accessibility element with its spoken text; hide the SVG itself
+- ✅ Set `accessibilityRole="button"` and `expanded` on the chevron row, 44 pt
+- 🔲 Check large Dynamic Type: values wrap under the label, the card grows, nothing is cut off _(am Gerät, offen)_
+- ✅ Commit (`feat: redesign the analysis card as actual burn`)
 
 #### Notes / Constraints
 
