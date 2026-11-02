@@ -32,47 +32,55 @@ export function SegmentedControl<T extends string>({
   const colors = useColors();
 
   return (
-    <View
-      accessibilityRole="radiogroup"
-      accessibilityLabel={accessibilityLabel}
-      style={[
-        styles.group,
-        stretch && styles.stretchGroup,
-        { borderColor: colors.foreground },
-      ]}
-    >
-      {options.map((option) => {
-        const selected = option.value === value;
-        return (
-          <Pressable
-            key={option.value}
-            accessibilityRole="radio"
-            // iOS does not announce the group label, so each option carries it.
-            accessibilityLabel={`${accessibilityLabel}: ${option.accessibilityLabel ?? option.label}`}
-            accessibilityState={{ checked: selected }}
-            onPress={() => onChange(option.value)}
-            // 32 pt high like the design; the slop keeps 44 pt to tap.
-            hitSlop={stretch ? STRETCH_SLOP : undefined}
-            style={[
-              styles.segment,
-              stretch && styles.stretchSegment,
-              selected && { backgroundColor: colors.foreground },
-            ]}
-          >
-            <AppText
-              variant={stretch ? 'segment' : 'secondary'}
-              tone={selected ? 'inverse' : 'foreground'}
+    <View style={stretch && styles.stretchArea}>
+      <View
+        accessibilityRole="radiogroup"
+        accessibilityLabel={accessibilityLabel}
+        hitSlop={stretch ? GROUP_SLOP : undefined}
+        style={[
+          styles.group,
+          stretch && styles.stretchGroup,
+          { borderColor: colors.foreground },
+        ]}
+      >
+        {options.map((option) => {
+          const selected = option.value === value;
+          return (
+            <Pressable
+              key={option.value}
+              accessibilityRole="radio"
+              // iOS does not announce the group label, so each option carries it.
+              accessibilityLabel={`${accessibilityLabel}: ${option.accessibilityLabel ?? option.label}`}
+              accessibilityState={{ checked: selected }}
+              onPress={() => onChange(option.value)}
+              // 32 pt high like the design; with the slops of the group and
+              // the area around it, 44 pt to tap. A touch outside a parent never
+              // reaches its children, so every level needs the extra space.
+              hitSlop={stretch ? STRETCH_SLOP : undefined}
+              style={[
+                styles.segment,
+                stretch && styles.stretchSegment,
+                selected && { backgroundColor: colors.foreground },
+              ]}
             >
-              {option.label}
-            </AppText>
-          </Pressable>
-        );
-      })}
+              <AppText
+                variant={stretch ? 'segment' : 'secondary'}
+                tone={selected ? 'inverse' : 'foreground'}
+              >
+                {option.label}
+              </AppText>
+            </Pressable>
+          );
+        })}
+      </View>
     </View>
   );
 }
 
 const STRETCH_SLOP = { top: 6, bottom: 6 };
+// 32 pt segment + 2 × 2 padding + 2 × 1.5 border = 39 pt, 2.5 pt short per side.
+const GROUP_OVERHANG = 2.5;
+const GROUP_SLOP = { top: GROUP_OVERHANG, bottom: GROUP_OVERHANG };
 
 const styles = StyleSheet.create({
   group: {
@@ -88,6 +96,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: space.m,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  // Reaches past the group without taking layout space.
+  stretchArea: {
+    marginVertical: -GROUP_OVERHANG,
+    paddingVertical: GROUP_OVERHANG,
   },
   stretchGroup: {
     borderWidth: border.medium,

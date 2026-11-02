@@ -1,6 +1,6 @@
 # Kcalwaage (CalorieWeightBalancer)
 
-Projektkontext für Claude, Stand 2026-10-12. Nutzbar als `CLAUDE.md` im Repo oder als System-Prompt in der Claude Developer Console.
+Projektkontext für Claude, Stand 2026-10-25. Nutzbar als `CLAUDE.md` im Repo oder als System-Prompt in der Claude Developer Console.
 
 ## Arbeitsweise
 - Julius schreibt Deutsch; antworte auf Deutsch, Code und Commit-Messages auf Englisch.
@@ -23,9 +23,10 @@ Fragen, die die App beantwortet: Bin ich diesen Monat im Plus oder Minus? Wie la
 ## Stack
 - React Native mit Expo, Development Build (kein Expo Go), Build/Upload über EAS, TypeScript.
 - HealthKit: `@kingstinct/react-native-healthkit`.
-- Charts: `react-native-gifted-charts` oder `victory-native`.
+- Chart: eigenes SVG mit `react-native-svg`, keine Chart-Library (Spike `docs/spikes/2026-10-25-chart-library.md`: gifted-charts kann keine dritte Linie, keine Tageslinien unter Wochenbalken; victory-native bräuchte Skia und die Muster ein zweites Mal).
 - SVG: `react-native-svg` für die Qualitäts-Muster (`src/components/quality-pattern.tsx`: `QualityPatternDefs`, `qualityFill`, `QualitySwatch`, `QualityCross`) und den Chart; der Chart füllt seine Balken mit denselben Mustern.
 - Toleranz-Slider: eigener Slider aus Views (`src/components/marked-slider.tsx`), Farben aus den Tokens. `@react-native-community/slider` lädt unter der neuen Architektur ohne Bridge kein Daumen-Bild.
+- Schalter: eigener aus Views (`src/components/switch-row.tsx`), Farben aus den Tokens. Der native `Switch` zeigte im Dark Mode teils einen hellen Daumen auf heller Spur.
 - Widget: SwiftUI-WidgetKit-Extension via `@bacons/apple-targets` (Ordner `targets/widget/`). Kein Flutter.
 - Die App rechnet und schreibt einen fertigen JSON-Datensatz (Zeitraum, Bilanz, Spanne, Fett in g, Zeitstempel) in die App-Group-`UserDefaults`, dann `WidgetCenter.reloadAllTimelines()` über ein kleines natives Modul. Das Widget fragt HealthKit nicht selbst ab (Daten bei gesperrtem Gerät verschlüsselt).
 - Hintergrund-Update per HealthKit Observer/Background Delivery; Fallback: Widget zeigt letzten Stand mit Uhrzeit.
@@ -61,8 +62,8 @@ Fragen, die die App beantwortet: Bin ich diesen Monat im Plus oder Minus? Wie la
   `Bmin = A(1 − tA) − V`, `Bmax = A(1 + tA) − V(1 − tV)` mit V = R + K. Verbrauch nur nach unten korrigiert.
 - Körperfett: Bilanz ÷ 7.700 kcal/kg Fettgewebe, beschriftet als „theoretisch“.
 - Anzeige: Einzelwert auf 10 kcal, Spannen-Enden auf 50 kcal, Ø pro Tag auf ganze kcal, kg auf 0,1. Beim Ziehen der Slider rechnet der Hero nur aus den Periodensummen (`toleranceRange`), gespeichert wird beim Loslassen.
-- Analyse Bilanz vs. Messung: `E ≈ 9400·ΔFettmasse + 1800·ΔMagermasse` (Hall 2008), Start/Ende als 7-Tage-Trend (Mittel der Messungen von Tag i−6 bis i, ohne Messung bis 34 Tage zurück erweitert; dieselben Werte wie die Chart-Linien). Fett = Gewicht × KFA, Magermasse = `leanBodyMass` oder Gewicht × (1 − KFA). Tatsächlicher Verbrauch = (Σ Nahrung − E) ÷ gezählte Tage, Null-Tage mit Nahrung = Verbrauch; Tracker = Σ Verbrauch ÷ Tage.
-- Zustände der Abgleich-Karte: `insufficient` unter 21 Tagen oder unter 6 Tagen mit Gewicht (Karte ausgegraut mit „Bisher: …“), `weightOnly` unter 6 Tagen mit KFA (nur Gewicht gegen „Bilanz, wenn alles Fett wäre“), `ok` bei |E − Bilanz| ≤ max(10 % der Bilanz, 400 kcal), sonst `deviation` (Waage zeigt weniger/mehr; Hinweis Magermasse ab +0,05 kg).
+- Analyse Bilanz vs. Messung: `E ≈ 9400·ΔFettmasse + 1800·ΔMagermasse` (Hall 2008), Start/Ende als 7-Tage-Trend (Mittel der Messungen von Tag i−6 bis i, ohne Messung bis 34 Tage zurück erweitert; dieselben Werte wie die Chart-Linien). Bilanz, Nahrung und Verbrauch zählen nur über die von Messungen abgedeckten Tage (`compared`): Start an Tag 1 mit Messung im Trendfenster, sonst erste Messung; Ende am letzten Tag, wenn die letzte Messung höchstens 6 Tage zurückliegt, sonst bei der letzten Messung. Fett = Gewicht × KFA, Magermasse = `leanBodyMass` oder Gewicht × (1 − KFA). Tatsächlicher Verbrauch = (Σ Nahrung − E) ÷ gezählte Tage, Null-Tage mit Nahrung = Verbrauch; Tracker = Σ Verbrauch ÷ Tage.
+- Zustände der Abgleich-Karte: `insufficient` unter 21 Tagen, unter 6 Tagen mit Gewicht oder wenn die Gewichtsmessungen unter 21 Tage abdecken (Karte ausgegraut mit „Bisher: …“, Vorschau-Werte nur, wenn die Messungen den ganzen Zeitraum abdecken), `weightOnly` unter 6 Tagen mit KFA oder wenn die KFA-Messungen unter 21 Tage abdecken (nur Gewicht gegen „Bilanz, wenn alles Fett wäre“, mit Anzahl der KFA-Tage), `ok` bei |E − Bilanz| ≤ max(10 % der Bilanz, 400 kcal), sonst `deviation` (Waage zeigt weniger/mehr). Bei `ok`/`deviation` dazu `expected` (`even` bei |Bilanz| ≤ 400 kcal, sonst `gain`/`loss`) und ab |ΔMagermasse| > 0,05 kg `composition` (`shift`: Fett und Magermasse gegenläufig über 0,05 kg, sonst `share` mit Anteil Magermasse). Texte wählt die UI, `src/core/` importiert kein i18n (ESLint).
 - Rechenkern als reines TypeScript-Modul mit Unit-Tests, unabhängig von HealthKit (`src/core/`, Abdeckung ≥ 90 %). Er rechnet ungerundet, gerundet wird erst in der Anzeige.
 
 ## Goldener Testfall
@@ -91,11 +92,12 @@ Drei Screens (Bilanz, Analyse-Chart, Einstellungen) plus Widget.
 3. Null-Tage als Erhaltungstage (Schalter).
 4. Umrechnung in Körperfett unter der Bilanz.
 5./6. Toleranz Verbrauch / Nahrung, Bilanz zeigt dann Spanne.
-7. Balkenchart pro Tag (Plus oben, Minus unten), ab 32 Tagen Wochenbalken (ISO-Kalenderwochen, Ø kcal/Tag; erste Woche unter 3 Tagen an die nächste angehängt). Eine Woche erbt das schlechteste Flag ihrer Tage: wenig Nahrung > ohne Nahrung > ohne Grundumsatz > Grundumsatz geschätzt.
-8. Gewichtslinie auf zweiter Achse plus 7-Tage-Trend.
-9. Fett- und Magermasse-Linien mit Einordnungssatz (nur mit Messungen).
+7. Balkenchart pro Tag (Plus oben, Minus unten), ab 32 Tagen Wochenbalken (ISO-Kalenderwochen, Ø kcal/Tag; erste Woche unter 3 Tagen an die nächste angehängt). Tagesbalken nach dem vorrangigen Flag (`primaryFlag`: wenig Nahrung > ohne Nahrung > ohne Grundumsatz > Grundumsatz geschätzt): Schraffur, Streifen, ohne Wert nur ✕ auf der Nulllinie; ohne Nahrung mit Wert (Null-Tage aus) gefüllt plus ✕. Wochenbalken schraffiert, sobald ein Tag unvollständig ist. Heute immer gestrichelter Umriss (zählt mit / zählt nicht). Tooltip per Tipp oder langem Drücken (0,3 s) und Ziehen, ein Tipp bei offenem Tooltip schließt ihn überall im Chart; der Chart rechnet nichts, alle Werte kommen aus `report.chart` (ESLint).
+8. Gewichtslinie auf zweiter Achse (Δ kg seit Zeitraumbeginn) als 7-Tage-Trend, durchgezogen; Einzelmessungen als hohle Kreise mit eigenem Chip „Messpunkte“.
+9. Fettmasse-Linie (7-Tage-Trend, gestrichelt) und „Fett laut Bilanz“ (gepunktet, startet mit der gemessenen Linie), Linien und Chips nur mit Messungen. Magermasse und Einordnung stehen in der Abgleich-Karte (P9).
 10. Widget klein/mittel: Zeitraum, Bilanz, Fett-Äquivalent; Spanne, wenn Toleranz aktiv.
 11. Daten-Seite (Wischen vom Bilanz-Screen): was aus Health ankommt, wie sich die Bilanz zusammensetzt, Link zu Health (Spec `docs/specs/2026-10-21-data-page.md`).
+12. Abgleich-Karte „Passt die Bilanz zur Waage?“ unter dem Chart (Spec `docs/specs/2026-10-25-analysis-card.md`): „Laut Bilanz“ gegen „Laut Waage“, Einordnungssatz nach Zustand, Richtung und `expected` (Zuwachs, Abnahme oder neutral), dazu ein Satz zur Zusammensetzung (Anteil Magermasse oder Fett ab, Magermasse auf), „Geschätzter tatsächlicher Verbrauch“ mit Tracker und Differenz, aufklappbar „Wie wird das berechnet?“. Gesperrt: gestrichelter Hinweis, darunter Vorschau mit Deckkraft 0,3 ohne Satz. Nur Gewicht: Hinweis je nach KFA-Tagen (keine oder zu wenige). Alle Sätze aus i18n (`analysis.*`), das Modell `src/features/balance/analysis-card.ts` wählt nur Keys (ESLint).
 
 Nicht in V1: Farbwahl, Widget-Konfiguration, Zyklus, Zielkalorien, iPad, Schreiben nach HealthKit.
 
@@ -115,3 +117,4 @@ Schwarz auf weiß, Dark Mode invertiert, keine Akzentfarbe. Plus/Minus über Vor
 2. Health-Sync von MyFitnessPal/Yazio prüfen.
 3. Nebentätigkeitsklausel prüfen.
 4. Entwurf Impressum und Datenschutzerklärung.
+5. WCAG-Konformität, in einem eigenen Branch. Dazu gehört eine Lösung für die Tastatur-Bedienung: In React Native 0.86.3 ist auf iOS keine RN-View per Full Keyboard Access fokussierbar (`_focusable` wird in `RCTViewComponentView.mm` nur unter `TARGET_OS_TV` gesetzt), erreichbar sind nur native Elemente wie die Tab-Leiste. −/+-Buttons am Slider lösen das nicht. Zu prüfen: RN patchen, `react-native-external-keyboard` oder RN-Upgrade (0.88 laut einem Bericht behoben, ungeprüft).

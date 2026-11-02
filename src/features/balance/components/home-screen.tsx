@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import type { ChartTooltipPreset } from './balance-chart';
 import { BalancePage } from './balance-page';
 import { DateRangeSheet } from './date-range-sheet';
 import { DataPage } from './data-page';
@@ -29,6 +30,7 @@ export type HomeUi = {
   toleranceOpen?: boolean;
   picker?: DateRangeSelection;
   sheet?: 'incompleteDays';
+  tooltip?: ChartTooltipPreset;
 };
 
 // Balance on the first page, the Health data behind it one swipe to the right.
@@ -91,6 +93,7 @@ export function HomeScreen({ initialUi }: { initialUi?: HomeUi } = {}) {
               periodLabel={periodLabel}
               pageCount={PAGES}
               toleranceOpen={initialUi?.toleranceOpen}
+              initialTooltip={initialUi?.tooltip}
               scrollEnabled={!scrollLocked}
               onShowData={() => showPage(1)}
               onOpenQuality={() => setQualityOpen(true)}

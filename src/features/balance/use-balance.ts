@@ -7,7 +7,7 @@ import {
   type EstimateSummary,
 } from './resting-fallback';
 import { analyzeBalance, type Analysis } from '@/core/analysis';
-import { TREND_MAX_LOOKBACK_DAYS } from '@/core/body';
+import { bodyValues, TREND_MAX_LOOKBACK_DAYS } from '@/core/body';
 import { chartBuckets, type ChartBucket } from '@/core/chart';
 import { addDays, elapsedDayHours, startOfDay } from '@/core/dates';
 import { dayBalances, type DayBalance } from '@/core/day-balance';
@@ -245,6 +245,7 @@ export function buildReport(
     chart: {
       buckets: chartBuckets(days, {
         measured: records.map((record) => record.weightKg !== undefined),
+        body: records.map(bodyValues),
         today: todayPlacement === 'excluded' ? today : undefined,
       }),
       lines: chartLines(history, days, LEAD_IN_DAYS),

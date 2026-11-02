@@ -1,7 +1,9 @@
+import { useEffect, useState } from 'react';
 import {
+  AccessibilityInfo,
+  Animated,
   Pressable,
   StyleSheet,
-  Switch,
   useWindowDimensions,
   View,
 } from 'react-native';
@@ -9,6 +11,64 @@ import {
 import { AppText } from './app-text';
 import { space, STACKED_FONT_SCALE, touchTarget } from '@/theme/spacing';
 import { useColors } from '@/theme/use-colors';
+
+const TRACK = { width: 51, height: 31 };
+const THUMB = 27;
+const THUMB_INSET = 2;
+const THUMB_TRAVEL = TRACK.width - THUMB - 2 * THUMB_INSET;
+const TOGGLE_MS = 180;
+
+// Drawn in views so its colors are always the tokens: the native switch
+// sometimes showed a light thumb on the light track in dark mode. Touches and
+// VoiceOver belong to the row.
+function SwitchMark({ value }: { value: boolean }) {
+  const colors = useColors();
+  const [progress] = useState(() => new Animated.Value(value ? 1 : 0));
+
+  useEffect(() => {
+    let active = true;
+    const toValue = value ? 1 : 0;
+    AccessibilityInfo.isReduceMotionEnabled().then((reduced) => {
+      if (!active) return;
+      if (reduced) progress.setValue(toValue);
+      else
+        Animated.timing(progress, {
+          toValue,
+          duration: TOGGLE_MS,
+          useNativeDriver: true,
+        }).start();
+    });
+    return () => {
+      active = false;
+    };
+  }, [progress, value]);
+
+  return (
+    <View
+      style={[
+        styles.track,
+        { backgroundColor: value ? colors.foreground : colors.separator },
+      ]}
+    >
+      <Animated.View
+        style={[
+          styles.thumb,
+          {
+            backgroundColor: value ? colors.background : colors.foreground,
+            transform: [
+              {
+                translateX: progress.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0, THUMB_TRAVEL],
+                }),
+              },
+            ],
+          },
+        ]}
+      />
+    </View>
+  );
+}
 
 type SwitchRowProps = {
   label: string;
@@ -24,7 +84,6 @@ export function SwitchRow({
   value,
   onValueChange,
 }: SwitchRowProps) {
-  const colors = useColors();
   const { fontScale } = useWindowDimensions();
   const stacked = fontScale > STACKED_FONT_SCALE;
 
@@ -45,15 +104,7 @@ export function SwitchRow({
           </AppText>
         ) : null}
       </View>
-      <Switch
-        accessibilityElementsHidden
-        importantForAccessibility="no-hide-descendants"
-        value={value}
-        onValueChange={onValueChange}
-        trackColor={{ false: colors.separator, true: colors.foreground }}
-        thumbColor={colors.background}
-        ios_backgroundColor={colors.separator}
-      />
+      <SwitchMark value={value} />
     </Pressable>
   );
 }
@@ -75,5 +126,16 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     flexGrow: 1,
     gap: space.xs,
+  },
+  track: {
+    width: TRACK.width,
+    height: TRACK.height,
+    borderRadius: TRACK.height / 2,
+    padding: THUMB_INSET,
+  },
+  thumb: {
+    width: THUMB,
+    height: THUMB,
+    borderRadius: THUMB / 2,
   },
 });

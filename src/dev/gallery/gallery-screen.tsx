@@ -2,9 +2,8 @@ import { router } from 'expo-router';
 import { FlatList, Pressable, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { GALLERY_ENTRIES, hasPendingUi, type GalleryEntry } from './entries';
+import { GALLERY_ENTRIES, type GalleryEntry } from './entries';
 import { AppText } from '@/components/app-text';
-import { Badge } from '@/components/badge';
 import { LinkButton } from '@/components/link-button';
 import { buildScenario } from '@/dev/demo/scenarios';
 import { space, touchTarget } from '@/theme/spacing';
@@ -32,7 +31,6 @@ function GalleryRow({ entry }: { entry: GalleryEntry }) {
         <AppText variant="footnote" tone="muted">
           {buildScenario(entry.scenario).name}
         </AppText>
-        {hasPendingUi(entry) ? <Badge label="UI folgt" /> : null}
       </View>
       <AppText tone="muted">›</AppText>
     </Pressable>

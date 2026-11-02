@@ -10,8 +10,8 @@ export type LinePoint = {
   // Only on days with a weight measurement.
   weightPoint?: number;
   fatTrend?: number;
-  // Cumulative balance ÷ 7,700.
-  theoreticalFat: number;
+  // Cumulative balance ÷ 7,700, from the day the measured line starts.
+  theoreticalFat?: number;
 };
 
 export type ChartLines = {
@@ -45,11 +45,17 @@ export function chartLines(
   const weight = deltas(weightTrend);
   const fat = deltas(inPeriod(trendSeries(records, 'fatKg')));
   const baseline = weightTrend.find((value) => value !== undefined);
+  // Fat compares with fat; without any, with the weight, else the whole period.
+  const measuredLine = fat.some((value) => value !== undefined) ? fat : weight;
+  const firstMeasured = Math.max(
+    0,
+    measuredLine.findIndex((value) => value !== undefined),
+  );
   const periodRecords = records.slice(leadInDays);
 
   let cumulative = 0;
   const points = days.map((day, index) => {
-    cumulative += day.kcal ?? 0;
+    if (index >= firstMeasured) cumulative += day.kcal ?? 0;
     const measured = periodRecords[index]?.weightKg;
     return {
       date: day.date,
@@ -59,7 +65,9 @@ export function chartLines(
           ? undefined
           : measured - baseline,
       fatTrend: fat[index],
-      theoreticalFat: fatKgFromKcal(cumulative),
+      ...(index >= firstMeasured && {
+        theoreticalFat: fatKgFromKcal(cumulative),
+      }),
     };
   });
 

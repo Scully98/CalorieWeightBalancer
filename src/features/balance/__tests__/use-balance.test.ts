@@ -214,7 +214,9 @@ describe('the running day', () => {
       running: true,
     });
     expect(report.days.at(-1)?.date).toBe('2026-10-23');
-    expect(report.chart.buckets.at(-1)).toMatchObject({ today: true });
+    expect(report.chart.buckets.at(-1)).toMatchObject({
+      today: { counted: false },
+    });
     expect(report.loadedAt).toBe(NOW);
   });
 
@@ -229,6 +231,10 @@ describe('the running day', () => {
     // 29 steady days of +200 and today +40, resting not scaled.
     expect(report.balance.kcal).toBe(29 * 200 + 40);
     expect(report.balance.completeDays).toBe(30);
+    expect(report.chart.buckets.at(-1)).toMatchObject({
+      kcal: 40,
+      today: { counted: true },
+    });
   });
 
   it('is loaded on its own for a custom period that ends earlier', async () => {

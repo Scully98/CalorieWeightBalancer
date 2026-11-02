@@ -71,7 +71,7 @@ function report(overrides: Partial<BalanceReport> = {}): BalanceReport {
       buckets: [],
       lines: { points: [], hasWeight: false, hasFat: false },
     },
-    analysis: { state: 'insufficient', days: 3, measurements: 0 },
+    analysis: { state: 'insufficient', days: 3, measurements: 0, spanDays: 0 },
     daysWithData: { food: 2, resting: 3, active: 2, weight: 2, bodyFat: 0 },
     sources: {
       food: undefined,

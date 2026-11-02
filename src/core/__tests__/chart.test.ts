@@ -1,4 +1,4 @@
-import { chartBuckets, worstFlag, type WeekBucket } from '../chart';
+import { chartBuckets, primaryFlag, type WeekBucket } from '../chart';
 import { addDays } from '../dates';
 import type { DayBalance, DayFlag } from '../day-balance';
 import { toDateKey } from '../day-record';
@@ -101,7 +101,7 @@ describe('chartBuckets', () => {
       // (0 − 1,600 + 4 × 300) ÷ 6 counted days.
       avgKcal: expect.closeTo(-400 / 6),
       incompleteDays: 3,
-      worst: 'lowFood',
+      primaryFlag: 'lowFood',
     });
     // Zero day eats what it burns: (2,600 + 1,000 + 4 × 2,900) ÷ 6.
     expect(week?.avgFoodKcal).toBeCloseTo(15200 / 6);
@@ -138,23 +138,62 @@ describe('chartBuckets', () => {
     ]);
   });
 
-  it('appends the running day to day bars only', () => {
-    const today = day(new Date(2026, 9, 24), { kcal: 40 });
+  it('appends the running day to day bars only, not counted', () => {
+    const today = day(new Date(2026, 9, 24), { kcal: 40, running: true });
     const daily = chartBuckets(period(7), { today });
     expect(daily).toHaveLength(8);
-    expect(daily[7]).toMatchObject({ kind: 'day', today: true, kcal: 40 });
+    expect(daily[7]).toMatchObject({
+      kind: 'day',
+      today: { counted: false },
+      kcal: 40,
+    });
     expect(chartBuckets(period(60), { today }).some((b) => 'today' in b)).toBe(
       false,
     );
   });
+
+  it('marks a counted running day as today', () => {
+    const days = period(7);
+    days[6] = { ...days[6], kcal: 40, running: true };
+    const buckets = chartBuckets(days);
+    expect(buckets[6]).toMatchObject({ today: { counted: true }, kcal: 40 });
+    expect(buckets.slice(0, 6).some((b) => 'today' in b)).toBe(false);
+  });
+
+  it('carries the values of the day for the tooltip', () => {
+    const days = period(2);
+    days[1] = {
+      ...days[1],
+      resting: 1750,
+      restingSource: 'formula',
+      flags: ['restingEstimated'],
+    };
+    const [measured, estimated] = chartBuckets(days, {
+      measured: [true, false],
+      body: [{ weightKg: 82.1, fatKg: 17.8, leanKg: 64.3 }, {}],
+    });
+    expect(measured).toMatchObject({
+      food: 2900,
+      resting: 1800,
+      restingSource: 'measured',
+      active: 800,
+      body: { weightKg: 82.1, fatKg: 17.8 },
+    });
+    expect(estimated).toMatchObject({
+      resting: 1750,
+      restingSource: 'formula',
+      primaryFlag: 'restingEstimated',
+    });
+    expect('body' in estimated).toBe(false);
+  });
 });
 
-describe('worstFlag', () => {
+describe('primaryFlag', () => {
   it('ranks low food over no food over no resting over estimated', () => {
-    expect(worstFlag(['restingEstimated', 'noResting'])).toBe('noResting');
-    expect(worstFlag(['noResting', 'noFood'])).toBe('noFood');
-    expect(worstFlag(['noFood', 'lowFood'])).toBe('lowFood');
-    expect(worstFlag(['restingEstimated'])).toBe('restingEstimated');
-    expect(worstFlag([])).toBeUndefined();
+    expect(primaryFlag(['restingEstimated', 'noResting'])).toBe('noResting');
+    expect(primaryFlag(['noResting', 'noFood'])).toBe('noFood');
+    expect(primaryFlag(['noFood', 'lowFood'])).toBe('lowFood');
+    expect(primaryFlag(['restingEstimated'])).toBe('restingEstimated');
+    expect(primaryFlag([])).toBeUndefined();
   });
 });

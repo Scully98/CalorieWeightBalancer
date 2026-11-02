@@ -215,6 +215,70 @@ export const en: typeof de = {
     included: 'Counted in the balance above.',
     outside: 'Not in the chosen period.',
   },
+  chart: {
+    titleDay: 'Balance per day',
+    titleWeek: 'Balance per week',
+    subtitleDay: 'Bars kcal · lines kg change since {{date}}',
+    subtitleWeek: 'Bars avg kcal per day of the week · lines kg since {{date}}',
+    axisKcal: 'kcal',
+    axisKg: 'kg',
+    today: 'today',
+    dayMonth: '{{month}}/{{day}}',
+    week: 'W{{week}}',
+    chips: {
+      bars: 'Balance',
+      weight: 'Weight',
+      points: 'Measurements',
+      fat: 'Fat mass',
+      theoretical: 'Fat from balance',
+    },
+    hints: {
+      trend: 'Lines: 7-day trend',
+      estimated: 'Resting energy estimated',
+      weekIncomplete: 'Week with incomplete days',
+      lowFood: 'little food',
+      noFood: 'no food',
+      todayExcluded: 'today, not counted',
+      todayIncluded: 'today, counted',
+    },
+    tooltip: {
+      food: 'Eaten',
+      resting: 'Resting',
+      active: 'Active',
+      balance: 'Balance',
+      avgFood: 'Avg eaten',
+      avgBurn: 'Avg burned',
+      avgBalance: 'Avg balance / day',
+      kcal: '{{value}} kcal',
+      maintenance: '0 (maintenance)',
+      notCounted: 'not counted',
+      weightFat: 'Weight {{weight}} kg · fat {{fat}} kg',
+      weight: 'Weight {{weight}} kg',
+      noMeasurement: 'No scale measurement',
+      todayTitle: 'Today · until {{time}}',
+      counted: 'Counted',
+      notCountedBadge: 'Not counted',
+      running: 'Day still running',
+      weekTitle: 'W{{week}} · {{range}}',
+      rangeSameMonth: '{{month}} {{fromDay}}–{{toDay}}',
+      range: '{{from}} – {{to}}',
+      incomplete_one: '{{count}} day incomplete',
+      incomplete_other: '{{count}} days incomplete',
+      weekFooter_one: '{{days}} days · {{count}} measurement',
+      weekFooter_other: '{{days}} days · {{count}} measurements',
+    },
+    a11y: {
+      summaryDay_one: 'Balance per day, {{count}} bar.',
+      summaryDay_other: 'Balance per day, {{count}} bars.',
+      summaryWeek_one: 'Balance per week, {{count}} bar.',
+      summaryWeek_other: 'Balance per week, {{count}} bars.',
+      weight: 'Weight {{value}} kilograms since {{date}}.',
+      kcal: '{{value}} kilocalories',
+      noSelection: 'No bar selected',
+      hint: 'Swipe up or down to go through the bars.',
+      chart: 'Chart',
+    },
+  },
   empty: {
     noData: {
       title: 'No data yet.',
@@ -284,6 +348,92 @@ export const en: typeof de = {
     todayBurn: 'Burned {{value}} kilocalories, {{detail}}',
     todayUnknown: '{{label}} unknown',
     plusWord: 'plus',
+    analysisHeader: '{{title}} {{from}} to {{to}}, {{measurements}}',
+    analysisBalance:
+      'By balance: {{kcal}} kilocalories, about {{fat}} kilograms of fat',
+    analysisScale:
+      'By scale: about {{kcal}} kilocalories stored. Fat {{fat}} kilograms, body fat {{points}} percentage points. Lean mass {{lean}} kilograms.',
+    analysisBalanceWeightOnly:
+      'By balance: about {{fat}} kilograms, if it were all fat',
+    analysisScaleWeightOnly: 'By scale: {{weight}} kilograms, {{trend}}',
+    analysisBurn:
+      'Estimated actual burn {{actual}} kilocalories a day. Tracker {{tracker}}, difference {{difference}}.',
+  },
+  // Abgleich card „Does the balance match the scale?“ (P9).
+  analysis: {
+    title: 'Does the balance match the scale?',
+    subtitle: '{{from}} – {{to}} · {{measurements}}',
+    measurements_one: '{{count}} measurement',
+    measurements_other: '{{count}} measurements',
+    days_one: '{{count}} day',
+    days_other: '{{count}} days',
+    locked: {
+      hint: 'The comparison needs at least {{days}} days and {{measurements}} measurements.',
+      soFarDays: 'So far: {{days}}, {{measurements}}.',
+      soFar: 'So far: {{measurements}}.',
+      soFarSpan: 'So far: {{measurements}} covering {{days}}.',
+    },
+    balance: 'By balance',
+    scale: 'By scale',
+    kcal: '{{value}} kcal',
+    approxKcal: '≈ {{value}} kcal',
+    balanceFat: '≈ {{value}} kg fat',
+    stored: 'stored',
+    fat: 'Fat {{value}} kg',
+    fatPoints: '(body fat {{value}} pts)',
+    lean: 'Lean mass {{value}} kg',
+    verdict: {
+      gain: {
+        ok: 'A good fit. The scale shows about the gain the balance suggests. Your entries and tracker agree.',
+        less: 'The scale shows less gain than the balance.',
+        more: 'The scale shows more gain than the balance.',
+      },
+      loss: {
+        ok: 'A good fit. The scale shows about the loss the balance suggests. Your entries and tracker agree.',
+        less: 'The scale shows more loss than the balance.',
+        more: 'The scale shows less loss than the balance.',
+      },
+      even: {
+        ok: 'A good fit. The balance suggests hardly any change, and the scale shows none either. Your entries and tracker agree.',
+        less: 'The balance suggests hardly any change, but the scale shows a loss.',
+        more: 'The balance suggests hardly any change, but the scale shows a gain.',
+      },
+      cause: {
+        less: 'You probably burn a bit more than the tracker measures, or ate less than you logged.',
+        more: 'You probably burn less than the tracker measures, or ate more than you logged.',
+      },
+    },
+    composition: {
+      shareGain:
+        'About {{percent}}% of the gain is lean mass (e.g. muscle or water).',
+      shareLoss:
+        'About {{percent}}% of the loss is lean mass (e.g. muscle or water).',
+      fatLossLeanGain:
+        'You lost {{fat}} kg of fat and gained {{lean}} kg of lean mass (e.g. muscle or water).',
+      fatGainLeanLoss:
+        'You gained {{fat}} kg of fat and lost {{lean}} kg of lean mass (e.g. muscle or water).',
+    },
+    burn: {
+      label: 'Estimated actual burn',
+      unit: 'kcal/day',
+      detail: 'Tracker: {{tracker}} kcal/day · difference {{difference}}',
+    },
+    explanation: {
+      toggle: 'How is this calculated?',
+      text: 'From the food you logged and the measured change in fat and lean mass. Only right if your food is logged completely.',
+      formula:
+        '(Food − {{fat}} × Δ fat − {{lean}} × Δ lean mass) ÷ days. Start and end as {{trend}}-day trend.',
+    },
+    weightOnly: {
+      balanceFat: '≈ {{value}} kg',
+      allFat: 'if it were all fat',
+      weight: '{{value}} kg',
+      trend: 'Weight, {{trend}}-day trend',
+      none: "No body fat data in Health. Only the weight is compared. Whether fat, muscle or water changed can't be told apart this way, and the actual burn can't be estimated.",
+      few: "Too few body fat measurements ({{count}} of {{min}}). Only the weight is compared. Whether fat, muscle or water changed can't be told apart this way, and the actual burn can't be estimated.",
+      short:
+        "The body fat measurements only cover {{days}}, {{min}} are needed. Only the weight is compared. Whether fat, muscle or water changed can't be told apart this way, and the actual burn can't be estimated.",
+    },
   },
   data: {
     title: 'Data from Health',

@@ -76,6 +76,14 @@ describe('chartLines', () => {
     expect(points[12].weightPoint).toBeCloseTo(1);
   });
 
+  it('starts theoretical fat with the measured line', () => {
+    const period = records(20, (i) => (i < 10 ? undefined : 80));
+    const { points } = chartLines(period, balances(period, 770), 0);
+    expect(points[9].theoreticalFat).toBeUndefined();
+    expect(points[10].theoreticalFat).toBeCloseTo(0.1);
+    expect(points[19].theoreticalFat).toBeCloseTo(1);
+  });
+
   it('hides weight and fat without measurements but keeps theoretical fat', () => {
     const period = records(10, () => undefined);
     const lines = chartLines(period, balances(period, 770), 0);
