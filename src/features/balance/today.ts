@@ -12,6 +12,10 @@ export function formatTime(date: Date, locale: string): string {
 
 export type TodayCardModel = {
   asOf: string;
+  // The whole day counts or not; a period that ends earlier has no choice.
+  canInclude: boolean;
+  // „+40 kcal“ in the folded row.
+  collapsed: string;
   balance: string;
   // „kcal“, or „kcal · als Erhaltung“ for a zero day.
   balanceUnit: string;
@@ -49,9 +53,17 @@ export function todayCard(
   const balance =
     day.kcal === undefined ? NONE : formatSigned(roundKcal(day.kcal), locale);
   const unknown = (label: string) => t('a11y.todayUnknown', { label });
+  const balanceLabel =
+    day.kcal === undefined
+      ? unknown(t('today.balance'))
+      : t('a11y.todayBalance', {
+          value: spokenSigned(roundKcal(day.kcal), locale, 0, t),
+        });
 
   return {
     asOf: t('today.asOf', { time }),
+    canInclude: placement !== 'outside',
+    collapsed: t('home.kcal', { value: balance }),
     balance,
     balanceUnit: day.maintenance ? t('today.maintenance') : t('today.unit'),
     food: day.food === undefined ? NONE : kcal(day.food),
@@ -59,13 +71,8 @@ export function todayCard(
     burnDetail,
     note: `${t('today.running')} ${t(`today.${placement}`)}`,
     labels: {
-      header: t('a11y.todayHeader', { time }),
-      balance:
-        day.kcal === undefined
-          ? unknown(t('today.balance'))
-          : t('a11y.todayBalance', {
-              value: spokenSigned(roundKcal(day.kcal), locale, 0, t),
-            }),
+      header: t('a11y.todayHeader', { time, balance: balanceLabel }),
+      balance: balanceLabel,
       food:
         day.food === undefined
           ? unknown(t('today.food'))

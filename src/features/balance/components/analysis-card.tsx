@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 
@@ -16,7 +16,10 @@ type AnalysisCardProps = Pick<BalanceReport, 'analysis' | 'days'>;
 
 // „Passt die Bilanz zur Waage?“: the balance against the energy the scale
 // measured, in the four states of the core.
-export function AnalysisCard({ analysis, days }: AnalysisCardProps) {
+export const AnalysisCard = memo(function AnalysisCard({
+  analysis,
+  days,
+}: AnalysisCardProps) {
   const colors = useColors();
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
@@ -156,7 +159,7 @@ export function AnalysisCard({ analysis, days }: AnalysisCardProps) {
       </View>
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   card: {

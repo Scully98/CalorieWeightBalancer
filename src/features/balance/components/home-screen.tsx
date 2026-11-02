@@ -32,7 +32,10 @@ export function HomeScreen({ initialUi }: { initialUi?: HomeUi } = {}) {
   const state = useBalance();
   const now = new Date();
   const span = periodSpan(period, includeToday, now);
-  const periodLabel = span && periodSubtitle(span, includeToday, now, t);
+  const periodLabel =
+    period.kind === 'custom' && span
+      ? periodSubtitle(span, includeToday, now, t)
+      : undefined;
   const store = useSettingsStore();
   // Open while „Eigener“ is being picked.
   const [picking, setPicking] = useState(initialUi?.picker);

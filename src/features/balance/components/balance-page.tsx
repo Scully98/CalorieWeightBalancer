@@ -1,12 +1,10 @@
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
-import { AnalysisCard } from './analysis-card';
-import { BalanceChart, type ChartTooltipPreset } from './balance-chart';
+import { BalanceContent } from './balance-content';
+import type { ChartTooltipPreset } from './balance-chart';
 import { EmptyState } from './empty-state';
-import { HeroSection } from './hero-section';
 import { PeriodSegments } from './period-segments';
-import { QualityRow } from './quality-row';
 import { TodayCard } from './today-card';
 import { AppText } from '@/components/app-text';
 import type { BalanceState } from '@/features/balance/use-balance';
@@ -14,6 +12,7 @@ import { space } from '@/theme/spacing';
 
 type BalancePageProps = {
   state: BalanceState;
+  // Only for a custom period; the presets name their days themselves.
   periodLabel?: string;
   // Gallery preset: the tolerance card starts open.
   toleranceOpen?: boolean;
@@ -25,8 +24,8 @@ type BalancePageProps = {
   onOpenQuality: () => void;
 };
 
-// The balance tab: period, the balance of that period, its
-// data quality, today so far, the chart and the Abgleich with the scale.
+// The balance tab: period, the balance of that period, today so far, the
+// actual burn from balance and scale, the chart, data quality and tolerance.
 export function BalancePage({
   state,
   periodLabel,
@@ -55,30 +54,23 @@ export function BalancePage({
         )}
       </View>
       {state.status === 'done' ? (
-        <>
-          <View style={styles.data}>
-            <HeroSection
-              balance={state.value.balance}
-              initialOpen={toleranceOpen}
-            />
-            <QualityRow balance={state.value.balance} onOpen={onOpenQuality} />
-          </View>
-          <TodayCard
-            today={state.value.today}
-            loadedAt={state.value.loadedAt}
-          />
-          <BalanceChart
-            chart={state.value.chart}
-            loadedAt={state.value.loadedAt}
-            initialTooltip={initialTooltip}
-          />
-          <AnalysisCard
-            analysis={state.value.analysis}
-            days={state.value.days}
-          />
-        </>
+        <BalanceContent
+          report={state.value}
+          toleranceOpen={toleranceOpen}
+          initialTooltip={initialTooltip}
+          onOpenQuality={onOpenQuality}
+        />
       ) : state.status === 'empty' ? (
-        <EmptyState report={state.value} />
+        <>
+          <EmptyState report={state.value} />
+          {/* The plus stays reachable, e.g. on the very first day. */}
+          {state.value.today.placement === 'outside' ? null : (
+            <TodayCard
+              today={state.value.today}
+              loadedAt={state.value.loadedAt}
+            />
+          )}
+        </>
       ) : state.status === 'error' ? (
         <EmptyState />
       ) : (
@@ -102,9 +94,6 @@ const styles = StyleSheet.create({
   },
   top: {
     gap: space.m,
-  },
-  data: {
-    gap: 14,
   },
   footer: {
     textAlign: 'center',

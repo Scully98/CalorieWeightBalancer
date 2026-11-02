@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 
@@ -16,7 +17,10 @@ type QualityRowProps = {
 // „24 von 30 Tagen vollständig“ with the patterns of the flags that occur.
 // Opens „Unvollständige Tage“; with every day complete there is nothing to
 // open.
-export function QualityRow({ balance, onOpen }: QualityRowProps) {
+export const QualityRow = memo(function QualityRow({
+  balance,
+  onOpen,
+}: QualityRowProps) {
   const colors = useColors();
   const { t } = useTranslation();
   const model = qualityRow(balance, t);
@@ -56,7 +60,7 @@ export function QualityRow({ balance, onOpen }: QualityRowProps) {
       ) : null}
     </Pressable>
   );
-}
+});
 
 const styles = StyleSheet.create({
   card: {
@@ -74,10 +78,7 @@ const styles = StyleSheet.create({
     gap: 7,
   },
   entries: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    rowGap: 5,
-    columnGap: 14,
+    gap: 5,
   },
   entry: {
     flexDirection: 'row',

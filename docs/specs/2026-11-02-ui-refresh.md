@@ -320,7 +320,7 @@ Keine App-Kürzel (Key Decision 16).
 
 ---
 
-### Milestone 3 — Seite: Hero, Heute, Reihenfolge, Toleranz
+### ✅ Milestone 3 — Seite: Hero, Heute, Reihenfolge, Toleranz
 
 > Die Seite bekommt ihren neuen Aufbau; die Abgleich-Karte zieht zunächst unverändert über den Chart.
 
@@ -358,24 +358,24 @@ Keine App-Kürzel (Key Decision 16).
 
 #### To-Dos
 
-- 🔲 Create `BalanceContent` with the order: hero, today, analysis card, chart, quality row, tolerance, and the tolerance draft
-- 🔲 Wrap chart, cards and quality row in `memo` so a slider drag renders only hero and tolerance
-- 🔲 Verify with the React profiler that the chart doesn't render during a drag
-- 🔲 Update the hero: centered, words with „kcal“, range without unit, „ca.“ line
-- 🔲 Remove `avg`, `avgLabel` and `fatNote` from `heroModel` and their keys (`home.hero.avg*`, `home.hero.fatNote`, `home.hero.fatRangeNote`, `a11y.avg*`); `toleranceRange` in the core stays unchanged
-- 🔲 Keep the spoken label free of a doubled unit
-- 🔲 Update `TodayCard`: dashed collapsed row with plus, title, „Stand“, balance, chevron
-- 🔲 Add the plus as `checkbox` with 44 pt target next to, not inside, the toggle (Key Decision 15)
-- 🔲 Hide the plus when today is `outside`; the note stays in the open card
-- 🔲 Keep the three columns and the note in the open card
-- 🔲 Show `TodayCard` below `EmptyState` when today isn't `outside`
-- 🔲 Show the period label only for a custom period
-- 🔲 Add the live range to the open `ToleranceCard`
-- 🔲 Stack the quality entries vertically
-- 🔲 Test `todayCard` with each placement and the unknown balance („–“)
-- 🔲 Test `heroModel` with the golden case: „+7.000“, „ca. +0,9 kg Körperfett“, range „+2.650“/„+19.350“, „ca. +0,3 bis +2,5 kg Körperfett“
-- 🔲 Check large Dynamic Type: hero wraps, today's row wraps, nothing is cut off
-- 🔲 Commit (`feat: rebuild the balance page in the new order`)
+- ✅ Create `BalanceContent` with the order: hero, today, analysis card, chart, quality row, tolerance, and the tolerance draft
+- ✅ Wrap chart, cards and quality row in `memo` so a slider drag renders only hero and tolerance
+- ✅ Verify with the React profiler that the chart doesn't render during a drag
+- ✅ Update the hero: centered, words with „kcal“, range without unit, „ca.“ line
+- ✅ Remove `avg`, `avgLabel` and `fatNote` from `heroModel` and their keys (`home.hero.avg*`, `home.hero.fatNote`, `home.hero.fatRangeNote`, `a11y.avg*`); `toleranceRange` in the core stays unchanged
+- ✅ Keep the spoken label free of a doubled unit
+- ✅ Update `TodayCard`: dashed collapsed row with plus, title, „Stand“, balance, chevron
+- ✅ Add the plus as `checkbox` with 44 pt target next to, not inside, the toggle (Key Decision 15)
+- ✅ Hide the plus when today is `outside`; the note stays in the open card
+- ✅ Keep the three columns and the note in the open card
+- ✅ Show `TodayCard` below `EmptyState` when today isn't `outside`
+- ✅ Show the period label only for a custom period
+- ✅ Add the live range to the open `ToleranceCard`
+- ✅ Stack the quality entries vertically
+- ✅ Test `todayCard` with each placement and the unknown balance („–“)
+- ✅ Test `heroModel` with the golden case: „+7.000“, „ca. +0,9 kg Körperfett“, range „+2.650“/„+19.350“, „ca. +0,3 bis +2,5 kg Körperfett“
+- ✅ Check large Dynamic Type: hero wraps, today's row wraps, nothing is cut off
+- ✅ Commit (`feat: rebuild the balance page in the new order`)
 
 #### Notes / Constraints
 

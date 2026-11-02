@@ -54,17 +54,14 @@ describe('balanceWords', () => {
 });
 
 describe('heroModel', () => {
-  it('shows the golden balance with words, average and fat', () => {
+  it('shows the golden balance with words and fat', () => {
     expect(heroModel(golden, OFF, 'de-DE', tDe)).toEqual({
       kind: 'single',
       kcal: ['+7.000'],
-      words: 'mehr gegessen als verbraucht',
-      avg: 'Ø +233 kcal pro Tag',
-      fat: '≈ +0,9 kg Körperfett',
-      fatNote: '(theoretisch, 7.700 kcal/kg)',
+      words: 'kcal mehr gegessen als verbraucht',
+      fat: 'ca. +0,9 kg Körperfett',
       label: 'plus 7.000 Kilokalorien, mehr gegessen als verbraucht',
-      avgLabel: 'Durchschnitt plus 233 Kilokalorien pro Tag',
-      fatLabel: 'etwa plus 0,9 Kilogramm Körperfett, theoretisch',
+      fatLabel: 'etwa plus 0,9 Kilogramm Körperfett, berechnet',
     });
   });
 
@@ -80,23 +77,19 @@ describe('heroModel', () => {
     expect(heroModel(golden, GOLDEN_TOLERANCE, 'de-DE', tDe)).toEqual({
       kind: 'range',
       kcal: ['+2.650', '+19.350'],
-      words: 'mehr gegessen als verbraucht',
-      avg: 'Ø +88 bis +645 kcal pro Tag',
-      fat: '≈ +0,3 bis +2,5 kg Fett',
-      fatNote: '(theoretisch)',
+      words: 'kcal mehr gegessen als verbraucht',
+      fat: 'ca. +0,3 bis +2,5 kg Körperfett',
       label:
         'plus 2.650 bis plus 19.350 Kilokalorien, mehr gegessen als verbraucht',
-      avgLabel: 'Durchschnitt plus 88 bis plus 645 Kilokalorien pro Tag',
-      fatLabel: 'etwa plus 0,3 bis plus 2,5 Kilogramm Fett, theoretisch',
+      fatLabel: 'etwa plus 0,3 bis plus 2,5 Kilogramm Körperfett, berechnet',
     });
   });
 
   it('shows ±0 and „so viel“ for a balance that rounds to zero', () => {
     const model = heroModel(balance(60004, 60000), OFF, 'de-DE', tDe);
     expect(model.kcal).toEqual(['±0']);
-    expect(model.words).toBe('so viel gegessen wie verbraucht');
-    expect(model.avg).toBe('Ø ±0 kcal pro Tag');
-    expect(model.fat).toBe('≈ ±0,0 kg Körperfett');
+    expect(model.words).toBe('kcal, so viel gegessen wie verbraucht');
+    expect(model.fat).toBe('ca. ±0,0 kg Körperfett');
     expect(model.label).toBe(
       'plus minus 0 Kilokalorien, so viel gegessen wie verbraucht',
     );
@@ -105,7 +98,7 @@ describe('heroModel', () => {
   it('shows a deficit with minus', () => {
     const model = heroModel(balance(60000, 61250), OFF, 'de-DE', tDe);
     expect(model.kcal).toEqual(['−1.250']);
-    expect(model.words).toBe('weniger gegessen als verbraucht');
+    expect(model.words).toBe('kcal weniger gegessen als verbraucht');
     expect(model.label).toBe(
       'minus 1.250 Kilokalorien, weniger gegessen als verbraucht',
     );
@@ -120,7 +113,7 @@ describe('heroModel', () => {
       tDe,
     );
     expect(model.kcal).toEqual(['−1.000', '+2.100']);
-    expect(model.words).toBe('je nach Messfehler Plus oder Minus');
+    expect(model.words).toBe('kcal, je nach Messfehler Plus oder Minus');
   });
 
   it('gives the same hero for a draft as for the stored tolerance', () => {

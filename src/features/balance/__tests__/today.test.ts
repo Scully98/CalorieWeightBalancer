@@ -59,6 +59,8 @@ describe('todayCard', () => {
     );
     expect(card).toEqual({
       asOf: 'Stand 14:32',
+      canInclude: true,
+      collapsed: '+40 kcal',
       balance: '+40',
       balanceUnit: 'kcal',
       food: '1.420',
@@ -66,12 +68,36 @@ describe('todayCard', () => {
       burnDetail: 'Ruhe 1.090 + Aktiv 290',
       note: 'Tag läuft noch, Verbrauch steigt bis Mitternacht. Zählt nicht zur Bilanz oben.',
       labels: {
-        header: 'Heute bisher, Stand 14:32',
+        header: 'Heute, Stand 14:32, Bilanz plus 40 Kilokalorien',
         balance: 'Bilanz plus 40 Kilokalorien',
         food: 'Gegessen 1.420 Kilokalorien',
         burn: 'Verbraucht 1.380 Kilokalorien, Ruhe 1.090 plus Aktiv 290',
       },
     });
+  });
+
+  it('offers the plus unless the period ends earlier', () => {
+    const day = running(DESIGN);
+    const canInclude = (placement: 'included' | 'excluded' | 'outside') =>
+      todayCard({ day, placement }, LOADED, 'de-DE', tDe).canInclude;
+    expect(canInclude('excluded')).toBe(true);
+    expect(canInclude('included')).toBe(true);
+    expect(canInclude('outside')).toBe(false);
+  });
+
+  it('folds an unknown balance to a dash', () => {
+    const day = running(
+      {},
+      { ...ON, zeroDaysAsMaintenance: false, profile: {} },
+    );
+    const card = todayCard(
+      { day, placement: 'excluded' },
+      LOADED,
+      'de-DE',
+      tDe,
+    );
+    expect(card.collapsed).toBe('– kcal');
+    expect(card.labels.header).toBe('Heute, Stand 14:32, Bilanz unbekannt');
   });
 
   it('says whether today counts', () => {

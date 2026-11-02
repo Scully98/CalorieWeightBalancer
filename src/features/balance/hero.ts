@@ -6,11 +6,7 @@ import {
   roundKcal,
   roundRangeKcal,
 } from '@/core/format';
-import {
-  KCAL_PER_KG_FAT,
-  toleranceRange,
-  type PeriodBalance,
-} from '@/core/period-balance';
+import { toleranceRange, type PeriodBalance } from '@/core/period-balance';
 import type { Settings } from '@/core/settings';
 
 export type BalanceWords = 'more' | 'less' | 'even' | 'either';
@@ -20,12 +16,10 @@ export type HeroModel = {
   kind: 'single' | 'range';
   // The value, or both ends of the range, with sign.
   kcal: string[];
+  // Below the number, with the unit.
   words: string;
-  avg: string;
   fat: string;
-  fatNote: string;
   label: string;
-  avgLabel: string;
   fatLabel: string;
 };
 
@@ -67,23 +61,21 @@ export function heroModel(
 
   if (tolerance.foodPercent === 0 && tolerance.burnPercent === 0) {
     const kcal = roundKcal(balance.kcal);
-    const words = t(`home.words.${balanceWords(kcal)}`);
+    const words = balanceWords(kcal);
     return {
       kind: 'single',
       kcal: [signed(kcal)],
-      words,
-      avg: t('home.hero.avg', { value: signed(balance.avgKcal) }),
+      words: t(`home.heroWords.${words}`),
       fat: t('home.hero.fat', { value: signed(balance.fatKg, 1) }),
-      fatNote: t('home.hero.fatNote', {
-        kcalPerKg: formatNumber(KCAL_PER_KG_FAT, locale),
+      label: t('a11y.heroKcal', {
+        value: spoken(kcal),
+        words: t(`home.words.${words}`),
       }),
-      label: t('a11y.heroKcal', { value: spoken(kcal), words }),
-      avgLabel: t('a11y.avg', { value: spoken(balance.avgKcal) }),
       fatLabel: t('a11y.fat', { value: spoken(balance.fatKg, 1) }),
     };
   }
 
-  const { range, avgRange, fatRange } = toleranceRange(
+  const { range, fatRange } = toleranceRange(
     {
       foodKcal: balance.foodKcal,
       burnKcal: balance.restingKcal + balance.activeKcal,
@@ -93,24 +85,19 @@ export function heroModel(
   );
   const min = roundRangeKcal(range.min);
   const max = roundRangeKcal(range.max);
-  const words = t(`home.words.${balanceWords(min, max)}`);
+  const words = balanceWords(min, max);
   return {
     kind: 'range',
     kcal: [signed(min), signed(max)],
-    words,
-    avg: t('home.hero.avgRange', {
-      min: signed(avgRange.min),
-      max: signed(avgRange.max),
-    }),
+    words: t(`home.heroWords.${words}`),
     fat: t('home.hero.fatRange', {
       min: signed(fatRange.min, 1),
       max: signed(fatRange.max, 1),
     }),
-    fatNote: t('home.hero.fatRangeNote'),
-    label: t('a11y.heroRange', { min: spoken(min), max: spoken(max), words }),
-    avgLabel: t('a11y.avgRange', {
-      min: spoken(avgRange.min),
-      max: spoken(avgRange.max),
+    label: t('a11y.heroRange', {
+      min: spoken(min),
+      max: spoken(max),
+      words: t(`home.words.${words}`),
     }),
     fatLabel: t('a11y.fatRange', {
       min: spoken(fatRange.min, 1),

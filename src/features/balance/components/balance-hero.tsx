@@ -10,7 +10,7 @@ type BalanceHeroProps = {
 };
 
 // The balance of the period: one value or the tolerance range, the words
-// that say what plus means, then average and fat equivalent.
+// that say what plus means, then the fat equivalent.
 export function BalanceHero({ model }: BalanceHeroProps) {
   const { t } = useTranslation();
   const [first, last] = model.kcal;
@@ -19,62 +19,53 @@ export function BalanceHero({ model }: BalanceHeroProps) {
     <View style={styles.hero}>
       <View accessible accessibilityLabel={model.label} style={styles.top}>
         {model.kind === 'single' ? (
-          <View style={styles.numberRow}>
-            <AppText variant="hero">{first}</AppText>
-            <AppText variant="heroUnit">{t('home.hero.kcal')}</AppText>
-          </View>
+          <AppText variant="hero" style={styles.center}>
+            {first}
+          </AppText>
         ) : (
-          <View style={[styles.numberRow, styles.rangeRow]}>
+          <View style={styles.rangeRow}>
             <AppText variant="heroRange">{first}</AppText>
             <AppText variant="heroRangeUnit" style={styles.to}>
               {t('home.hero.to')}
             </AppText>
             <AppText variant="heroRange">{last}</AppText>
-            <AppText variant="heroRangeUnit">{t('home.hero.kcal')}</AppText>
           </View>
         )}
-        <AppText variant="heroWords">{model.words}</AppText>
-      </View>
-      <View style={styles.details}>
-        <AppText
-          variant="secondary"
-          tone="muted"
-          accessibilityLabel={model.avgLabel}
-        >
-          {model.avg}
-        </AppText>
-        <AppText accessibilityLabel={model.fatLabel}>
-          {model.fat}{' '}
-          <AppText variant="footnote" tone="muted">
-            {model.fatNote}
-          </AppText>
+        <AppText variant="heroWords" style={styles.center}>
+          {model.words}
         </AppText>
       </View>
+      <AppText
+        variant="secondary"
+        tone="muted"
+        accessibilityLabel={model.fatLabel}
+        style={styles.center}
+      >
+        {model.fat}
+      </AppText>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   hero: {
-    gap: space.xs,
+    gap: space.s,
+    paddingVertical: space.s,
   },
   top: {
     gap: space.xs,
   },
-  numberRow: {
+  center: {
+    textAlign: 'center',
+  },
+  rangeRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     alignItems: 'baseline',
-    columnGap: space.s,
-  },
-  rangeRow: {
+    justifyContent: 'center',
     columnGap: 10,
   },
   to: {
     fontWeight: '500',
-  },
-  details: {
-    gap: 3,
-    marginTop: space.s,
   },
 });
