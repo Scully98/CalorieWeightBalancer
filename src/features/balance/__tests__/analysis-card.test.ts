@@ -47,10 +47,12 @@ const VALUES: AnalysisValues = {
   differencePerDay: 90,
 };
 const COUNTS = { days: 30, measurements: 18 };
+const COMPARED = { from: '2026-09-24', to: '2026-10-23' };
 
 const ok = (expected: Expected, composition?: Composition): Analysis => ({
   ...COUNTS,
   state: 'ok',
+  compared: COMPARED,
   values: VALUES,
   expected,
   composition,
@@ -63,6 +65,7 @@ const deviation = (
 ): Analysis => ({
   ...COUNTS,
   state: 'deviation',
+  compared: COMPARED,
   values,
   direction,
   expected,
@@ -167,7 +170,13 @@ describe('analysisCardModel', () => {
 
   it('dims a preview without a verdict while insufficient', () => {
     const model = analysisCardModel(
-      { days: 7, measurements: 4, state: 'insufficient', preview: VALUES },
+      {
+        days: 7,
+        measurements: 4,
+        state: 'insufficient',
+        spanDays: 7,
+        preview: VALUES,
+      },
       DAYS,
       'de-DE',
       tDe,
@@ -186,7 +195,7 @@ describe('analysisCardModel', () => {
   it('shows dashes without a preview', () => {
     const body = composition(
       analysisCardModel(
-        { days: 7, measurements: 1, state: 'insufficient' },
+        { days: 7, measurements: 1, state: 'insufficient', spanDays: 1 },
         DAYS,
         'de-DE',
         tDe,
@@ -202,9 +211,9 @@ describe('analysisCardModel', () => {
   });
 
   it('names only the measurements from 21 days on', () => {
-    const model = (days: number, measurements: number) =>
+    const model = (days: number, measurements: number, spanDays = 6) =>
       analysisCardModel(
-        { days, measurements, state: 'insufficient' },
+        { days, measurements, state: 'insufficient', spanDays },
         DAYS,
         'de-DE',
         tDe,
@@ -212,16 +221,45 @@ describe('analysisCardModel', () => {
     expect(model(30, 4).locked?.soFar).toBe('Bisher: 4 Messungen.');
     expect(model(1, 1).locked?.soFar).toBe('Bisher: 1 Tag, 1 Messung.');
     expect(model(30, 1).subtitle).toMatch(/· 1 Messung$/);
+    expect(model(30, 6, 6).locked?.soFar).toBe(
+      'Bisher: 6 Messungen, die 6 Tage abdecken.',
+    );
+  });
+
+  it('names the days compared, not the whole period', () => {
+    const model = analysisCardModel(
+      {
+        ...COUNTS,
+        state: 'ok',
+        expected: 'gain',
+        values: VALUES,
+        compared: { from: '2026-10-01', to: '2026-10-23' },
+      },
+      DAYS,
+      'de-DE',
+      tDe,
+    );
+    expect(model.subtitle).toMatch(/^1\. Okt – 23\. Okt/);
   });
 
   it('compares the weight only, with a note by body fat days', () => {
-    const weightOnly = (compositionMeasurements: number): Analysis => ({
+    const weightOnly = (
+      compositionMeasurements: number,
+      compositionSpanDays = 0,
+    ): Analysis => ({
       ...COUNTS,
       state: 'weightOnly',
+      compared: COMPARED,
       balanceFatKg: 0.9,
       weightChangeKg: 0.7,
       compositionMeasurements,
+      compositionSpanDays,
     });
+    const short = analysisCardModel(weightOnly(10, 10), DAYS, 'de-DE', tDe);
+    if (short.body.kind !== 'weightOnly') throw new Error(short.body.kind);
+    expect(short.body.note).toMatch(
+      /^Die Körperfett-Messungen decken erst 10 Tage ab, nötig sind 21\./,
+    );
     const none = analysisCardModel(weightOnly(0), DAYS, 'de-DE', tDe);
     if (none.body.kind !== 'weightOnly') throw new Error(none.body.kind);
     expect(none.dimmed).toBe(false);

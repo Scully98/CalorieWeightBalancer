@@ -1,4 +1,4 @@
-import { chartBuckets, worstFlag, type WeekBucket } from '../chart';
+import { chartBuckets, primaryFlag, type WeekBucket } from '../chart';
 import { addDays } from '../dates';
 import type { DayBalance, DayFlag } from '../day-balance';
 import { toDateKey } from '../day-record';
@@ -101,7 +101,7 @@ describe('chartBuckets', () => {
       // (0 − 1,600 + 4 × 300) ÷ 6 counted days.
       avgKcal: expect.closeTo(-400 / 6),
       incompleteDays: 3,
-      worst: 'lowFood',
+      primaryFlag: 'lowFood',
     });
     // Zero day eats what it burns: (2,600 + 1,000 + 4 × 2,900) ÷ 6.
     expect(week?.avgFoodKcal).toBeCloseTo(15200 / 6);
@@ -182,18 +182,18 @@ describe('chartBuckets', () => {
     expect(estimated).toMatchObject({
       resting: 1750,
       restingSource: 'formula',
-      worst: 'restingEstimated',
+      primaryFlag: 'restingEstimated',
     });
     expect('body' in estimated).toBe(false);
   });
 });
 
-describe('worstFlag', () => {
+describe('primaryFlag', () => {
   it('ranks low food over no food over no resting over estimated', () => {
-    expect(worstFlag(['restingEstimated', 'noResting'])).toBe('noResting');
-    expect(worstFlag(['noResting', 'noFood'])).toBe('noFood');
-    expect(worstFlag(['noFood', 'lowFood'])).toBe('lowFood');
-    expect(worstFlag(['restingEstimated'])).toBe('restingEstimated');
-    expect(worstFlag([])).toBeUndefined();
+    expect(primaryFlag(['restingEstimated', 'noResting'])).toBe('noResting');
+    expect(primaryFlag(['noResting', 'noFood'])).toBe('noFood');
+    expect(primaryFlag(['noFood', 'lowFood'])).toBe('lowFood');
+    expect(primaryFlag(['restingEstimated'])).toBe('restingEstimated');
+    expect(primaryFlag([])).toBeUndefined();
   });
 });

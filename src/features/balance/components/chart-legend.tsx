@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
-import Svg, { Line } from 'react-native-svg';
+import Svg, { Circle, Line } from 'react-native-svg';
 
-import { LINE_STROKE } from './chart-canvas';
+import { LINE_STROKE, POINT } from './chart-canvas';
 import type {
   ChartLegend as Legend,
   ChartSeries,
@@ -45,6 +45,24 @@ function ChipIcon({ series }: { series: ChartSeries }) {
   if (series === 'bars')
     return (
       <View style={[styles.barIcon, { backgroundColor: colors.foreground }]} />
+    );
+  if (series === 'points')
+    return (
+      <Svg
+        width={CHIP_ICON.height}
+        height={CHIP_ICON.height}
+        accessible={false}
+        importantForAccessibility="no-hide-descendants"
+      >
+        <Circle
+          cx={CHIP_ICON.height / 2}
+          cy={CHIP_ICON.height / 2}
+          r={POINT.r}
+          fill="none"
+          stroke={colors.foreground}
+          strokeWidth={POINT.strokeWidth}
+        />
+      </Svg>
     );
   const stroke = LINE_STROKE[series];
   const inset = stroke.strokeLinecap ? 1.5 : 0;

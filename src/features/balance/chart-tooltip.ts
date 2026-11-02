@@ -121,7 +121,9 @@ function dayModel(
     };
   }
 
-  const badge = bucket.worst ? t(FLAG_BADGE[bucket.worst]) : undefined;
+  const badge = bucket.primaryFlag
+    ? t(FLAG_BADGE[bucket.primaryFlag])
+    : undefined;
   const { weightKg, fatKg } = bucket.body ?? {};
   const footer =
     weightKg === undefined

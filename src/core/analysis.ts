@@ -1,4 +1,4 @@
-import { bodyValues, trendSeries, type BodyKey } from './body';
+import { bodyValues, TREND_DAYS, trendSeries, type BodyKey } from './body';
 import type { DayBalance } from './day-balance';
 import type { DayRecord } from './day-record';
 import { fatKgFromKcal } from './period-balance';
@@ -53,19 +53,33 @@ export type Composition =
 
 type Verdict = { expected: Expected; composition?: Composition };
 
+// The days the comparison covers, both included (YYYY-MM-DD).
+export type ComparedDays = { from: string; to: string };
+
 export type Analysis =
-  | (Counts & { state: 'insufficient'; preview?: AnalysisValues })
+  | (Counts & {
+      state: 'insufficient';
+      // Days the weight measurements cover.
+      spanDays: number;
+      // Only when the measurements cover the whole period.
+      preview?: AnalysisValues;
+    })
   | (Counts & {
       state: 'weightOnly';
+      compared: ComparedDays;
       balanceFatKg: number;
       weightChangeKg: number;
-      // Days with fat and lean mass in the period, below 6.
+      // Days with fat and lean mass in the period, and the days they cover;
+      // one of them is below its minimum.
       compositionMeasurements: number;
+      compositionSpanDays: number;
     })
-  | (Counts & Verdict & { state: 'ok'; values: AnalysisValues })
+  | (Counts &
+      Verdict & { state: 'ok'; compared: ComparedDays; values: AnalysisValues })
   | (Counts &
       Verdict & {
         state: 'deviation';
+        compared: ComparedDays;
         values: AnalysisValues;
         // less: the scale shows less energy stored than the balance.
         direction: 'less' | 'more';
@@ -95,16 +109,53 @@ export function bodyComposition(
   };
 }
 
-// Start and end of a trend in the period: the first and last value, so a
-// trend that only begins within the period starts there.
+// Period days the scale can speak for, as indices of the period. It starts on
+// day 0 with a measurement in that day's trend window, else at the first
+// measurement. It runs to the last day with a measurement in that day's window,
+// else only to the last measurement: older values would stand in for days the
+// scale has not seen.
+type Span = { start: number; end: number };
+
+function measuredSpan(
+  records: readonly DayRecord[],
+  key: BodyKey,
+  leadInDays: number,
+): Span | undefined {
+  const measured = records.flatMap((record, index) =>
+    bodyValues(record)[key] === undefined ? [] : [index - leadInDays],
+  );
+  const inPeriod = measured.filter((index) => index >= 0);
+  if (inPeriod.length === 0) return undefined;
+  const lastDay = records.length - leadInDays - 1;
+  const lastMeasured = inPeriod[inPeriod.length - 1];
+  return {
+    start: measured.some((index) => index < 0 && index > -TREND_DAYS)
+      ? 0
+      : inPeriod[0],
+    end: lastDay - lastMeasured < TREND_DAYS ? lastDay : lastMeasured,
+  };
+}
+
+function spanDays(span: Span | undefined): number {
+  return span ? span.end - span.start + 1 : 0;
+}
+
+function comparedDays(
+  days: readonly DayBalance[],
+  { start, end }: Span,
+): ComparedDays {
+  return { from: days[start].date, to: days[end].date };
+}
+
 function trendEnds(
   records: readonly DayRecord[],
   key: BodyKey,
   leadInDays: number,
+  span: Span,
 ): { start: number; end: number } | undefined {
   const trend = trendSeries(records, key).slice(leadInDays);
-  const start = trend.find((value) => value !== undefined);
-  const end = trend[trend.length - 1];
+  const start = trend[span.start];
+  const end = trend[span.end];
   return start === undefined || end === undefined ? undefined : { start, end };
 }
 
@@ -112,11 +163,14 @@ function analysisValues(
   records: readonly DayRecord[],
   days: readonly DayBalance[],
   leadInDays: number,
+  span: Span,
 ): AnalysisValues | undefined {
-  const weight = trendEnds(records, 'weightKg', leadInDays);
-  const fat = trendEnds(records, 'fatKg', leadInDays);
-  const lean = trendEnds(records, 'leanKg', leadInDays);
-  const counted = days.filter((day) => day.kcal !== undefined);
+  const weight = trendEnds(records, 'weightKg', leadInDays, span);
+  const fat = trendEnds(records, 'fatKg', leadInDays, span);
+  const lean = trendEnds(records, 'leanKg', leadInDays, span);
+  const counted = days
+    .slice(span.start, span.end + 1)
+    .filter((day) => day.kcal !== undefined);
   if (!weight || !fat || !lean || counted.length === 0) return undefined;
 
   let balanceKcal = 0;
@@ -153,8 +207,9 @@ function analysisValues(
 }
 
 // Compares the balance with the change the scale measured: E = 9,400 · Δ fat
-// + 1,800 · Δ lean, with start and end as 7-day trend. `records` are the
-// lead-in days followed by the period days, `days` the balances of the period.
+// + 1,800 · Δ lean, with start and end as 7-day trend. Both sides cover the
+// same days, see measuredSpan. `records` are the lead-in days followed by the
+// period days, `days` the balances of the period.
 export function analyzeBalance(
   records: readonly DayRecord[],
   days: readonly DayBalance[],
@@ -166,26 +221,54 @@ export function analyzeBalance(
     measurements: period.filter((record) => record.weightKg !== undefined)
       .length,
   };
-  const values = analysisValues(records, days, leadInDays);
+  const weightSpan = measuredSpan(records, 'weightKg', leadInDays);
+  const fatSpan = measuredSpan(records, 'fatKg', leadInDays);
 
-  if (counts.days < MIN_ANALYSIS_DAYS || counts.measurements < MIN_MEASUREMENTS)
-    return { ...counts, state: 'insufficient', preview: values };
+  if (
+    !weightSpan ||
+    counts.days < MIN_ANALYSIS_DAYS ||
+    counts.measurements < MIN_MEASUREMENTS ||
+    spanDays(weightSpan) < MIN_ANALYSIS_DAYS
+  )
+    return {
+      ...counts,
+      state: 'insufficient',
+      spanDays: spanDays(weightSpan),
+      preview:
+        fatSpan && spanDays(fatSpan) === counts.days
+          ? analysisValues(records, days, leadInDays, fatSpan)
+          : undefined,
+    };
 
   const compositionMeasurements = period.filter(
     (record) => bodyValues(record).fatKg !== undefined,
   ).length;
-  if (!values || compositionMeasurements < MIN_MEASUREMENTS) {
-    const weight = trendEnds(records, 'weightKg', leadInDays);
-    const balanceKcal = days.reduce((sum, day) => sum + (day.kcal ?? 0), 0);
+  if (
+    !fatSpan ||
+    compositionMeasurements < MIN_MEASUREMENTS ||
+    spanDays(fatSpan) < MIN_ANALYSIS_DAYS
+  ) {
+    const weight = trendEnds(records, 'weightKg', leadInDays, weightSpan);
+    const balanceKcal = days
+      .slice(weightSpan.start, weightSpan.end + 1)
+      .reduce((sum, day) => sum + (day.kcal ?? 0), 0);
     return {
       ...counts,
       state: 'weightOnly',
+      compared: comparedDays(days, weightSpan),
       balanceFatKg: fatKgFromKcal(balanceKcal),
       weightChangeKg: weight ? weight.end - weight.start : 0,
       compositionMeasurements,
+      compositionSpanDays: spanDays(fatSpan),
     };
   }
 
+  const values = analysisValues(records, days, leadInDays, fatSpan);
+  // No day of the span has a balance.
+  if (!values)
+    return { ...counts, state: 'insufficient', spanDays: spanDays(weightSpan) };
+
+  const compared = comparedDays(days, fatSpan);
   const verdict: Verdict = {
     expected: expectedChange(values.balanceKcal),
     composition: bodyComposition(values.fatChangeKg, values.leanChangeKg),
@@ -195,11 +278,12 @@ export function analyzeBalance(
     Math.abs(gap) <=
     Math.max(FIT_SHARE * Math.abs(values.balanceKcal), FIT_MIN_KCAL)
   )
-    return { ...counts, ...verdict, state: 'ok', values };
+    return { ...counts, ...verdict, state: 'ok', compared, values };
   return {
     ...counts,
     ...verdict,
     state: 'deviation',
+    compared,
     values,
     direction: gap < 0 ? 'less' : 'more',
   };

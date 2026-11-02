@@ -41,7 +41,7 @@ const DATE_LABEL_END_GAP = 4;
 // More weeks than this get every second label.
 const WEEK_LABELS_ALL = 9;
 
-export type ChartSeries = 'bars' | 'weight' | 'fat' | 'theoretical';
+export type ChartSeries = 'bars' | 'weight' | 'points' | 'fat' | 'theoretical';
 export type HiddenSeries = Partial<Record<ChartSeries, boolean>>;
 
 export type BarKind = 'full' | 'hatch' | 'stripes' | 'today';
@@ -73,7 +73,7 @@ export type ChartTick = {
 
 export type ChartLabel = { x: number; text: string };
 
-export type LineSeries = Exclude<ChartSeries, 'bars'>;
+export type LineSeries = Exclude<ChartSeries, 'bars' | 'points'>;
 
 export type ChartLine = { series: LineSeries; segments: string[] };
 
@@ -131,8 +131,8 @@ function barKind(bucket: ChartBucket): BarKind | undefined {
   }
   if (bucket.today) return bucket.kcal === undefined ? undefined : 'today';
   if (bucket.kcal === undefined || bucket.maintenance) return undefined;
-  if (bucket.worst === 'restingEstimated') return 'hatch';
-  if (bucket.worst === 'lowFood') return 'stripes';
+  if (bucket.primaryFlag === 'restingEstimated') return 'hatch';
+  if (bucket.primaryFlag === 'lowFood') return 'stripes';
   return 'full';
 }
 
@@ -308,9 +308,13 @@ export function chartModel(
   const visibleLines = LINE_ORDER.filter(
     (series) => lineAvailable(series, lines) && !hidden[series],
   );
+  const hasPoints = lines.points.some(
+    (point) => point.weightPoint !== undefined,
+  );
+  const showPoints = hasPoints && !hidden.points;
   const kgValues = lines.points.flatMap((point) => [
     ...visibleLines.map((series) => LINE_VALUE[series](point)),
-    visibleLines.includes('weight') ? point.weightPoint : undefined,
+    showPoints ? point.weightPoint : undefined,
   ]);
   const kgScaleValue = kgScale(
     Math.max(
@@ -369,6 +373,7 @@ export function chartModel(
   const chipSeries: ChartSeries[] = [
     'bars',
     ...(lines.hasWeight ? (['weight'] as const) : []),
+    ...(hasPoints ? (['points'] as const) : []),
     ...(lines.hasFat ? (['fat'] as const) : []),
     ...(lines.points.length > 0 ? (['theoretical'] as const) : []),
   ];
@@ -385,13 +390,13 @@ export function chartModel(
     bars,
     crosses,
     ticks,
-    showRight: visibleLines.length > 0,
+    showRight: visibleLines.length > 0 || showPoints,
     xLabels: daily ? dayLabels(slots, t) : weekLabels(slots, t),
     lines: visibleLines.map((series) => ({
       series,
       segments: segments(lines.points, LINE_VALUE[series], lineX, yKg),
     })),
-    points: visibleLines.includes('weight')
+    points: showPoints
       ? lines.points.flatMap((point, index) =>
           point.weightPoint === undefined
             ? []
@@ -406,6 +411,16 @@ export function chartModel(
       hints,
     },
   };
+}
+
+// Selection after a tap at x (viewBox units): an open tooltip closes wherever
+// the tap lands, because a day's slot is too narrow to hit again.
+export function selectionAfterTap(
+  slots: readonly ChartSlot[],
+  x: number,
+  selected: number | undefined,
+): number | undefined {
+  return selected === undefined ? slotAt(slots, x) : undefined;
 }
 
 // Index of the slot under x (viewBox units); clamped into the plot while

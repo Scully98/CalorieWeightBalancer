@@ -1,6 +1,12 @@
 import { createInstance } from 'i18next';
 
-import { chartModel, PLOT, slotAt, VIEW } from '../chart-model';
+import {
+  chartModel,
+  PLOT,
+  selectionAfterTap,
+  slotAt,
+  VIEW,
+} from '../chart-model';
 import { chartBuckets, type ChartBucket } from '@/core/chart';
 import { addDays } from '@/core/dates';
 import type { DayBalance } from '@/core/day-balance';
@@ -101,7 +107,7 @@ describe('chartModel slots and bars', () => {
     expect(m.legend.hints).toEqual(['weekIncomplete']);
   });
 
-  it('fills day bars by the worst flag', () => {
+  it('fills day bars by the primary flag', () => {
     const m = model(
       chartBuckets(
         period(4, {
@@ -264,6 +270,7 @@ describe('chartModel lines', () => {
     expect(m.legend.chips.map((chip) => chip.series)).toEqual([
       'bars',
       'weight',
+      'points',
       'fat',
       'theoretical',
     ]);
@@ -275,11 +282,34 @@ describe('chartModel lines', () => {
     expect(model(chartBuckets(period(30)), withBody).ticks[0].right).toBe(
       '+2,0',
     );
-    // Without weight only fat and theoretical (max 0,58) → 1.
-    const m = model(chartBuckets(period(30)), withBody, { weight: true });
-    expect(m.ticks[0].right).toBe('+1,0');
-    expect(m.points).toEqual([]);
-    expect(m.ticks[1].right).toBe('+0,5');
+    // Without the points the weight line (max 0,87) → 1.
+    const noPoints = model(chartBuckets(period(30)), withBody, {
+      points: true,
+    });
+    expect(noPoints.ticks[0].right).toBe('+1,0');
+    expect(noPoints.ticks[1].right).toBe('+0,5');
+  });
+
+  it('switches points and weight line independently', () => {
+    const buckets = chartBuckets(period(30));
+    const noPoints = model(buckets, withBody, { points: true });
+    expect(noPoints.points).toEqual([]);
+    expect(noPoints.lines.map((line) => line.series)).toContain('weight');
+    expect(
+      noPoints.legend.chips.find((chip) => chip.series === 'points')?.visible,
+    ).toBe(false);
+
+    const noLine = model(buckets, withBody, { weight: true });
+    expect(noLine.points).toHaveLength(10);
+    expect(noLine.lines.map((line) => line.series)).not.toContain('weight');
+
+    const onlyPoints = model(buckets, withBody, {
+      weight: true,
+      fat: true,
+      theoretical: true,
+    });
+    expect(onlyPoints.lines).toEqual([]);
+    expect(onlyPoints.showRight).toBe(true);
   });
 
   it('uses 0,5 kg for small changes', () => {
@@ -332,6 +362,21 @@ describe('chartModel lines', () => {
 function withBody90() {
   return lines(90, (index) => ({ weightTrend: index * 0.01 }));
 }
+
+describe('selectionAfterTap', () => {
+  const slots = model(chartBuckets(period(10)), lines(10)).slots;
+
+  it('selects the bar under the tap while nothing is selected', () => {
+    expect(selectionAfterTap(slots, slots[3].center, undefined)).toBe(3);
+    expect(selectionAfterTap(slots, PLOT.left - 1, undefined)).toBeUndefined();
+  });
+
+  it('closes the tooltip wherever the tap lands', () => {
+    expect(selectionAfterTap(slots, slots[3].center, 3)).toBeUndefined();
+    expect(selectionAfterTap(slots, slots[7].center, 3)).toBeUndefined();
+    expect(selectionAfterTap(slots, PLOT.left - 1, 3)).toBeUndefined();
+  });
+});
 
 describe('slotAt', () => {
   const slots = model(chartBuckets(period(10)), lines(10)).slots;

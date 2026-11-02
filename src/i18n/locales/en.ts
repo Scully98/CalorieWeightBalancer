@@ -228,6 +228,7 @@ export const en: typeof de = {
     chips: {
       bars: 'Balance',
       weight: 'Weight',
+      points: 'Measurements',
       fat: 'Fat mass',
       theoretical: 'Fat from balance',
     },
@@ -370,6 +371,7 @@ export const en: typeof de = {
       hint: 'The comparison needs at least {{days}} days and {{measurements}} measurements.',
       soFarDays: 'So far: {{days}}, {{measurements}}.',
       soFar: 'So far: {{measurements}}.',
+      soFarSpan: 'So far: {{measurements}} covering {{days}}.',
     },
     balance: 'By balance',
     scale: 'By scale',
@@ -429,6 +431,8 @@ export const en: typeof de = {
       trend: 'Weight, {{trend}}-day trend',
       none: "No body fat data in Health. Only the weight is compared. Whether fat, muscle or water changed can't be told apart this way, and the actual burn can't be estimated.",
       few: "Too few body fat measurements ({{count}} of {{min}}). Only the weight is compared. Whether fat, muscle or water changed can't be told apart this way, and the actual burn can't be estimated.",
+      short:
+        "The body fat measurements only cover {{days}}, {{min}} are needed. Only the weight is compared. Whether fat, muscle or water changed can't be told apart this way, and the actual burn can't be estimated.",
     },
   },
   data: {

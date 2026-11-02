@@ -226,6 +226,7 @@ export const de = {
     chips: {
       bars: 'Bilanz',
       weight: 'Gewicht',
+      points: 'Messpunkte',
       fat: 'Fettmasse',
       theoretical: 'Fett laut Bilanz',
     },
@@ -369,6 +370,7 @@ export const de = {
       hint: 'Für den Abgleich brauchst du mindestens {{days}} Tage und {{measurements}} Messungen.',
       soFarDays: 'Bisher: {{days}}, {{measurements}}.',
       soFar: 'Bisher: {{measurements}}.',
+      soFarSpan: 'Bisher: {{measurements}}, die {{days}} abdecken.',
     },
     balance: 'Laut Bilanz',
     scale: 'Laut Waage',
@@ -428,6 +430,8 @@ export const de = {
       trend: 'Gewicht, {{trend}}-Tage-Trend',
       none: 'Keine Körperfett-Daten in Health. Verglichen wird nur das Gewicht. Ob Fett, Muskeln oder Wasser dazugekommen sind, lässt sich so nicht trennen, und der tatsächliche Verbrauch kann nicht geschätzt werden.',
       few: 'Zu wenige Körperfett-Messungen ({{count}} von {{min}}). Verglichen wird nur das Gewicht. Ob Fett, Muskeln oder Wasser dazugekommen sind, lässt sich so nicht trennen, und der tatsächliche Verbrauch kann nicht geschätzt werden.',
+      short:
+        'Die Körperfett-Messungen decken erst {{days}} ab, nötig sind {{min}}. Verglichen wird nur das Gewicht. Ob Fett, Muskeln oder Wasser dazugekommen sind, lässt sich so nicht trennen, und der tatsächliche Verbrauch kann nicht geschätzt werden.',
     },
   },
   data: {

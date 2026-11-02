@@ -73,7 +73,7 @@ describe('analyzeBalance', () => {
   it('needs 21 days and 6 measurements', () => {
     const five = (i: number) => i < 10 && i % 2 === 0;
     expect(analyze({ days: 21, measured: five }).state).toBe('insufficient');
-    const six = (i: number) => i <= 10 && i % 2 === 0;
+    const six = (i: number) => i % 4 === 0;
     expect(analyze({ days: 21, measured: six }).state).not.toBe('insufficient');
     expect(analyze({ days: 20, measured: () => true }).state).toBe(
       'insufficient',
@@ -85,6 +85,129 @@ describe('analyzeBalance', () => {
     expect(analysis.state === 'insufficient' && analysis.preview).toMatchObject(
       { balanceKcal: 4200 },
     );
+  });
+
+  describe('with measurements in only part of the period', () => {
+    // 80 kg at the start, +0.04 kg per day, body fat 20 %.
+    const fat = (i: number) => (80 + i * 0.04) * 0.2;
+    const lean = (i: number) => (80 + i * 0.04) * 0.8;
+
+    it('locks without a preview for two measurements at the end', () => {
+      const analysis = analyze({
+        days: 30,
+        measured: (i) => i >= 28,
+        fat,
+        lean,
+      });
+      expect(analysis).toMatchObject({
+        state: 'insufficient',
+        measurements: 2,
+        spanDays: 2,
+      });
+      expect(
+        analysis.state === 'insufficient' && analysis.preview,
+      ).toBeUndefined();
+    });
+
+    it('locks when six measurements only cover the last days', () => {
+      expect(
+        analyze({ days: 30, measured: (i) => i >= 24, fat, lean }),
+      ).toMatchObject({ state: 'insufficient', measurements: 6, spanDays: 6 });
+    });
+
+    it('locks when six measurements only cover the first days', () => {
+      expect(
+        analyze({ days: 30, measured: (i) => i < 6, fat, lean }),
+      ).toMatchObject({ state: 'insufficient', measurements: 6, spanDays: 6 });
+    });
+
+    it('locks when the end has no trend at all', () => {
+      expect(
+        analyze({ days: 90, measured: (i) => i < 10, fat, lean }),
+      ).toMatchObject({ state: 'insufficient', spanDays: 10 });
+    });
+
+    it('sums the balance only over the measured days', () => {
+      const analysis = analyze({
+        days: 60,
+        measured: (i) => i >= 30,
+        fat,
+        lean,
+      });
+      if (analysis.state !== 'deviation' && analysis.state !== 'ok')
+        throw new Error(analysis.state);
+      expect(analysis.values.balanceKcal).toBe(30 * 300);
+      expect(analysis.values.foodKcal).toBe(30 * 2900);
+      expect(analysis.compared.to).toBe(toDateKey(addDays(START, 59)));
+      expect(analysis.compared.from).toBe(toDateKey(addDays(START, 30)));
+    });
+
+    it('stops at the last measurement when it is older than a trend window', () => {
+      const analysis = analyze({
+        days: 40,
+        measured: (i) => i < 25,
+        fat,
+        lean,
+      });
+      if (analysis.state !== 'deviation' && analysis.state !== 'ok')
+        throw new Error(analysis.state);
+      expect(analysis.values.balanceKcal).toBe(25 * 300);
+      expect(analysis.compared.to).toBe(toDateKey(addDays(START, 24)));
+    });
+
+    it('still counts the whole period with a recent last measurement', () => {
+      const analysis = analyze({
+        days: 30,
+        measured: (i) => i <= 23,
+        fat,
+        lean,
+      });
+      if (analysis.state !== 'deviation' && analysis.state !== 'ok')
+        throw new Error(analysis.state);
+      expect(analysis.values.balanceKcal).toBe(30 * 300);
+    });
+
+    it('starts on day one with a measurement in its trend window', () => {
+      const count = 30;
+      const leadIn = 6;
+      const { records, days } = scenario({ days: leadIn + count, fat, lean });
+      const analysis = analyzeBalance(records, days.slice(leadIn), leadIn);
+      if (analysis.state !== 'deviation' && analysis.state !== 'ok')
+        throw new Error(analysis.state);
+      expect(analysis.compared.from).toBe(days[leadIn].date);
+    });
+
+    it('compares the weight only while body fat covers too few days', () => {
+      expect(
+        analyze({
+          days: 30,
+          withBodyFat: (i) => i < 12,
+          fat,
+          lean,
+        }),
+      ).toMatchObject({
+        state: 'weightOnly',
+        compositionMeasurements: 6,
+        compositionSpanDays: 11,
+      });
+    });
+
+    it('fits the same weight gain whatever the days around it', () => {
+      const all = analyze({ days: 30, measured: () => true, fat, lean });
+      const later = analyze({
+        days: 60,
+        measured: (i) => i >= 30,
+        fat: (i) => fat(i - 30),
+        lean: (i) => lean(i - 30),
+      });
+      if (
+        (all.state !== 'deviation' && all.state !== 'ok') ||
+        (later.state !== 'deviation' && later.state !== 'ok')
+      )
+        throw new Error('expected values');
+      expect(later.values.balanceKcal).toBe(all.values.balanceKcal);
+      expect(later.values.storedKcal).toBeCloseTo(all.values.storedKcal);
+    });
   });
 
   it('compares the weight only without body fat', () => {

@@ -51,8 +51,8 @@ export function MarkedSlider({
   const lockScroll = useScrollLock();
   const [width, setWidth] = useState(0);
   const span = Math.max(0, width - THUMB);
-  // Step under the finger; the parts above the track ignore touches, so
-  // locationX is measured on the track area. Beyond its ends it clamps.
+  // Step under the finger. The area takes every touch itself (box-only), so
+  // locationX is measured on it, not on the thumb. Beyond its ends it clamps.
   function valueAt(event: GestureResponderEvent): number {
     if (span === 0) return value;
     const x = event.nativeEvent.locationX - INSET;
@@ -87,6 +87,7 @@ export function MarkedSlider({
         <AppText variant="bodyStrong">{valueText}</AppText>
       </View>
       <View
+        pointerEvents="box-only"
         accessible
         accessibilityRole="adjustable"
         accessibilityLabel={accessibilityLabel}
@@ -108,12 +109,8 @@ export function MarkedSlider({
         onResponderTerminate={finish}
         style={styles.area}
       >
+        <View style={[styles.track, { backgroundColor: colors.separator }]} />
         <View
-          pointerEvents="none"
-          style={[styles.track, { backgroundColor: colors.separator }]}
-        />
-        <View
-          pointerEvents="none"
           style={[
             styles.band,
             {
@@ -124,14 +121,12 @@ export function MarkedSlider({
           ]}
         />
         <View
-          pointerEvents="none"
           style={[
             styles.fill,
             { width: offset, backgroundColor: colors.foreground },
           ]}
         />
         <View
-          pointerEvents="none"
           style={[
             styles.thumb,
             {

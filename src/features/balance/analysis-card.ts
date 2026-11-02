@@ -119,6 +119,41 @@ function compositionText(
   );
 }
 
+function weightOnlyNote(
+  analysis: Extract<Analysis, { state: 'weightOnly' }>,
+  t: TFunction,
+): string {
+  if (analysis.compositionMeasurements === 0)
+    return t('analysis.weightOnly.none');
+  if (analysis.compositionMeasurements < MIN_MEASUREMENTS)
+    return t('analysis.weightOnly.few', {
+      count: analysis.compositionMeasurements,
+      min: MIN_MEASUREMENTS,
+    });
+  return t('analysis.weightOnly.short', {
+    days: t('analysis.days', { count: analysis.compositionSpanDays }),
+    min: MIN_ANALYSIS_DAYS,
+  });
+}
+
+function lockedSoFar(
+  analysis: Extract<Analysis, { state: 'insufficient' }>,
+  measurements: string,
+  t: TFunction,
+): string {
+  if (analysis.days < MIN_ANALYSIS_DAYS)
+    return t('analysis.locked.soFarDays', {
+      days: t('analysis.days', { count: analysis.days }),
+      measurements,
+    });
+  if (analysis.measurements < MIN_MEASUREMENTS)
+    return t('analysis.locked.soFar', { measurements });
+  return t('analysis.locked.soFarSpan', {
+    measurements,
+    days: t('analysis.days', { count: analysis.spanDays }),
+  });
+}
+
 // „Passt die Bilanz zur Waage?“: texts and numbers of the card from the core's
 // analysis. The words are chosen here from the state, never in the core.
 export function analysisCardModel(
@@ -135,8 +170,12 @@ export function analysisCardModel(
   const measurements = t('analysis.measurements', {
     count: analysis.measurements,
   });
-  const first = days[0]?.date;
-  const last = days.at(-1)?.date;
+  // The days compared, which can be fewer than the period; the period while
+  // locked.
+  const compared =
+    analysis.state === 'insufficient' ? undefined : analysis.compared;
+  const first = compared?.from ?? days[0]?.date;
+  const last = compared?.to ?? days.at(-1)?.date;
   const from = first ? shortDate(first, t) : NONE;
   const to = last ? shortDate(last, t) : NONE;
   const title = t('analysis.title');
@@ -178,13 +217,7 @@ export function analysisCardModel(
             trend,
           }),
         },
-        note:
-          analysis.compositionMeasurements === 0
-            ? t('analysis.weightOnly.none')
-            : t('analysis.weightOnly.few', {
-                count: analysis.compositionMeasurements,
-                min: MIN_MEASUREMENTS,
-              }),
+        note: weightOnlyNote(analysis, t),
       },
     };
   }
@@ -203,13 +236,7 @@ export function analysisCardModel(
             days: MIN_ANALYSIS_DAYS,
             measurements: MIN_MEASUREMENTS,
           }),
-          soFar:
-            analysis.days < MIN_ANALYSIS_DAYS
-              ? t('analysis.locked.soFarDays', {
-                  days: t('analysis.days', { count: analysis.days }),
-                  measurements,
-                })
-              : t('analysis.locked.soFar', { measurements }),
+          soFar: lockedSoFar(analysis, measurements, t),
         }
       : undefined;
 

@@ -77,12 +77,12 @@ describe('tooltipModel for a day', () => {
     );
   });
 
-  it('marks estimated resting energy and names the worst flag', () => {
+  it('marks estimated resting energy and names the primary flag', () => {
     const model = tooltipModel(
       dayBucket({
         restingSource: 'formula',
         flags: ['restingEstimated'],
-        worst: 'restingEstimated',
+        primaryFlag: 'restingEstimated',
       }),
       LOADED,
       'de-DE',
@@ -107,7 +107,7 @@ describe('tooltipModel for a day', () => {
         kcal: 0,
         maintenance: true,
         flags: ['noFood'],
-        worst: 'noFood',
+        primaryFlag: 'noFood',
         body: { weightKg: 82.1 },
       }),
       LOADED,
@@ -126,7 +126,7 @@ describe('tooltipModel for a day', () => {
         food: undefined,
         kcal: -2600,
         flags: ['noFood'],
-        worst: 'noFood',
+        primaryFlag: 'noFood',
       }),
       LOADED,
       'de-DE',
@@ -142,7 +142,7 @@ describe('tooltipModel for a day', () => {
         restingSource: 'missing',
         kcal: undefined,
         flags: ['noResting'],
-        worst: 'noResting',
+        primaryFlag: 'noResting',
       }),
       LOADED,
       'de-DE',

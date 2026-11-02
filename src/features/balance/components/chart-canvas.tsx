@@ -43,7 +43,7 @@ export const LINE_STROKE: Record<
   },
 };
 
-const POINT = { r: 2.5, strokeWidth: 1.25 };
+export const POINT = { r: 2.5, strokeWidth: 1.25 };
 
 function barFill(bar: ChartBar, prefix: string, colors: ThemeColors) {
   if (bar.kind === 'full') return bar.plus ? colors.plus : colors.minus;

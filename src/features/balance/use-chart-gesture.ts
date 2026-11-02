@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import type { GestureResponderEvent, ViewProps } from 'react-native';
 
-import { slotAt, VIEW, type ChartSlot } from './chart-model';
+import { selectionAfterTap, slotAt, VIEW, type ChartSlot } from './chart-model';
 import { useScrollLock } from '@/hooks/scroll-lock';
 
 // Held this long without moving, the finger drags the selection; before
@@ -29,7 +29,7 @@ type ResponderProps = Pick<
   | 'onResponderTerminate'
 >;
 
-// Tap selects a bar or closes its tooltip; a long press then drag moves the
+// Tap selects a bar or closes the open tooltip; a long press then drag moves the
 // selection bar by bar while the scroll views around are locked.
 export function useChartGesture({
   slots,
@@ -51,8 +51,8 @@ export function useChartGesture({
     [lockScroll],
   );
 
-  const indexAt = (event: GestureResponderEvent, clamp: boolean) =>
-    slotAt(slots, (event.nativeEvent.locationX * VIEW.width) / width, clamp);
+  const indexAt = (event: GestureResponderEvent) =>
+    slotAt(slots, (event.nativeEvent.locationX * VIEW.width) / width, true);
 
   function finish() {
     clearTimeout(timer.current);
@@ -70,7 +70,7 @@ export function useChartGesture({
         x: event.nativeEvent.pageX,
         y: event.nativeEvent.pageY,
       };
-      const index = indexAt(event, true);
+      const index = indexAt(event);
       timer.current = setTimeout(() => {
         dragging.current = true;
         lockScroll(true);
@@ -79,7 +79,7 @@ export function useChartGesture({
     },
     onResponderMove: (event) => {
       if (dragging.current) {
-        const index = indexAt(event, true);
+        const index = indexAt(event);
         if (index !== selected) onSelect(index);
         return;
       }
@@ -97,9 +97,13 @@ export function useChartGesture({
         Math.abs(event.nativeEvent.pageY - start.current.y) > MOVE_SLOP;
       finish();
       if (wasDragging || moved) return;
-      const index = indexAt(event, false);
-      if (index === undefined) return;
-      onSelect(index === selected ? undefined : index);
+      onSelect(
+        selectionAfterTap(
+          slots,
+          (event.nativeEvent.locationX * VIEW.width) / width,
+          selected,
+        ),
+      );
     },
     onResponderTerminate: finish,
   };
