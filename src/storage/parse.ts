@@ -86,8 +86,6 @@ function period(value: unknown): Period | undefined {
       return PRESETS.includes(candidate.days as PresetDays)
         ? { kind: 'days', days: candidate.days as PresetDays }
         : undefined;
-    case 'all':
-      return { kind: 'all' };
     case 'custom': {
       const from = isoDate(candidate.from);
       const to = isoDate(candidate.to);

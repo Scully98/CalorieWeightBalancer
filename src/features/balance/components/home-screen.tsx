@@ -16,7 +16,6 @@ import { IncompleteDaysSheet } from './incomplete-days-sheet';
 import type { DateRangeSelection } from '../date-range';
 import { periodSpan, periodSubtitle } from '../period-subtitle';
 import { useBalance } from '../use-balance';
-import { formatLocale } from '@/i18n';
 import { addDays } from '@/core/dates';
 import { toDateKey } from '@/core/day-record';
 import { ScrollLockContext } from '@/hooks/scroll-lock';
@@ -42,16 +41,8 @@ export function HomeScreen({ initialUi }: { initialUi?: HomeUi } = {}) {
   const { period, includeToday, zeroDaysAsMaintenance } = useSettings();
   const state = useBalance();
   const now = new Date();
-  const span = periodSpan(
-    period,
-    includeToday,
-    now,
-    state.status === 'done' || state.status === 'empty'
-      ? state.value.days
-      : undefined,
-  );
-  const periodLabel =
-    span && periodSubtitle(period, span, includeToday, now, formatLocale(), t);
+  const span = periodSpan(period, includeToday, now);
+  const periodLabel = span && periodSubtitle(span, includeToday, now, t);
   const pager = useRef<ScrollView>(null);
   const store = useSettingsStore();
   // Open while „Eigener“ is being picked.

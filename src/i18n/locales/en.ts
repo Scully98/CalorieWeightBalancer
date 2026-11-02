@@ -85,18 +85,15 @@ export const en: typeof de = {
     segments: {
       label: 'Period',
       days: '{{count}} d',
-      all: 'All',
       custom: 'Custom',
       daysSpoken_one: '{{count}} day',
       daysSpoken_other: '{{count}} days',
-      allSpoken: 'All since the first data point',
       customSpoken: 'Custom period',
     },
     subtitle: {
       range: '{{from}} – {{to}}',
       days_one: '{{count}} day',
       days_other: '{{count}} days',
-      all: 'since first data point {{date}}',
       withoutToday: 'excluding today',
       withToday: 'including today',
     },

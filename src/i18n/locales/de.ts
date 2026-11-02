@@ -83,18 +83,15 @@ export const de = {
     segments: {
       label: 'Zeitraum',
       days: '{{count}} T',
-      all: 'Alles',
       custom: 'Eigener',
       daysSpoken_one: '{{count}} Tag',
       daysSpoken_other: '{{count}} Tage',
-      allSpoken: 'Alles seit erstem Datenpunkt',
       customSpoken: 'Eigener Zeitraum',
     },
     subtitle: {
       range: '{{from}} – {{to}}',
       days_one: '{{count}} Tag',
       days_other: '{{count}} Tage',
-      all: 'seit erstem Datenpunkt {{date}}',
       withoutToday: 'ohne heute',
       withToday: 'inkl. heute',
     },

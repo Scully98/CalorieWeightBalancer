@@ -17,13 +17,13 @@ export type PickerBounds = { min: string; max: string };
 // How far back the picker goes when Health has no first data point.
 export const FALLBACK_LOOKBACK_DAYS = 365;
 
-// From the first data point to yesterday, or to today when today counts.
+// From the first data point to yesterday; today only comes with the plus on
+// the today card.
 export function pickerBounds(
   firstDataDate: Date | undefined,
   now: Date,
-  includeToday: boolean,
 ): PickerBounds {
-  const max = addDays(startOfDay(now), includeToday ? 0 : -1);
+  const max = addDays(startOfDay(now), -1);
   const first = firstDataDate
     ? startOfDay(firstDataDate)
     : addDays(max, -FALLBACK_LOOKBACK_DAYS);

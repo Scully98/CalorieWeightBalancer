@@ -24,25 +24,17 @@ describe('resolvePeriod', () => {
     });
   });
 
-  it('ends with today when today is included', () => {
+  it('adds today on top of a preset when today is included', () => {
     expect(keys({ kind: 'days', days: 7 }, { includeToday: true })).toEqual({
-      first: '2026-10-18',
+      first: '2026-10-17',
       last: '2026-10-24',
-      days: 7,
+      days: 8,
     });
-  });
-
-  it('starts "all" at the first day with data', () => {
-    expect(
-      keys({ kind: 'all' }, { firstDataDate: new Date(2026, 6, 1, 9) }),
-    ).toEqual({ first: '2026-07-01', last: '2026-10-23', days: 115 });
-  });
-
-  it('has no days for "all" without data or with data only today', () => {
-    expect(resolvePeriod({ kind: 'all' }, TODAY).days).toBe(0);
-    expect(
-      resolvePeriod({ kind: 'all' }, TODAY, { firstDataDate: TODAY }).days,
-    ).toBe(0);
+    expect(keys({ kind: 'days', days: 30 }, { includeToday: true })).toEqual({
+      first: '2026-09-24',
+      last: '2026-10-24',
+      days: 31,
+    });
   });
 
   it('includes both ends of a custom period', () => {
@@ -59,6 +51,46 @@ describe('resolvePeriod', () => {
     };
     expect(keys(period).last).toBe('2026-10-23');
     expect(keys(period, { includeToday: true }).last).toBe('2026-10-24');
+  });
+
+  it('adds today to a custom period that ends yesterday or today', () => {
+    const until = (to: string): Period => ({
+      kind: 'custom',
+      from: '2026-10-20',
+      to,
+    });
+    const today = { includeToday: true };
+    expect(keys(until('2026-10-23'))).toMatchObject({ days: 4 });
+    expect(keys(until('2026-10-23'), today)).toEqual({
+      first: '2026-10-20',
+      last: '2026-10-24',
+      days: 5,
+    });
+    expect(keys(until('2026-10-24'))).toMatchObject({ days: 4 });
+    expect(keys(until('2026-10-24'), today)).toMatchObject({ days: 5 });
+  });
+
+  it('keeps a custom period that ends earlier without today', () => {
+    const period: Period = {
+      kind: 'custom',
+      from: '2026-10-06',
+      to: '2026-10-20',
+    };
+    expect(keys(period, { includeToday: true })).toEqual({
+      first: '2026-10-06',
+      last: '2026-10-20',
+      days: 15,
+    });
+  });
+
+  it('has only today for a custom period that starts today', () => {
+    const period: Period = {
+      kind: 'custom',
+      from: '2026-10-24',
+      to: '2026-10-24',
+    };
+    expect(resolvePeriod(period, TODAY).days).toBe(0);
+    expect(resolvePeriod(period, TODAY, { includeToday: true }).days).toBe(1);
   });
 
   it('swaps a custom period given backwards', () => {
@@ -154,35 +186,17 @@ describe('resolvePeriod', () => {
   });
 
   it.each([7, 30, 60, 90] as const)(
-    'ends %i days with yesterday or today',
+    'has %i days up to yesterday, or one more with today',
     (days) => {
       const off = keys({ kind: 'days', days });
       const on = keys({ kind: 'days', days }, { includeToday: true });
       expect(off.last).toBe('2026-10-23');
       expect(on.last).toBe('2026-10-24');
       expect(off.days).toBe(days);
-      expect(on.days).toBe(days);
+      expect(on.first).toBe(off.first);
+      expect(on.days).toBe(days + 1);
     },
   );
-
-  it('ends "all" with yesterday or today', () => {
-    const firstDataDate = new Date(2026, 9, 20, 8);
-    expect(keys({ kind: 'all' }, { firstDataDate })).toEqual({
-      first: '2026-10-20',
-      last: '2026-10-23',
-      days: 4,
-    });
-    expect(
-      keys({ kind: 'all' }, { firstDataDate, includeToday: true }),
-    ).toEqual({ first: '2026-10-20', last: '2026-10-24', days: 5 });
-    // Data only today: nothing without today, one day with it.
-    expect(
-      resolvePeriod({ kind: 'all' }, TODAY, {
-        firstDataDate: TODAY,
-        includeToday: true,
-      }).days,
-    ).toBe(1);
-  });
 
   it('ignores the time of day', () => {
     const early = resolvePeriod(
@@ -199,7 +213,8 @@ describe('resolvePeriod', () => {
 
 describe('periodDateKeys', () => {
   it('has no keys for an empty period', () => {
-    expect(periodDateKeys(resolvePeriod({ kind: 'all' }, TODAY))).toEqual([]);
+    const period: Period = { kind: 'custom', from: 'x', to: 'y' };
+    expect(periodDateKeys(resolvePeriod(period, TODAY))).toEqual([]);
   });
 });
 

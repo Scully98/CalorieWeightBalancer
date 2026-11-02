@@ -76,16 +76,6 @@ describe('toBalanceState', () => {
     expect(toBalanceState({ status: 'done', value }).status).toBe('done');
   });
 
-  it('reports "all" without any data as empty, not as error', async () => {
-    const value = await loadBalance(
-      nothing,
-      { ...DEFAULT_SETTINGS, period: { kind: 'all' } },
-      NOW,
-    );
-    expect(value.balance.days).toBe(0);
-    expect(toBalanceState({ status: 'done', value }).status).toBe('empty');
-  });
-
   it('passes loading and error through', () => {
     expect(toBalanceState({ status: 'loading' })).toEqual({
       status: 'loading',
@@ -228,13 +218,31 @@ describe('the running day', () => {
     );
     expect(report.today.placement).toBe('included');
     expect(report.days.at(-1)).toBe(report.today.day);
-    // 29 steady days of +200 and today +40, resting not scaled.
-    expect(report.balance.kcal).toBe(29 * 200 + 40);
-    expect(report.balance.completeDays).toBe(30);
+    // Today on top: 30 steady days of +200 and today +40, resting not scaled.
+    expect(report.balance.days).toBe(31);
+    expect(report.balance.kcal).toBe(30 * 200 + 40);
+    expect(report.balance.completeDays).toBe(31);
     expect(report.chart.buckets.at(-1)).toMatchObject({
       kcal: 40,
       today: { counted: true },
     });
+  });
+
+  it('changes the balance by exactly its own value', async () => {
+    const without = await loadBalance(
+      withToday(steady([])),
+      DEFAULT_SETTINGS,
+      NOW,
+    );
+    const included = await loadBalance(
+      withToday(steady([])),
+      { ...DEFAULT_SETTINGS, includeToday: true },
+      NOW,
+    );
+    expect(included.days[0]?.date).toBe(without.days[0]?.date);
+    expect(included.balance.kcal - without.balance.kcal).toBe(
+      without.today.day.kcal,
+    );
   });
 
   it('is loaded on its own for a custom period that ends earlier', async () => {
