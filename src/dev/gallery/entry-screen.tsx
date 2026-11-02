@@ -28,6 +28,7 @@ function homeUi(ui: GalleryUi | undefined): HomeUi {
   const key = (daysAgo: number) => toDateKey(addDays(now, -daysAgo));
   return {
     toleranceOpen: ui?.tolerance?.open,
+    todayOpen: ui?.todayOpen,
     sheet: ui?.sheet,
     tooltip: ui?.tooltip,
     picker: ui?.picker && {
@@ -54,8 +55,16 @@ export function EntryScreen() {
     const memory = createSettingsStore(createMemoryStore());
     if (entry) {
       const tolerance = entry.ui?.tolerance;
+      const custom = entry.ui?.period;
+      const key = (daysAgo: number) => toDateKey(addDays(new Date(), -daysAgo));
       memory.updateSettings({
-        period: buildScenario(entry.scenario).period,
+        period: custom
+          ? {
+              kind: 'custom',
+              from: key(custom.fromDaysAgo),
+              to: key(custom.toDaysAgo),
+            }
+          : buildScenario(entry.scenario).period,
         includeToday: entry.ui?.includeToday ?? false,
         ...(tolerance && {
           tolerance: {

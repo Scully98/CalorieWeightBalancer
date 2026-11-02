@@ -17,6 +17,8 @@ type BalanceContentProps = {
   report: BalanceReport;
   // Gallery preset: the tolerance card starts open.
   toleranceOpen?: boolean;
+  // Gallery preset: the today card starts open.
+  todayOpen?: boolean;
   // Gallery preset: a bar of the chart starts selected.
   initialTooltip?: ChartTooltipPreset;
   onOpenQuality: () => void;
@@ -29,6 +31,7 @@ type BalanceContentProps = {
 export function BalanceContent({
   report,
   toleranceOpen = false,
+  todayOpen,
   initialTooltip,
   onOpenQuality,
 }: BalanceContentProps) {
@@ -48,7 +51,11 @@ export function BalanceContent({
   return (
     <>
       <BalanceHero model={model} />
-      <TodayCard today={report.today} loadedAt={report.loadedAt} />
+      <TodayCard
+        today={report.today}
+        loadedAt={report.loadedAt}
+        initialOpen={todayOpen}
+      />
       <AnalysisCard analysis={report.analysis} days={report.days} />
       <BalanceChart
         chart={report.chart}

@@ -5,7 +5,6 @@ import { BalanceContent } from './balance-content';
 import type { ChartTooltipPreset } from './balance-chart';
 import { EmptyState } from './empty-state';
 import { PeriodSegments } from './period-segments';
-import { TodayCard } from './today-card';
 import { AppText } from '@/components/app-text';
 import type { BalanceState } from '@/features/balance/use-balance';
 import { space } from '@/theme/spacing';
@@ -16,6 +15,8 @@ type BalancePageProps = {
   periodLabel?: string;
   // Gallery preset: the tolerance card starts open.
   toleranceOpen?: boolean;
+  // Gallery preset: the today card starts open.
+  todayOpen?: boolean;
   // Gallery preset: a bar of the chart starts selected.
   initialTooltip?: ChartTooltipPreset;
   // Off while a slider is dragged.
@@ -30,6 +31,7 @@ export function BalancePage({
   state,
   periodLabel,
   toleranceOpen,
+  todayOpen,
   initialTooltip,
   scrollEnabled = true,
   onPickCustom,
@@ -57,20 +59,12 @@ export function BalancePage({
         <BalanceContent
           report={state.value}
           toleranceOpen={toleranceOpen}
+          todayOpen={todayOpen}
           initialTooltip={initialTooltip}
           onOpenQuality={onOpenQuality}
         />
       ) : state.status === 'empty' ? (
-        <>
-          <EmptyState report={state.value} />
-          {/* The plus stays reachable, e.g. on the very first day. */}
-          {state.value.today.placement === 'outside' ? null : (
-            <TodayCard
-              today={state.value.today}
-              loadedAt={state.value.loadedAt}
-            />
-          )}
-        </>
+        <EmptyState report={state.value} />
       ) : state.status === 'error' ? (
         <EmptyState />
       ) : (

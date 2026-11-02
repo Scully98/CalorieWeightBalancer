@@ -1,6 +1,8 @@
 import { createDemoSource } from '../demo-source';
 import { buildScenario, SCENARIO_IDS, type ScenarioId } from '../scenarios';
+import { comparisonBars } from '@/core/analysis';
 import { dayBalances } from '@/core/day-balance';
+import { roundKcal } from '@/core/format';
 import type { DayRecord } from '@/core/day-record';
 import { resolvePeriod } from '@/core/period';
 import { periodBalance } from '@/core/period-balance';
@@ -124,6 +126,22 @@ describe('demo scenarios through the balance load', () => {
       state: 'weightOnly',
       compositionMeasurements: 0,
     });
+  });
+
+  it('give the bars from the center when something goes the other way', async () => {
+    for (const id of ['shift30', 'opposite30'] as const) {
+      const { analysis } = await load(id);
+      if (analysis.state !== 'deviation') throw new Error(analysis.state);
+      expect(comparisonBars(analysis.values).layout).toBe('diverging');
+    }
+  });
+
+  it('round the burn to the tracker for the target', async () => {
+    const { analysis } = await load('match30');
+    if (analysis.state !== 'ok') throw new Error(analysis.state);
+    expect(roundKcal(analysis.values.actualBurnPerDay)).toBe(
+      roundKcal(analysis.values.trackerBurnPerDay),
+    );
   });
 
   it('fit for the good-fit scenario and deviate for the design data', async () => {

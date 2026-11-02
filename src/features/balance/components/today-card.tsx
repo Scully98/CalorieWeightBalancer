@@ -10,7 +10,9 @@ import { useSettings, useSettingsStore } from '@/storage/settings-context';
 import { border, space, touchTarget } from '@/theme/spacing';
 import { useColors } from '@/theme/use-colors';
 
-type TodayCardProps = Pick<BalanceReport, 'today' | 'loadedAt'>;
+type TodayCardProps = Pick<BalanceReport, 'today' | 'loadedAt'> & {
+  initialOpen?: boolean;
+};
 
 const PLUS = { circle: 28, length: 12, stroke: 2 };
 
@@ -52,10 +54,11 @@ function IncludeToday({ label }: { label: string }) {
 export const TodayCard = memo(function TodayCard({
   today,
   loadedAt,
+  initialOpen = false,
 }: TodayCardProps) {
   const colors = useColors();
   const { t } = useTranslation();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(initialOpen);
   const card = todayCard(today, loadedAt, formatLocale(), t);
 
   const column = (

@@ -12,7 +12,10 @@ export type ScenarioId =
   | 'empty'
   | 'firstDay'
   | 'stale30'
-  | 'noProfileGaps30';
+  | 'noProfileGaps30'
+  | 'shift30'
+  | 'opposite30'
+  | 'match30';
 
 // Values of one series day; the date is added relative to today.
 export type DemoValues = Omit<DayRecord, 'date'>;
@@ -125,6 +128,36 @@ export function buildScenario(id: ScenarioId): Scenario {
         today: {},
         profile: 'none',
       };
+    // Same balance, but fat down and lean mass up: bars from the center.
+    case 'shift30':
+      return {
+        id,
+        name: 'Fett ab, Magermasse auf',
+        period: days(30),
+        series: generateSeries({ fatPer30Days: -0.3, leanPer30Days: 0.8 }).map(
+          toValues,
+        ),
+      };
+    // Same balance, but the scale goes down.
+    case 'opposite30':
+      return {
+        id,
+        name: 'Waage gegenläufig',
+        period: days(30),
+        series: generateSeries({ fatPer30Days: -0.2, leanPer30Days: -0.1 }).map(
+          toValues,
+        ),
+      };
+    // The burn from the scale rounds to the tracker's: the target on the card.
+    case 'match30':
+      return {
+        id,
+        name: 'Tracker stimmt',
+        period: days(30),
+        series: generateSeries({ fatPer30Days: 0.75, leanPer30Days: 0.1 }).map(
+          toValues,
+        ),
+      };
     // First entries today, nothing before.
     case 'firstDay':
       return {
@@ -167,4 +200,7 @@ export const SCENARIO_IDS: readonly ScenarioId[] = [
   'firstDay',
   'stale30',
   'noProfileGaps30',
+  'shift30',
+  'opposite30',
+  'match30',
 ];

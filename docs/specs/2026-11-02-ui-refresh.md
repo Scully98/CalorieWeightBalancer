@@ -1,6 +1,6 @@
 # UI-Refresh der Bilanz-Seite
 
-Stand 2026-11-02. In Umsetzung. Branch `feature/ui-refresh`.
+Stand 2026-11-02. Umgesetzt auf `feature/ui-refresh` (M1–M6). Offen sind nur die am Gerät nötigen Prüfungen (🔲): Dynamic Type, Profiler, Slider-Sperre, restliche Galerie-Einträge. Branch `feature/ui-refresh`.
 
 ## Overview
 
@@ -82,7 +82,7 @@ Elemente der neuen Karte:
 | 7 | **Hero kurz.** „ca. +0,9 kg Körperfett“, Spanne „ca. +0,3 bis +2,5 kg Körperfett“. „theoretisch“ und „7.700 kcal/kg“ entfallen sichtbar. VoiceOver liest „etwa plus 0,9 Kilogramm Körperfett, berechnet“. „Ø pro Tag“ zieht auf die Daten-Seite (Zeile „= Bilanz“). Der Zeitraum-Untertitel erscheint nur bei „Eigener“. Die Herleitung bleibt in `calculation.fat` | Julius 2026-11-02: „theoretisch ist einfach zu lang“. Ohne Datum wäre ein eigener Zeitraum nirgends erkennbar | „theoretisch“ behalten; Untertitel immer |
 | 8 | **Balkenanteile kommen aus dem Kern.** Neue reine Funktion `comparisonBars(values)` in `src/core/analysis.ts`; das Modell darf sie importieren (`allowImportNames`). Komponente und Modell rechnen weiterhin nichts außer Rundung | Regel „die Karte rechnet nichts“ (Analyse-Spec, Key Decision 6) und Abdeckung ≥ 90 % im Kern | Berechnung im Modell |
 | 9 | **Schalter „Heute einrechnen“ entfällt in den Einstellungen.** Das Plus ist die einzige Stelle. Der gespeicherte Wert `includeToday` bleibt in `settings.v1` | Zwei Schalter für denselben Wert sind unnötig | Beide behalten |
-| 10 | **Leerzustand behält Heute.** Bei `status === 'empty'` steht `TodayCard` unter dem `EmptyState`, wenn heute nicht `outside` ist. Sonst käme man am ersten Tag nicht mehr ans Plus, weil der Schalter wegfällt | Folge aus 9. Text von `firstDay` passt sich an | Plus am ersten Tag nicht erreichbar |
+| 10 | **Leerzustand behält Heute.** `EmptyState` zeigt `TodayCard` am ersten Tag (wie bisher) und neu bei „Daten nur außerhalb des Zeitraums“, wenn heute nicht `outside` ist. Ohne jede Health-Daten gibt es keine Karte. Sonst käme man nicht mehr ans Plus, weil der Schalter wegfällt. _(Erste Fassung auf der Seite zeigte die Karte am ersten Tag doppelt, im Simulator gefunden)_ | Folge aus 9. Text von `firstDay` passt sich an | Plus am ersten Tag nicht erreichbar |
 | 11 | **„Alles“ entfällt ohne Migration.** Ein gespeichertes `{ kind: 'all' }` ergibt in `parseSettings` wie jeder ungültige Wert den Standard 30 T | Julius 2026-11-02; die Fallback-Regel existiert schon | Letzte Periode umrechnen |
 | 12 | **Differenz-Anzeige ohne Maßstab.** Die Linie hat feste Länge, der kleinere Wert steht links. Tracker ist immer hohl, „tatsächlich“ immer gefüllt und fett. Bei gerundeter Differenz 0 steht die Zielscheibe (`card-ok.png`), unabhängig vom Zustand. `ok` mit Differenz ≠ 0 zeigt die Linie | Screenshot zeigt +90 über die ganze Breite, ein Maßstab wäre also nicht lesbar | Länge proportional |
 | 13 | **Rechter Satz neben „Bilanz vs. Waage“:** `ok` → „ungefähr gleich“. `deviation`, gleiches Vorzeichen, `expected` nicht `even` → „Waage zeigt {p} % der Bilanz“ (auf ganze Prozent). `expected` = `even` → „Waage zeigt mehr“ bzw. „weniger“, weil Prozent einer Bilanz nahe 0 nichts aussagen. Gegenläufig → „Waage zeigt in die andere Richtung“ | Prozent sind nur bei gleichem Vorzeichen und nennenswerter Bilanz sinnvoll | Prozent immer |
@@ -98,7 +98,7 @@ Elemente der neuen Karte:
 |-----------|----------|--------|-----------|-----------|------------|
 | M1 — Zeitraum: „Alles“ weg, Heute obendrauf | Kern, Laden, Segmente, Picker, Tests | 0 | 13 | 0 | — |
 | M2 — Daten-Seite in die Einstellungen | Route, Einstellungszeile, Pager raus, Schalter raus | 1 | 8 | 0 | M1 |
-| M3 — Seite: Hero, Heute, Reihenfolge, Toleranz | Neuer Aufbau bis auf die Karte | 1 | 9 | 1 | M2 |
+| M3 — Seite: Hero, Heute, Reihenfolge, Toleranz | Neuer Aufbau bis auf die Karte | 1 | 10 | 1 | M2 |
 | M4 — Karte: Kern und Modell | `comparisonBars`, neues Modell, Texte | 0 | 6 | 0 | — |
 | M5 — Karte: Komponente | Balken, Differenz-Linie, Chevron, alle Zustände | 2 | 3 | 0 | M3, M4 |
 | M6 — Galerie, Abnahme, Doku | Szenario, Einträge, Screenshots, `CLAUDE.md` | 0 | 6 | 0 | M5 |
@@ -331,7 +331,8 @@ Keine App-Kürzel (Key Decision 16).
 | Color | File | Action |
 |-------|------|--------|
 | 🟢 | `src/features/balance/components/balance-content.tsx` | Reihenfolge laut Screenshot, hält den Toleranz-Entwurf (ersetzt `HeroSection`) |
-| 🟠 | `src/features/balance/components/balance-page.tsx` | Rendert `BalanceContent`; Untertitel nur bei `period.kind === 'custom'`; Heute auch im Leerzustand (Key Decision 10). Ersetzt die uncommitted Änderung |
+| 🟠 | `src/features/balance/components/balance-page.tsx` | Rendert `BalanceContent`; Untertitel nur bei `period.kind === 'custom'` |
+| 🟠 | `src/features/balance/components/empty-state.tsx` | Heute auch im Zustand `period` (Key Decision 10) |
 | 🔴 | `src/features/balance/components/hero-section.tsx` | Geht in `balance-content.tsx` auf |
 | 🟠 | `src/features/balance/components/balance-hero.tsx` | Zentriert, ohne `kcal` neben der Zahl, ohne Ø, ohne Fett-Hinweis |
 | 🟠 | `src/features/balance/hero.ts` | `avg`, `avgLabel`, `fatNote` raus; `words` aus `home.heroWords`; `label` weiter aus `home.words` |
@@ -369,7 +370,7 @@ Keine App-Kürzel (Key Decision 16).
 - ✅ Add the plus as `checkbox` with 44 pt target next to, not inside, the toggle (Key Decision 15)
 - ✅ Hide the plus when today is `outside`; the note stays in the open card
 - ✅ Keep the three columns and the note in the open card
-- ✅ Show `TodayCard` below `EmptyState` when today isn't `outside`
+- ✅ Show `TodayCard` in `EmptyState` for `period` when today isn't `outside`
 - ✅ Show the period label only for a custom period
 - ✅ Add the live range to the open `ToleranceCard`
 - ✅ Stack the quality entries vertically
@@ -752,7 +753,7 @@ Keine App-Kürzel (Key Decision 16).
 
 ---
 
-### Milestone 6 — Galerie, Abnahme, Doku
+### ✅ Milestone 6 — Galerie, Abnahme, Doku
 
 > Alle Zustände sind in der Galerie erreichbar, per Screenshot gegen die Vorlage geprüft, und die Projekt-Doku stimmt wieder.
 
@@ -762,7 +763,7 @@ Keine App-Kürzel (Key Decision 16).
 
 | Color | File | Action |
 |-------|------|--------|
-| 🟠 | `src/dev/demo/scenarios.ts` | Szenario `shift30`: Fett ab, Magermasse auf; Szenario oder Werte für gegenläufig |
+| 🟠 | `src/dev/demo/scenarios.ts` | Szenarien `shift30` (Fett ab, Magermasse auf), `opposite30` (Waage gegenläufig), `match30` (Zielscheibe) |
 | 🟠 | `src/dev/demo/__tests__/scenarios.test.ts` | Neue Szenarien |
 | 🟠 | `src/dev/gallery/entries.ts` | Einträge für `diverging`, Heute offen, Heute `outside`; Titel an die neue Karte anpassen |
 | 🟠 | `src/dev/gallery/entry-screen.tsx` | Start-Zustände, falls nötig |
@@ -771,13 +772,13 @@ Keine App-Kürzel (Key Decision 16).
 
 #### To-Dos
 
-- 🔲 Add the scenario with fat loss and lean gain and one with balance and scale in opposite directions
-- 🔲 Add gallery entries for the new states
-- 🔲 Compare `normal30` with `page-deviation.png` and `goodFit30` with `card-ok.png`, light and dark
-- 🔲 Check gallery 1c, 1e, 1f, 1h, 1i, 1j, 1k, 1l, L2, L4 after the rebuild
-- 🔲 Update `CLAUDE.md`
-- 🔲 Run `npm run lint`, `npm run typecheck` and the tests, coverage in `src/core/` ≥ 90 %
-- 🔲 Commit (`docs: update the project context for the ui refresh`)
+- ✅ Add the scenario with fat loss and lean gain and one with balance and scale in opposite directions
+- ✅ Add gallery entries for the new states
+- 🔲 Compare `normal30` with `page-deviation.png` and `goodFit30` with `card-ok.png`, light and dark _(Karte `normal30` hell und dunkel und Zielscheibe `match30` (L10) hell im Simulator geprüft; Chart-Mitte offen; bitte selbst abnehmen)_
+- 🔲 Check gallery 1c, 1e, 1f, 1h, 1i, 1j, 1k, 1l, L2, L4 after the rebuild _(im Simulator gesehen: 1a, 1b, 1c, 1j, 1k, 1l, L2, L3, L7–L10; offen: 1e, 1f, 1h, 1i, L4)_
+- ✅ Update `CLAUDE.md`
+- ✅ Run `npm run lint`, `npm run typecheck` and the tests, coverage in `src/core/` ≥ 90 %
+- ✅ Commit (`feat: add gallery states for the ui refresh`)
 
 #### Notes / Constraints
 
@@ -809,6 +810,6 @@ Keine App-Kürzel (Key Decision 16). Keine UI in diesem Milestone.
 | 7 | ⚠️ Concern | Screenshot zeigt keinen Chip „Messpunkte“, `CLAUDE.md` Feature 8 verlangt ihn | Chip bleibt — Julius 2026-11-02 |
 | 8 | ⚠️ Concern | Screenshot zeigt keinen Zeitraum-Untertitel, bei „Eigener“ wäre der Zeitraum dann nicht erkennbar | Untertitel nur bei „Eigener“ — Julius 2026-11-02 |
 | 9 | ⚠️ Concern | Uncommitted Änderung setzt Heute über den Hero, der Screenshot darunter | Screenshot gilt; bitte widersprechen, falls der Diff die neuere Absicht ist (Key Decision 1) |
-| 10 | ⚠️ Concern | Ohne Schalter in den Einstellungen wäre das Plus am ersten Tag nicht erreichbar, weil der Leerzustand keine Heute-Karte hat | Heute-Karte auch im Leerzustand (Key Decisions 9, 10), Annahme |
+| 10 | ⚠️ Concern | Ohne Schalter in den Einstellungen wäre das Plus bei „Daten nur außerhalb des Zeitraums“ nicht erreichbar (der erste Tag hatte die Karte schon) | Heute-Karte auch dort (Key Decisions 9, 10), Annahme |
 | 11 | ⚠️ Concern | Die Skill-Vorlage verlangt Sub-Agents, Tastenkürzel und nennt Pfade `docs/references/…`, die es nicht gibt | Muster aus `.claude/docs/reference/patterns/docs/` gelesen (`specs.md`, `doc-building-blocks.md`). Spec ohne Sub-Agents geschrieben. Touch-App ohne Kürzel, wie die bisherigen Specs |
 | 12 | ⚠️ Concern | Der Screenshot `card-ok.png` hat 0,7 kg × 9.400 + 0,1 kg × 1.800 = 6.760 kcal, zeigt aber ≈ 6.900. Das passt nur mit ungerundeten kg | Kein Fehler: Werte sind gerundet angezeigt. Bei der Abnahme zählt das Layout, nicht diese Zahl |

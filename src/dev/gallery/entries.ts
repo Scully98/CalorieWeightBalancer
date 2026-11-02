@@ -7,6 +7,9 @@ export type GalleryUi = {
   colorScheme?: 'dark';
   tolerance?: { foodPercent: number; burnPercent: number; open: boolean };
   includeToday?: boolean;
+  todayOpen?: boolean;
+  // Days before today; replaces the period of the scenario.
+  period?: { fromDaysAgo: number; toDaysAgo: number };
   sheet?: 'incompleteDays';
   tooltip?: 'lastEstimatedDay';
   // Days before today; „Bis“ is being edited.
@@ -108,5 +111,35 @@ export const GALLERY_ENTRIES: readonly GalleryEntry[] = [
     id: 'L5',
     title: 'Ohne Grundumsatz (nicht im Design)',
     scenario: 'noProfileGaps30',
+  },
+  {
+    id: 'L6',
+    title: 'Heute aufgeklappt (nicht im Design)',
+    scenario: 'normal30',
+    ui: { todayOpen: true },
+  },
+  {
+    id: 'L7',
+    title: 'Zeitraum endet früher · ohne Plus (nicht im Design)',
+    scenario: 'normal30',
+    ui: { todayOpen: true, period: { fromDaysAgo: 40, toDaysAgo: 10 } },
+  },
+  {
+    id: 'L8',
+    title: 'Fett ab, Magermasse auf (nicht im Design)',
+    scenario: 'shift30',
+    ui: { part: 'abgleich' },
+  },
+  {
+    id: 'L9',
+    title: 'Waage gegenläufig zur Bilanz (nicht im Design)',
+    scenario: 'opposite30',
+    ui: { part: 'abgleich' },
+  },
+  {
+    id: 'L10',
+    title: 'Verbrauch gleich Tracker · Zielscheibe',
+    scenario: 'match30',
+    ui: { part: 'abgleich' },
   },
 ];

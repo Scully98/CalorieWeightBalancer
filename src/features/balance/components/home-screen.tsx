@@ -19,6 +19,7 @@ import { useColors } from '@/theme/use-colors';
 // Start state for the development gallery; the app never passes it.
 export type HomeUi = {
   toleranceOpen?: boolean;
+  todayOpen?: boolean;
   picker?: DateRangeSelection;
   sheet?: 'incompleteDays';
   tooltip?: ChartTooltipPreset;
@@ -62,6 +63,7 @@ export function HomeScreen({ initialUi }: { initialUi?: HomeUi } = {}) {
           state={state}
           periodLabel={periodLabel}
           toleranceOpen={initialUi?.toleranceOpen}
+          todayOpen={initialUi?.todayOpen}
           initialTooltip={initialUi?.tooltip}
           scrollEnabled={!scrollLocked}
           onOpenQuality={() => setQualityOpen(true)}
