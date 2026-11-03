@@ -33,6 +33,21 @@ Prerequisites: Node.js LTS (tested with 22.16.0) and npm. Local builds need macO
 
    Expo Go is not supported; the app only runs in its development build.
 
+### iPhone with the paid developer account
+
+`app.json` sets `ios.appleTeamId`, so Xcode signs automatically with that team and registers the App IDs, the App Group and HealthKit on the first build.
+
+1. Add the Apple ID of the team in Xcode → Settings → Accounts.
+2. Make sure `.env.local` does not set `APPLE_PERSONAL_TEAM_ID`.
+3. Connect the iPhone, then:
+
+   ```sh
+   npx expo prebuild --clean
+   npx expo run:ios --device --configuration Release
+   ```
+
+   `Release` embeds the JS bundle, so the app and its background updates work without Metro. If signing fails, open `ios/Kcalwaage.xcworkspace`, select the team with "Automatically manage signing" for the targets `Kcalwaage` and `widget`, and build once with ⌘R.
+
 ### iPhone with a free Apple ID
 
 Without a paid developer account, Xcode signs with a Personal Team. Profiles expire after 7 days, and App Groups are not available, so the widget only shows its placeholder ("Open the app to see your balance.").

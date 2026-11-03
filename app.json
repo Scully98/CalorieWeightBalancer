@@ -12,6 +12,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.scully98.calorieweightbalancer",
+      "appleTeamId": "7V8YXT5455",
       "entitlements": {
         "com.apple.security.application-groups": [
           "group.com.scully98.calorieweightbalancer"
