@@ -43,3 +43,6 @@ coverage/
 # generated native folders
 /ios
 /android
+
+# widget colors, generated from targets/widget/expo-target.config.js on prebuild
+/targets/widget/Assets.xcassets
