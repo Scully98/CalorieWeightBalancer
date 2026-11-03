@@ -12,9 +12,14 @@ import { StyleSheet, useColorScheme, View } from 'react-native';
 import { AppText } from '@/components/app-text';
 import { Button } from '@/components/button';
 import '@/i18n';
+import { startWidgetBackground } from '@/features/widget/background';
 import { useIntroCompleted } from '@/storage/settings-context';
 import { space } from '@/theme/spacing';
 import { useColors } from '@/theme/use-colors';
+
+// At load, not in an effect: on a launch in the background by HealthKit the
+// queued events must reach JS before the 25 s window ends.
+startWidgetBackground();
 
 // Shown instead of a blank screen when rendering throws.
 export function ErrorBoundary({ retry }: ErrorBoundaryProps) {

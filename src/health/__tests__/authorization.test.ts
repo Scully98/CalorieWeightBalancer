@@ -45,7 +45,7 @@ describe('requestReadAccess', () => {
 });
 
 describe('HealthKit config plugin', () => {
-  it('has no write permission and no background delivery', () => {
+  it('has no write permission but background delivery', () => {
     const plugin = appJson.expo.plugins.find(
       (entry) =>
         Array.isArray(entry) &&
@@ -53,7 +53,7 @@ describe('HealthKit config plugin', () => {
     ) as [string, Record<string, unknown>];
     expect(plugin[1]).toMatchObject({
       NSHealthUpdateUsageDescription: false,
-      background: false,
+      background: true,
     });
   });
 });

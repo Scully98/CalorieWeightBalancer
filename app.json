@@ -25,7 +25,7 @@
         {
           "NSHealthShareUsageDescription": "Kcalwaage reads dietary, resting and active energy, weight, body fat, lean body mass, height, age and sex to calculate your calorie balance. Your data stays on your iPhone.",
           "NSHealthUpdateUsageDescription": false,
-          "background": false
+          "background": true
         }
       ],
       "@bacons/apple-targets",
