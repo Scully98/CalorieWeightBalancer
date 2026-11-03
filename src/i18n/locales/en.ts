@@ -270,7 +270,7 @@ export const en: typeof de = {
       weekFooter_other: '{{days}} days · {{count}} measurements',
     },
     a11y: {
-        summaryDay_one: 'Balance per day, {{count}} bar.',
+      summaryDay_one: 'Balance per day, {{count}} bar.',
       summaryDay_other: 'Balance per day, {{count}} bars.',
       summaryWeek_one: 'Balance per week, {{count}} bar.',
       summaryWeek_other: 'Balance per week, {{count}} bars.',
@@ -302,6 +302,20 @@ export const en: typeof de = {
     open: 'Open Health permissions',
   },
   // Dates spelled like the design („Sep 24“).
+  // Home and lock screen widget; finished texts in the App Group file.
+  widget: {
+    unit: 'kcal',
+    range: '{{min}} to {{max}}',
+    lockFat: 'approx. {{value}} kg fat',
+    inline: '{{kcal}} kcal · {{days}} d',
+    inlineEmpty: 'Balance: no data yet',
+    stale: 'As of {{date}}, {{time}}',
+    a11y: {
+      dates: '{{from}} to {{to}}',
+      range: 'With measurement error {{range}}',
+      stale: 'As of {{date}}, {{time}}',
+    },
+  },
   date: {
     dayMonth: '{{month}} {{day}}',
     dayMonthYear: '{{month}} {{day}}, {{year}}',

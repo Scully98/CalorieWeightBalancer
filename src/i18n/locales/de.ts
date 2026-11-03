@@ -268,7 +268,7 @@ export const de = {
       weekFooter_other: '{{days}} Tage · {{count}} Messungen',
     },
     a11y: {
-        summaryDay_one: 'Bilanz pro Tag, {{count}} Balken.',
+      summaryDay_one: 'Bilanz pro Tag, {{count}} Balken.',
       summaryDay_other: 'Bilanz pro Tag, {{count}} Balken.',
       summaryWeek_one: 'Bilanz pro Woche, {{count}} Balken.',
       summaryWeek_other: 'Bilanz pro Woche, {{count}} Balken.',
@@ -300,6 +300,20 @@ export const de = {
     open: 'Health-Berechtigungen öffnen',
   },
   // Dates spelled like the design („24. Sep“); Intl writes „24. Sept.“.
+  // Home and lock screen widget; finished texts in the App Group file.
+  widget: {
+    unit: 'kcal',
+    range: '{{min}} bis {{max}}',
+    lockFat: 'ca. {{value}} kg Fett',
+    inline: '{{kcal}} kcal · {{days}} T',
+    inlineEmpty: 'Bilanz: noch keine Daten',
+    stale: 'Stand {{date}}, {{time}}',
+    a11y: {
+      dates: '{{from}} bis {{to}}',
+      range: 'Mit Messfehler {{range}}',
+      stale: 'Stand {{date}}, {{time}} Uhr',
+    },
+  },
   date: {
     dayMonth: '{{day}}. {{month}}',
     dayMonthYear: '{{day}}. {{month}} {{year}}',
