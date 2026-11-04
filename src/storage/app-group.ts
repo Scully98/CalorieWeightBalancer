@@ -5,7 +5,7 @@ import { WidgetFile } from '../../modules/widget-file';
 
 // Shared with the widget extension (targets/widget); needs the App Group
 // entitlement.
-export const APP_GROUP = 'group.com.scully98.calorieweightbalancer';
+export const APP_GROUP = 'group.com.scully98.unrestart';
 
 const storage = new ExtensionStorage(APP_GROUP);
 

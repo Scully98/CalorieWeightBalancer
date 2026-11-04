@@ -15,7 +15,7 @@ const colors = {
 module.exports = {
   type: 'widget',
   name: 'widget',
-  displayName: 'Kcalwaage',
+  displayName: 'UnRestart',
   deploymentTarget: '16.4',
   colors,
   // Empty on purpose: the plugin then mirrors the App Group of app.json (and

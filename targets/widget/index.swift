@@ -2,7 +2,7 @@ import SwiftUI
 import WidgetKit
 
 @main
-struct KcalwaageWidgets: WidgetBundle {
+struct UnRestartWidgets: WidgetBundle {
   var body: some Widget {
     BalanceWidget()
   }

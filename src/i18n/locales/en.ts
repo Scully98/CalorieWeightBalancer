@@ -8,7 +8,7 @@ export const en: typeof de = {
     stepOf: 'Step {{current}} of {{count}}',
     pageOf: 'Page {{current}} of {{count}}',
     permissionsPath:
-      'In Health: profile picture → Apps → Kcalwaage. There you see every value and can switch it on or off.',
+      'In Health: profile picture → Apps → UnRestart. There you see every value and can switch it on or off.',
   },
   tabs: {
     balance: 'Balance',
@@ -198,7 +198,7 @@ export const en: typeof de = {
     },
     groupSpoken_one: '{{title}}, {{count}} day',
     groupSpoken_other: '{{title}}, {{count}} days',
-    note: 'Add the missing entries. Once they are in Health, Kcalwaage recalculates the next time you open it.',
+    note: 'Add the missing entries. Once they are in Health, UnRestart recalculates the next time you open it.',
   },
   today: {
     title: 'Today',
@@ -284,16 +284,16 @@ export const en: typeof de = {
   empty: {
     noData: {
       title: 'No data yet.',
-      body: 'Check in Health whether Kcalwaage may read.',
+      body: 'Check in Health whether UnRestart may read.',
     },
     explain:
       'iOS doesn’t tell apps whether access was denied. If entries are missing, your tracking or scale app probably doesn’t sync with Health.',
     period: {
       title: 'No food in this period.',
       lastBefore:
-        'Last entry before: {{date}}. Choose a longer period or check in Health whether Kcalwaage may read.',
+        'Last entry before: {{date}}. Choose a longer period or check in Health whether UnRestart may read.',
       first:
-        'First entry: {{date}}. Choose another period or check in Health whether Kcalwaage may read.',
+        'First entry: {{date}}. Choose another period or check in Health whether UnRestart may read.',
     },
     firstDay: {
       title: 'Your balance starts tomorrow.',
@@ -528,7 +528,7 @@ export const en: typeof de = {
       resultValue: '{{min}} to {{max}} kcal',
       resultSign: 'Plus = ate more than you burned',
       footer:
-        'Kcalwaage factors in the margin of error and shows you an honest range instead of false precision and checks it against your scale.',
+        'UnRestart factors in the margin of error and shows you an honest range instead of false precision and checks it against your scale.',
       a11y: 'Calories, energy burned and weight put into relation over weeks',
     },
     bigPicture: {
@@ -545,7 +545,7 @@ export const en: typeof de = {
     },
     health: {
       title: 'Nothing works without your Health data',
-      body: "Kcalwaage doesn't measure anything itself. It adds up your Apple Health values and lays them out clearly, locally, read-only, nothing leaves your iPhone.",
+      body: "UnRestart doesn't measure anything itself. It adds up your Apple Health values and lays them out clearly, locally, read-only, nothing leaves your iPhone.",
       rows: {
         food: { label: 'Dietary energy', detail: 'what goes in' },
         burn: { label: 'Resting & active energy', detail: 'what goes out' },

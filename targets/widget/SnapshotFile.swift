@@ -2,7 +2,7 @@ import Foundation
 
 // Written by the app (src/features/widget/snapshot.ts, sync.ts) through
 // modules/widget-file. Finished texts only; the widget formats nothing.
-let appGroup = "group.com.scully98.calorieweightbalancer"
+let appGroup = "group.com.scully98.unrestart"
 let snapshotPath = "widget/snapshot.v1.json"
 
 struct WidgetSnapshot: Decodable {

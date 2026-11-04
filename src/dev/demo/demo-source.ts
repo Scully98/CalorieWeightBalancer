@@ -8,7 +8,7 @@ import type { HealthProfile } from '@/health/scan';
 import type { DataKey, HealthSource } from '@/health/source';
 
 // Searched for in the release bundle; it must never show up there.
-export const DEMO_BUNDLE_MARKER = 'kcalwaage-demo-data';
+export const DEMO_BUNDLE_MARKER = 'unrestart-demo-data';
 
 // Today so far, as „Heute bisher“ in the design.
 const TODAY_SO_FAR: DemoValues = { food: 1420, resting: 1090, active: 290 };

@@ -46,7 +46,7 @@ Prerequisites: Node.js LTS (tested with 22.16.0) and npm. Local builds need macO
    npx expo run:ios --device --configuration Release
    ```
 
-   `Release` embeds the JS bundle, so the app and its background updates work without Metro. If signing fails, open `ios/Kcalwaage.xcworkspace`, select the team with "Automatically manage signing" for the targets `Kcalwaage` and `widget`, and build once with ⌘R.
+   `Release` embeds the JS bundle, so the app and its background updates work without Metro. If signing fails, open `ios/UnRestart.xcworkspace`, select the team with "Automatically manage signing" for the targets `UnRestart` and `widget`, and build once with ⌘R.
 
 ### iPhone with a free Apple ID
 
@@ -54,7 +54,7 @@ Without a paid developer account, Xcode signs with a Personal Team. Profiles exp
 
 1. Add your Apple ID in Xcode → Settings → Accounts.
 2. On the iPhone, turn on Settings → Privacy & Security → Developer Mode, connect it via USB and trust the Mac.
-3. Put your Personal Team ID (the OU field of your "Apple Development" certificate) into `.env.local`, which is git-ignored and read by the Expo CLI. This drops the App Group entitlement and uses the bundle ID `com.scully98.calorieweightbalancer.dev`:
+3. Put your Personal Team ID (the OU field of your "Apple Development" certificate) into `.env.local`, which is git-ignored and read by the Expo CLI. This drops the App Group entitlement and uses the bundle ID `com.scully98.unrestart.dev`:
 
    ```sh
    echo "APPLE_PERSONAL_TEAM_ID=XXXXXXXXXX" > .env.local
@@ -62,7 +62,7 @@ Without a paid developer account, Xcode signs with a Personal Team. Profiles exp
    npx expo run:ios --device
    ```
 
-   If the first build fails with `errSecInternalComponent`, build once from Xcode (`ios/Kcalwaage.xcworkspace`, ⌘R) and choose "Always Allow" when macOS asks for keychain access.
+   If the first build fails with `errSecInternalComponent`, build once from Xcode (`ios/UnRestart.xcworkspace`, ⌘R) and choose "Always Allow" when macOS asks for keychain access.
 
 4. On the iPhone, trust the developer certificate under Settings → General → VPN & Device Management.
 
@@ -70,7 +70,7 @@ Without a paid developer account, Xcode signs with a Personal Team. Profiles exp
 
 The widget lives in `targets/widget/` (SwiftUI, linked by `@bacons/apple-targets` on prebuild) and reads the file the app writes into the App Group container. Run `npx expo prebuild --clean` after changing `targets/widget/expo-target.config.js` or `app.json`.
 
-In the Simulator: build and open the app once so it writes the file, then long-press the home screen → Edit → Add Widget → Kcalwaage. Lock screen widgets: lock the Simulator (⌘L), long-press the lock screen → Customize.
+In the Simulator: build and open the app once so it writes the file, then long-press the home screen → Edit → Add Widget → UnRestart. Lock screen widgets: lock the Simulator (⌘L), long-press the lock screen → Customize.
 
 If `.env.local` sets `APPLE_PERSONAL_TEAM_ID`, local builds drop the App Group. Prefix the command with `APPLE_PERSONAL_TEAM_ID=` to build with it.
 

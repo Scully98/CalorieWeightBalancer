@@ -23,7 +23,7 @@ struct BalanceEntryView: View {
   var body: some View {
     content
       // Opens the balance page.
-      .widgetURL(URL(string: "calorieweightbalancer:///"))
+      .widgetURL(URL(string: "unrestart:///"))
       .widgetBackground(family == .systemSmall ? Palette.background : .clear)
   }
 

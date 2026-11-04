@@ -4,8 +4,8 @@
 # app afterwards overwrites the file with the real (empty) balance.
 set -e
 cd "$(dirname "$0")/.."
-group=$(xcrun simctl get_app_container booted com.scully98.calorieweightbalancer groups |
-  awk '/group.com.scully98.calorieweightbalancer/ { print $2 }')
+group=$(xcrun simctl get_app_container booted com.scully98.unrestart groups |
+  awk '/group.com.scully98.unrestart/ { print $2 }')
 if [ -z "$group" ]; then
   echo "App with App Group not installed in the booted Simulator." >&2
   exit 1

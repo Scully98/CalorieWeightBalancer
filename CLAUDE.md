@@ -1,6 +1,6 @@
-# Kcalwaage (CalorieWeightBalancer)
+# UnRestart (CalorieWeightBalancer)
 
-Projektkontext für Claude, Stand 2026-11-02. Nutzbar als `CLAUDE.md` im Repo oder als System-Prompt in der Claude Developer Console.
+Projektkontext für Claude, Stand 2026-11-04. Nutzbar als `CLAUDE.md` im Repo oder als System-Prompt in der Claude Developer Console.
 
 ## Arbeitsweise
 - Julius schreibt Deutsch; antworte auf Deutsch, Code und Commit-Messages auf Englisch.
@@ -22,6 +22,7 @@ Fragen, die die App beantwortet: Bin ich diesen Monat im Plus oder Minus? Wie la
 
 ## Stack
 - React Native mit Expo, Development Build (kein Expo Go), Build/Upload über EAS, TypeScript.
+- Name unter dem Icon „UnRestart“ (früher Arbeitstitel „Kcalwaage“). Bundle ID `com.scully98.unrestart`, Widget `….widget`, App Group `group.com.scully98.unrestart`, Scheme `unrestart`. Der `slug` bleibt `calorieweightbalancer`, daran hängt das EAS-Projekt.
 - HealthKit: `@kingstinct/react-native-healthkit`.
 - Chart: eigenes SVG mit `react-native-svg`, keine Chart-Library (Spike `docs/spikes/2026-10-25-chart-library.md`: gifted-charts kann keine dritte Linie, keine Tageslinien unter Wochenbalken; victory-native bräuchte Skia und die Muster ein zweites Mal).
 - SVG: `react-native-svg` für die Qualitäts-Muster (`src/components/quality-pattern.tsx`: `QualityPatternDefs`, `qualityFill`, `QualitySwatch`, `QualityCross`) und den Chart; der Chart füllt seine Balken mit denselben Mustern.
@@ -113,7 +114,7 @@ Schwarz auf weiß, Dark Mode invertiert, keine Akzentfarbe. Plus/Minus über Vor
 - Julius plant eine zweite, kostenpflichtige App. Gewerbe, Developer-Account und Verkäufername sollen für beide genutzt werden; der Trader-Status gilt dann accountweit, also auch hier. Danach ist ein optionaler Tip Jar per Update denkbar.
 
 ## Offene Punkte
-1. Name „Kcalwaage“ (Arbeitstitel; Alternativen Kcalsaldo, Bilanzkompass): Markenprüfung DPMA/EUIPO/App Store vor Schritt 11.
+1. Name „UnRestart“ von Julius geprüft (2026-11-04). Im Store „UnRestart: Calorie Balance“ (höchstens 30 Zeichen), die Botschaft „long-term“ kommt in den Untertitel. Name in App Store Connect reservieren.
 2. Health-Sync von MyFitnessPal/Yazio prüfen.
 3. Nebentätigkeitsklausel prüfen.
 4. Entwurf Impressum und Datenschutzerklärung.

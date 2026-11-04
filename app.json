@@ -1,9 +1,9 @@
 {
   "expo": {
-    "name": "Kcalwaage",
+    "name": "UnRestart",
     "slug": "calorieweightbalancer",
     "owner": "scully98",
-    "scheme": "calorieweightbalancer",
+    "scheme": "unrestart",
     "version": "1.0.0",
     "orientation": "default",
     "icon": "./assets/icon.png",
@@ -11,11 +11,11 @@
     "platforms": ["ios"],
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.scully98.calorieweightbalancer",
+      "bundleIdentifier": "com.scully98.unrestart",
       "appleTeamId": "7V8YXT5455",
       "entitlements": {
         "com.apple.security.application-groups": [
-          "group.com.scully98.calorieweightbalancer"
+          "group.com.scully98.unrestart"
         ]
       }
     },
@@ -24,7 +24,7 @@
       [
         "@kingstinct/react-native-healthkit",
         {
-          "NSHealthShareUsageDescription": "Kcalwaage reads dietary, resting and active energy, weight, body fat, lean body mass, height, age and sex to calculate your calorie balance. Your data stays on your iPhone.",
+          "NSHealthShareUsageDescription": "UnRestart reads dietary, resting and active energy, weight, body fat, lean body mass, height, age and sex to calculate your calorie balance. Your data stays on your iPhone.",
           "NSHealthUpdateUsageDescription": false,
           "background": true
         }
