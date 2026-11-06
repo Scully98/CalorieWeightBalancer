@@ -12,6 +12,7 @@ import { periodSpan, periodSubtitle } from '../period-subtitle';
 import { useBalance } from '../use-balance';
 import { addDays } from '@/core/dates';
 import { toDateKey } from '@/core/day-record';
+import { useWidgetSync } from '@/features/widget/use-widget-sync';
 import { ScrollLockContext } from '@/hooks/scroll-lock';
 import { useSettings, useSettingsStore } from '@/storage/settings-context';
 import { useColors } from '@/theme/use-colors';
@@ -31,6 +32,7 @@ export function HomeScreen({ initialUi }: { initialUi?: HomeUi } = {}) {
   const { t } = useTranslation();
   const { period, includeToday, zeroDaysAsMaintenance } = useSettings();
   const state = useBalance();
+  useWidgetSync(state);
   const now = new Date();
   const span = periodSpan(period, includeToday, now);
   const periodLabel =

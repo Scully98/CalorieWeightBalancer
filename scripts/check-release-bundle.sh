@@ -8,7 +8,7 @@ out="dist/release-check"
 rm -rf "$out"
 npx expo export --platform ios --output-dir "$out" > /dev/null
 
-if grep -rlaE 'kcalwaage-demo-data|normal30|Zustandsgalerie|kcalwaage-day-values' "$out"; then
+if grep -rlaE 'unrestart-demo-data|normal30|Zustandsgalerie|unrestart-day-values' "$out"; then
   echo "Demo code found in the release bundle (files above)." >&2
   exit 1
 fi

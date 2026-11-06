@@ -1,6 +1,6 @@
-# Kcalwaage (CalorieWeightBalancer)
+# UnRestart (CalorieWeightBalancer)
 
-Projektkontext für Claude, Stand 2026-11-02. Nutzbar als `CLAUDE.md` im Repo oder als System-Prompt in der Claude Developer Console.
+Projektkontext für Claude, Stand 2026-11-04. Nutzbar als `CLAUDE.md` im Repo oder als System-Prompt in der Claude Developer Console.
 
 ## Arbeitsweise
 - Julius schreibt Deutsch; antworte auf Deutsch, Code und Commit-Messages auf Englisch.
@@ -16,20 +16,21 @@ Fragen, die die App beantwortet: Bin ich diesen Monat im Plus oder Minus? Wie la
 ## Rahmenbedingungen
 - Alles lokal: kein Backend, keine Accounts, kein Tracking, keine Analytics. Datenschutz-Label „Keine Daten erfasst“.
 - Einzige Datenquelle Apple HealthKit, nur Leserechte. Essen/Gewicht kommen aus MyFitnessPal, Yazio, Waage-App usw. per Health-Sync.
-- Einstellungen lokal in einer App Group (Widget liest mit), über `SettingsStore` in `src/storage/` (Interface `KeyValueStore`, Tests mit In-Memory-Variante). Keys nur `introCompleted`, `profile.v1` (eingetragene Körperdaten), `settings.v1` (Zeitraum, Null-Tage, heute, Toleranz); nie Health-Werte. In die App Group schreibt nur `src/storage/app-group.ts` (ESLint).
+- Einstellungen lokal in einer App Group (Widget liest mit), über `SettingsStore` in `src/storage/` (Interface `KeyValueStore`, Tests mit In-Memory-Variante). Keys nur `introCompleted`, `profile.v1` (eingetragene Körperdaten), `settings.v1` (Zeitraum, Null-Tage, heute, Toleranz); nie Health-Werte. Einzige abgeleitete Health-Werte auf der Platte sind die fertigen Widget-Texte in der Datei `widget/snapshot.v1.json` im App-Group-Container (Ordner vom Backup ausgenommen, Richtlinie 5.1.3; Schutzklasse `completeUntilFirstUserAuthentication`, damit der Sperrbildschirm sie lesen kann). In die App Group schreibt nur `src/storage/app-group.ts`, Dateien über das lokale Expo-Modul `modules/widget-file` (ESLint).
 - V1: nur iPhone, Deutsch und Englisch.
 - Apple: Developer Program 99 USD/Jahr (Individual-Account), Richtlinie 5.1.3 (Health-Daten nicht für Werbung, nicht in iCloud), Datenschutz-URL Pflicht, Hinweis „Keine medizinische Beratung“, genug Funktionsumfang nach 4.2.
 
 ## Stack
 - React Native mit Expo, Development Build (kein Expo Go), Build/Upload über EAS, TypeScript.
+- Name unter dem Icon „UnRestart“ (früher Arbeitstitel „Kcalwaage“). Bundle ID `com.scully98.unrestart`, Widget `….widget`, App Group `group.com.scully98.unrestart`, Scheme `unrestart`. Der `slug` bleibt `calorieweightbalancer`, daran hängt das EAS-Projekt.
 - HealthKit: `@kingstinct/react-native-healthkit`.
 - Chart: eigenes SVG mit `react-native-svg`, keine Chart-Library (Spike `docs/spikes/2026-10-25-chart-library.md`: gifted-charts kann keine dritte Linie, keine Tageslinien unter Wochenbalken; victory-native bräuchte Skia und die Muster ein zweites Mal).
 - SVG: `react-native-svg` für die Qualitäts-Muster (`src/components/quality-pattern.tsx`: `QualityPatternDefs`, `qualityFill`, `QualitySwatch`, `QualityCross`) und den Chart; der Chart füllt seine Balken mit denselben Mustern.
 - Toleranz-Slider: eigener Slider aus Views (`src/components/marked-slider.tsx`), Farben aus den Tokens. `@react-native-community/slider` lädt unter der neuen Architektur ohne Bridge kein Daumen-Bild.
 - Schalter: eigener aus Views (`src/components/switch-row.tsx`), Farben aus den Tokens. Der native `Switch` zeigte im Dark Mode teils einen hellen Daumen auf heller Spur.
-- Widget: SwiftUI-WidgetKit-Extension via `@bacons/apple-targets` (Ordner `targets/widget/`). Kein Flutter.
-- Die App rechnet und schreibt einen fertigen JSON-Datensatz (Zeitraum, Bilanz, Spanne, Fett in g, Zeitstempel) in die App-Group-`UserDefaults`, dann `WidgetCenter.reloadAllTimelines()` über ein kleines natives Modul. Das Widget fragt HealthKit nicht selbst ab (Daten bei gesperrtem Gerät verschlüsselt).
-- Hintergrund-Update per HealthKit Observer/Background Delivery; Fallback: Widget zeigt letzten Stand mit Uhrzeit.
+- Widget: SwiftUI-WidgetKit-Extension via `@bacons/apple-targets` (Ordner `targets/widget/`, `entitlements: {}` spiegelt die App Group). Kein Flutter. Farben als Kopie der Tokens in `expo-target.config.js` (Test `src/theme/__tests__/widget-colors.test.ts`).
+- Die App rechnet und schreibt fertige Anzeige- und VoiceOver-Texte (`src/features/widget/snapshot.ts`: Tage, Datumsspanne, Bilanz, Spanne, Fett in kg, Zeitstempel, `staleAfter`), keine Rohzahlen, dann `WidgetCenter.reloadAllTimelines()`, nur wenn sich etwas ändert (`sync.ts`). Das Widget formatiert und rechnet nichts und fragt HealthKit nicht selbst ab (Daten bei gesperrtem Gerät verschlüsselt). Spec `docs/specs/2026-11-03-widget.md`.
+- Im Vordergrund schreibt die Bilanz-Seite (`useWidgetSync`, nur mit `healthKitSource` und aktiver App). Im Hintergrund Background Delivery für Nahrung, Ruhe, Aktiv und Gewicht, stündlich (`src/health/background.ts`, `src/features/widget/background.ts`); bei gesperrtem Gerät, vor dem Intro oder bei Fehlern wird nichts geschrieben. Akku vor Aktualität. Ist der Datensatz von einem früheren Tag und wandert der Zeitraum mit, zeigt das Widget „Stand …“.
 
 ## HealthKit-Typen
 | Wert | Typ | Pro Tag | V1 |
@@ -95,7 +96,7 @@ Drei Screens (Bilanz, Analyse-Chart, Einstellungen) plus Widget.
 7. Balkenchart pro Tag (Plus oben, Minus unten), ab 32 Tagen Wochenbalken (ISO-Kalenderwochen, Ø kcal/Tag; erste Woche unter 3 Tagen an die nächste angehängt). Tagesbalken nach dem vorrangigen Flag (`primaryFlag`: wenig Nahrung > ohne Nahrung > ohne Grundumsatz > Grundumsatz geschätzt): Schraffur, Streifen, ohne Wert nur ✕ auf der Nulllinie; ohne Nahrung mit Wert (Null-Tage aus) gefüllt plus ✕. Wochenbalken schraffiert, sobald ein Tag unvollständig ist. Heute immer gestrichelter Umriss (zählt mit / zählt nicht). Tooltip per Tipp oder langem Drücken (0,3 s) und Ziehen, ein Tipp bei offenem Tooltip schließt ihn überall im Chart; der Chart rechnet nichts, alle Werte kommen aus `report.chart` (ESLint).
 8. Gewichtslinie auf zweiter Achse (Δ kg seit Zeitraumbeginn) als 7-Tage-Trend, durchgezogen; Einzelmessungen als hohle Kreise mit eigenem Chip „Messpunkte“.
 9. Fettmasse-Linie (7-Tage-Trend, gestrichelt) und „Fett laut Bilanz“ (gepunktet, startet mit der gemessenen Linie), Linien und Chips nur mit Messungen. Magermasse und Einordnung stehen in der Abgleich-Karte (P9).
-10. Widget klein/mittel: Zeitraum, Bilanz, Fett-Äquivalent; Spanne, wenn Toleranz aktiv.
+10. Widget klein (Homescreen) sowie rechteckig und inline (Sperrbildschirm): Tage und Datumsspanne, Bilanz, „ca. … kg Körperfett“; klein mit Spanne unter dem Einzelwert, wenn Toleranz aktiv; Sperrbildschirm immer Einzelwert. Tippen öffnet die Bilanz. Kein mittleres Widget in V1.
 11. Daten-Seite (`/settings/data`, aus den Einstellungen): was aus Health ankommt, wie sich die Bilanz zusammensetzt, Link zu Health (Spec `docs/specs/2026-10-21-data-page.md`).
 12. Karte „Dein tatsächlicher Verbrauch“ über dem Chart (Specs `docs/specs/2026-10-25-analysis-card.md`, `docs/specs/2026-11-02-ui-refresh.md`): große Zahl, Differenz-Linie zum Tracker (Zielscheibe bei gerundet gleich), Balken „Bilanz vs. Waage“ mit Fett, Magermasse und Lücke (`comparisonBars`, bei Gegenläufigem von einer Mittellinie), Kurzsatz mit Chevron. Aufgeklappt: Einordnungssatz nach Zustand, Richtung und `expected` (Zuwachs, Abnahme oder neutral), Satz zur Zusammensetzung (Anteil Magermasse oder Fett ab, Magermasse auf), Erklärung und Formel. Gesperrt: gestrichelter Hinweis, darunter Vorschau mit Deckkraft 0,3 ohne Satz. Nur Gewicht: Titel „Bilanz vs. Waage“, Balken in kg, Hinweis je nach KFA-Tagen (keine oder zu wenige). Alle Sätze aus i18n (`analysis.*`), das Modell `src/features/balance/analysis-card.ts` wählt nur Keys (ESLint).
 
@@ -113,7 +114,7 @@ Schwarz auf weiß, Dark Mode invertiert, keine Akzentfarbe. Plus/Minus über Vor
 - Julius plant eine zweite, kostenpflichtige App. Gewerbe, Developer-Account und Verkäufername sollen für beide genutzt werden; der Trader-Status gilt dann accountweit, also auch hier. Danach ist ein optionaler Tip Jar per Update denkbar.
 
 ## Offene Punkte
-1. Name „Kcalwaage“ (Arbeitstitel; Alternativen Kcalsaldo, Bilanzkompass): Markenprüfung DPMA/EUIPO/App Store vor Schritt 11.
+1. Name „UnRestart“ von Julius geprüft (2026-11-04). Im Store „UnRestart: Calorie Balance“ (höchstens 30 Zeichen), die Botschaft „long-term“ kommt in den Untertitel. Name in App Store Connect reservieren.
 2. Health-Sync von MyFitnessPal/Yazio prüfen.
 3. Nebentätigkeitsklausel prüfen.
 4. Entwurf Impressum und Datenschutzerklärung.

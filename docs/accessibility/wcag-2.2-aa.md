@@ -54,3 +54,16 @@ Status: **Erfüllt** (im Code oder per Test belegt) · **Gerät offen** (umgeset
 | 3.3.7, 3.3.8 Eingabe, Anmeldung | n/a               | Keine Anmeldung, nichts doppelt einzugeben                                                                                      |
 | 4.1.2 Name, Rolle, Wert         | Gerät offen       | Rollen und Zustände, „eingeklappt“ ergänzt                                                                                      |
 | 4.1.3 Statusmeldungen           | Gerät offen       | `useAnnounceChange`; VoiceOver ungeprüft                                                                                        |
+
+## Widget
+
+Stand 2026-11-03, Spec `docs/specs/2026-11-03-widget.md`. Klein (Homescreen), rechteckig und inline (Sperrbildschirm).
+
+| Kriterium         | Status      | Beleg oder Lücke                                                                                                                                                                                                                             |
+| ----------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.1.1, 4.1.2 Name | Gerät offen | Ein Element pro Widget mit kombiniertem Label: Tage, Datumsspanne, Vorzeichen gesprochen („plus 7.000 Kilokalorien, mehr gegessen als verbraucht“), Spanne beim kleinen Widget, Fett „berechnet“, Stand, falls sichtbar (`snapshot.test.ts`) |
+| 1.4.1 Farbe       | Erfüllt     | Wie in der App: Vorzeichen und Text, keine Akzentfarbe                                                                                                                                                                                       |
+| 1.4.3 Kontrast    | Erfüllt     | Homescreen mit denselben Tokens wie die App (`widget-colors.test.ts`); Sperrbildschirm mit den Systemstilen `.primary`/`.secondary`                                                                                                          |
+| 1.4.4 Textgröße   | Gerät offen | Textstile mit Dynamic Type, die Zahl über `@ScaledMetric`; `minimumScaleFactor` verhindert Abschneiden, das Widget hat eine feste Größe                                                                                                      |
+| 2.1.1 Tastatur    | Gerät offen | Ein Element, Leertaste öffnet die App (System)                                                                                                                                                                                               |
+| 2.5.8 Zielgröße   | Erfüllt     | Das ganze Widget ist das Ziel                                                                                                                                                                                                                |

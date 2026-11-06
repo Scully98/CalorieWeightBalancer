@@ -13,7 +13,7 @@ import { space } from '@/theme/spacing';
 import { useColors } from '@/theme/use-colors';
 
 // Searched for in the release bundle; it must never show up there.
-export const DAY_VALUES_MARKER = 'kcalwaage-day-values';
+export const DAY_VALUES_MARKER = 'unrestart-day-values';
 
 // The last 30 days and today.
 const DAYS = 31;

@@ -34,7 +34,7 @@ describe('emptyModel', () => {
     expect(emptyModel({}, NOW, 'de-DE', tDe)).toEqual({
       kind: 'noData',
       title: 'Noch keine Daten.',
-      body: 'Prüfe in Health, ob Kcalwaage lesen darf.',
+      body: 'Prüfe in Health, ob UnRestart lesen darf.',
       showPermissions: true,
     });
   });
@@ -51,7 +51,7 @@ describe('emptyModel', () => {
     );
     expect(model.title).toBe('Keine Nahrung in diesem Zeitraum.');
     expect(model.body).toBe(
-      'Letzter Eintrag davor: 12.09.2026. Wähle einen längeren Zeitraum oder prüfe in Health, ob Kcalwaage lesen darf.',
+      'Letzter Eintrag davor: 12.09.2026. Wähle einen längeren Zeitraum oder prüfe in Health, ob UnRestart lesen darf.',
     );
   });
 

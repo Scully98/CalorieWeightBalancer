@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "loadedAt": "2026-10-24T06:14:00.000Z",
+  "staleAfter": "2026-10-24T22:00:00.000Z",
+  "title": "30 Tage",
+  "dates": "24. Sep – 23. Okt",
+  "stale": "Stand 24. Okt, 08:14",
+  "staleLabel": "Stand 24. Oktober, 08:14 Uhr",
+  "content": {
+    "kind": "balance",
+    "kcal": "+7.000",
+    "unit": "kcal",
+    "range": "+2.650 bis +19.350",
+    "fat": "ca. +0,3 bis +2,5 kg Körperfett",
+    "lockFat": "ca. +0,9 kg Fett",
+    "inline": "+7.000 kcal · 30 T",
+    "label": "30 Tage, 24. September bis 23. Oktober. plus 7.000 Kilokalorien, mehr gegessen als verbraucht. Mit Messfehler plus 2.650 bis plus 19.350 Kilokalorien, mehr gegessen als verbraucht. etwa plus 0,3 bis plus 2,5 Kilogramm Körperfett, berechnet",
+    "lockLabel": "30 Tage. plus 7.000 Kilokalorien, mehr gegessen als verbraucht. etwa plus 0,9 Kilogramm Körperfett, berechnet"
+  }
+}

@@ -20,6 +20,10 @@ const APP_GROUP = {
   name: '@bacons/apple-targets',
   message: 'Read and write the App Group through the store in src/storage.',
 };
+const APP_GROUP_FILE = {
+  group: ['**/modules/widget-file', '**/modules/widget-file/*'],
+  message: 'Read and write the App Group through src/storage/app-group.ts.',
+};
 const CORE_TEXT_MESSAGE =
   'The core returns states and numbers; texts come from i18n in the UI.';
 const NO_I18N = [
@@ -74,7 +78,7 @@ module.exports = defineConfig([
   // imports them; routes in src/app/dev load them behind __DEV__.
   // Health values are summed by statistics queries, which deduplicate iPhone
   // and Watch; raw samples are only read where nothing is summed.
-  // Only the store touches the App Group.
+  // Only the store touches the App Group, UserDefaults and files alike.
   // ESLint keeps one config per rule and file, so each block lists every
   // restriction that applies to its files.
   {
@@ -82,7 +86,10 @@ module.exports = defineConfig([
     rules: {
       'no-restricted-imports': [
         'error',
-        { paths: [RAW_SAMPLES, APP_GROUP], patterns: [DEV_CODE] },
+        {
+          paths: [RAW_SAMPLES, APP_GROUP],
+          patterns: [DEV_CODE, APP_GROUP_FILE],
+        },
       ],
     },
   },
@@ -91,14 +98,17 @@ module.exports = defineConfig([
     rules: {
       'no-restricted-imports': [
         'error',
-        { paths: [APP_GROUP], patterns: [DEV_CODE] },
+        { paths: [APP_GROUP], patterns: [DEV_CODE, APP_GROUP_FILE] },
       ],
     },
   },
   {
     files: ['src/dev/**/*.{ts,tsx}', 'src/app/dev/**/*.{ts,tsx}'],
     rules: {
-      'no-restricted-imports': ['error', { paths: [RAW_SAMPLES, APP_GROUP] }],
+      'no-restricted-imports': [
+        'error',
+        { paths: [RAW_SAMPLES, APP_GROUP], patterns: [APP_GROUP_FILE] },
+      ],
     },
   },
   {
@@ -107,7 +117,7 @@ module.exports = defineConfig([
     rules: {
       'no-restricted-imports': [
         'error',
-        { paths: [APP_GROUP], patterns: [DEV_CODE] },
+        { paths: [APP_GROUP], patterns: [DEV_CODE, APP_GROUP_FILE] },
       ],
     },
   },
@@ -128,7 +138,7 @@ module.exports = defineConfig([
         'error',
         {
           paths: [RAW_SAMPLES, APP_GROUP, ...NO_I18N],
-          patterns: [DEV_CODE, NO_I18N_PATTERN],
+          patterns: [DEV_CODE, APP_GROUP_FILE, NO_I18N_PATTERN],
         },
       ],
     },

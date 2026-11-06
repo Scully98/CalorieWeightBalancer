@@ -6,7 +6,7 @@ export const de = {
     stepOf: 'Schritt {{current}} von {{count}}',
     pageOf: 'Seite {{current}} von {{count}}',
     permissionsPath:
-      'In Health: Profilbild → Apps → Kcalwaage. Dort siehst du alle Werte und kannst sie an- und ausschalten.',
+      'In Health: Profilbild → Apps → UnRestart. Dort siehst du alle Werte und kannst sie an- und ausschalten.',
   },
   tabs: {
     balance: 'Bilanz',
@@ -197,7 +197,7 @@ export const de = {
     },
     groupSpoken_one: '{{title}}, {{count}} Tag',
     groupSpoken_other: '{{title}}, {{count}} Tage',
-    note: 'Fehlende Einträge nachtragen. Sobald sie in Health stehen, rechnet Kcalwaage beim nächsten Öffnen neu.',
+    note: 'Fehlende Einträge nachtragen. Sobald sie in Health stehen, rechnet UnRestart beim nächsten Öffnen neu.',
   },
   today: {
     title: 'Heute',
@@ -268,7 +268,7 @@ export const de = {
       weekFooter_other: '{{days}} Tage · {{count}} Messungen',
     },
     a11y: {
-        summaryDay_one: 'Bilanz pro Tag, {{count}} Balken.',
+      summaryDay_one: 'Bilanz pro Tag, {{count}} Balken.',
       summaryDay_other: 'Bilanz pro Tag, {{count}} Balken.',
       summaryWeek_one: 'Bilanz pro Woche, {{count}} Balken.',
       summaryWeek_other: 'Bilanz pro Woche, {{count}} Balken.',
@@ -282,16 +282,16 @@ export const de = {
   empty: {
     noData: {
       title: 'Noch keine Daten.',
-      body: 'Prüfe in Health, ob Kcalwaage lesen darf.',
+      body: 'Prüfe in Health, ob UnRestart lesen darf.',
     },
     explain:
       'iOS zeigt Apps nicht an, ob ein Zugriff abgelehnt wurde. Fehlen Einträge, synchronisiert vermutlich deine Tracking- oder Waage-App nicht mit Health.',
     period: {
       title: 'Keine Nahrung in diesem Zeitraum.',
       lastBefore:
-        'Letzter Eintrag davor: {{date}}. Wähle einen längeren Zeitraum oder prüfe in Health, ob Kcalwaage lesen darf.',
+        'Letzter Eintrag davor: {{date}}. Wähle einen längeren Zeitraum oder prüfe in Health, ob UnRestart lesen darf.',
       first:
-        'Erster Eintrag: {{date}}. Wähle einen anderen Zeitraum oder prüfe in Health, ob Kcalwaage lesen darf.',
+        'Erster Eintrag: {{date}}. Wähle einen anderen Zeitraum oder prüfe in Health, ob UnRestart lesen darf.',
     },
     firstDay: {
       title: 'Deine Bilanz beginnt morgen.',
@@ -300,6 +300,20 @@ export const de = {
     open: 'Health-Berechtigungen öffnen',
   },
   // Dates spelled like the design („24. Sep“); Intl writes „24. Sept.“.
+  // Home and lock screen widget; finished texts in the App Group file.
+  widget: {
+    unit: 'kcal',
+    range: '{{min}} bis {{max}}',
+    lockFat: 'ca. {{value}} kg Fett',
+    inline: '{{kcal}} kcal · {{days}} T',
+    inlineEmpty: 'Bilanz: noch keine Daten',
+    stale: 'Stand {{date}}, {{time}}',
+    a11y: {
+      dates: '{{from}} bis {{to}}',
+      range: 'Mit Messfehler {{range}}',
+      stale: 'Stand {{date}}, {{time}} Uhr',
+    },
+  },
   date: {
     dayMonth: '{{day}}. {{month}}',
     dayMonthYear: '{{day}}. {{month}} {{year}}',
@@ -514,7 +528,7 @@ export const de = {
       resultValue: '{{min}} bis {{max}} kcal',
       resultSign: 'Plus = mehr gegessen als verbraucht',
       footer:
-        'Kcalwaage rechnet die Fehlertoleranz mit ein und zeigt dir eine ehrliche Spanne statt Scheingenauigkeit und gleicht sie mit deiner Waage ab.',
+        'UnRestart rechnet die Fehlertoleranz mit ein und zeigt dir eine ehrliche Spanne statt Scheingenauigkeit und gleicht sie mit deiner Waage ab.',
       a11y: 'Kalorien, Verbrauch und Gewicht über Wochen ins Verhältnis gesetzt',
     },
     bigPicture: {
@@ -531,7 +545,7 @@ export const de = {
     },
     health: {
       title: 'Ohne deine Health-Daten geht nichts',
-      body: 'Kcalwaage misst selbst nichts. Sie rechnet deine Apple-Health-Werte auf und bereitet sie übersichtlich auf, lokal, nur lesend, nichts verlässt dein iPhone.',
+      body: 'UnRestart misst selbst nichts. Die App rechnet deine Apple-Health-Werte auf und bereitet sie übersichtlich auf, lokal, nur lesend, nichts verlässt dein iPhone.',
       rows: {
         food: { label: 'Nahrungsenergie', detail: 'was rein geht' },
         burn: { label: 'Ruhe- & Aktivenergie', detail: 'was raus geht' },
