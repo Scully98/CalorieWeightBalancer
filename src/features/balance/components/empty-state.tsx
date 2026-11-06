@@ -7,6 +7,7 @@ import type { BalanceReport } from '../use-balance';
 import { AppText } from '@/components/app-text';
 import { Button } from '@/components/button';
 import { openHealthApp } from '@/health/open-health-app';
+import { useAnnounceChange } from '@/hooks/use-announce';
 import { formatLocale } from '@/i18n';
 import { border, space } from '@/theme/spacing';
 import { useColors } from '@/theme/use-colors';
@@ -29,6 +30,7 @@ export function EmptyState({ report }: EmptyStateProps) {
     formatLocale(),
     t,
   );
+  useAnnounceChange(model.title);
 
   if (model.kind === 'firstDay' && report)
     return (

@@ -55,7 +55,7 @@ export function HomeScreen({ initialUi }: { initialUi?: HomeUi } = {}) {
 
   return (
     <SafeAreaView
-      edges={['top']}
+      edges={['top', 'left', 'right']}
       style={[styles.flex, { backgroundColor: colors.background }]}
     >
       <ScrollLockContext value={setScrollLocked}>

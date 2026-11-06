@@ -82,6 +82,9 @@ export const AnalysisCard = memo(function AnalysisCard({
               <Pressable
                 accessibilityRole="button"
                 accessibilityState={{ expanded: open }}
+                accessibilityValue={
+                  open ? undefined : { text: t('a11y.collapsed') }
+                }
                 onPress={() => setOpen(!open)}
                 style={styles.toggle}
               >

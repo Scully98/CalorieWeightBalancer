@@ -43,6 +43,13 @@ module.exports = defineConfig([
     rules: {
       'no-restricted-syntax': [
         'error',
+        // Without a role a Pressable is out of reach for Full Keyboard Access.
+        // Backdrops hidden from VoiceOver have a visible way out instead.
+        {
+          selector:
+            "JSXOpeningElement[name.name='Pressable']:not(:has(JSXAttribute[name.name=/^(accessibilityRole|accessibilityElementsHidden)$/]))",
+          message: 'Give every Pressable an accessibilityRole.',
+        },
         { selector: `Literal[value=/^${HEX}$/]`, message: COLOR_MESSAGE },
         { selector: `Literal[value=/^${FUNCTION}/i]`, message: COLOR_MESSAGE },
         {

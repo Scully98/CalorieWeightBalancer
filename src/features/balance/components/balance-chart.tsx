@@ -6,6 +6,7 @@ import { ChartCanvas } from './chart-canvas';
 import { ChartLegend } from './chart-legend';
 import { ChartTooltip } from './chart-tooltip';
 import {
+  cappedChartWidth,
   chartModel,
   VIEW,
   type ChartModel,
@@ -55,9 +56,14 @@ export const BalanceChart = memo(function BalanceChart({
 }: BalanceChartProps) {
   const { t } = useTranslation();
   const locale = formatLocale();
-  const { fontScale } = useWindowDimensions();
+  const { fontScale, height: windowHeight } = useWindowDimensions();
   // Content width, measured: the canvas scales the design's viewBox to it.
-  const [width, setWidth] = useState<number>();
+  const [measured, setMeasured] = useState<number>();
+  // In landscape the height, which follows the width, stays within the window.
+  const width =
+    measured === undefined
+      ? undefined
+      : cappedChartWidth(measured, windowHeight);
   // Chips the user switched off; kept across period changes, not stored.
   const [hidden, setHidden] = useState<HiddenSeries>({});
   // Stable while only the width or the selection changes, so the memoized
@@ -122,7 +128,7 @@ export const BalanceChart = memo(function BalanceChart({
         </AppText>
       </View>
       <View
-        onLayout={(event) => setWidth(event.nativeEvent.layout.width)}
+        onLayout={(event) => setMeasured(event.nativeEvent.layout.width)}
         accessible
         accessibilityRole="adjustable"
         accessibilityLabel={chartSummary(model, chart.lines, locale, t)}
@@ -134,8 +140,11 @@ export const BalanceChart = memo(function BalanceChart({
         onAccessibilityAction={(event) =>
           step(event.nativeEvent.actionName === 'increment' ? 1 : -1)
         }
+        onAccessibilityEscape={
+          selected === undefined ? undefined : () => select(undefined)
+        }
       >
-        <View style={styles.axisHeader}>
+        <View style={[styles.axisHeader, { width }, styles.centered]}>
           <AppText
             variant="caption2"
             tone="muted"
@@ -154,7 +163,7 @@ export const BalanceChart = memo(function BalanceChart({
           ) : null}
         </View>
         {width ? (
-          <View>
+          <View style={[{ width }, styles.centered]}>
             <ChartCanvas model={model} width={width} selected={selected} />
             <View style={StyleSheet.absoluteFill} {...gesture} />
           </View>
@@ -162,7 +171,7 @@ export const BalanceChart = memo(function BalanceChart({
         {tooltip ? (
           <ChartTooltip
             model={tooltip}
-            left={tooltipLeft}
+            left={tooltipLeft + ((measured ?? 0) - (width ?? 0)) / 2}
             width={tooltipWidth}
           />
         ) : null}
@@ -185,6 +194,9 @@ const styles = StyleSheet.create({
   },
   header: {
     gap: 2,
+  },
+  centered: {
+    alignSelf: 'center',
   },
   axisHeader: {
     flexDirection: 'row',

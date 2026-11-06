@@ -1,5 +1,6 @@
 export const de = {
   common: {
+    introTitle: 'Einführung',
     next: 'Weiter',
     skip: 'Überspringen',
     stepOf: 'Schritt {{current}} von {{count}}',
@@ -69,6 +70,10 @@ export const de = {
     analysis: {
       title: 'Abgleich mit der Waage',
       body: 'Aus der Veränderung von Fett- und Magermasse ({{fat}} bzw. {{lean}} kcal pro kg, Hall 2008) und deiner Nahrung schätzt die App deinen tatsächlichen Verbrauch. Ab {{days}} Tagen und {{measurements}} Messungen; Start und Ende als {{trend}}-Tage-Trend.',
+    },
+    keyboard: {
+      title: 'Bedienung per Tastatur',
+      body: 'Alle Aktionen gehen auch per Tastatur. Schalte dazu in den iOS-Bedienungshilfen unter „Tastaturen“ den vollständigen Tastaturzugriff (Full Keyboard Access) ein.',
     },
     medical: {
       title: 'Keine medizinische Beratung',
@@ -263,14 +268,14 @@ export const de = {
       weekFooter_other: '{{days}} Tage · {{count}} Messungen',
     },
     a11y: {
-      summaryDay_one: 'Bilanz pro Tag, {{count}} Balken.',
+        summaryDay_one: 'Bilanz pro Tag, {{count}} Balken.',
       summaryDay_other: 'Bilanz pro Tag, {{count}} Balken.',
       summaryWeek_one: 'Bilanz pro Woche, {{count}} Balken.',
       summaryWeek_other: 'Bilanz pro Woche, {{count}} Balken.',
       weight: 'Gewicht {{value}} Kilogramm seit {{date}}.',
       kcal: '{{value}} Kilokalorien',
       noSelection: 'Kein Balken gewählt',
-      hint: 'Nach oben oder unten wischen, um die Balken durchzugehen.',
+      hint: 'Zum Durchgehen der Balken den Wert ändern.',
       chart: 'Diagramm',
     },
   },
@@ -325,9 +330,11 @@ export const de = {
     prevMonth: 'Vorheriger Monat',
     nextMonth: 'Nächster Monat',
     field: '{{label}}, {{date}}',
+    announce: '{{from}} bis {{to}}, {{days}}',
   },
   // Spoken by VoiceOver instead of signs and units.
   a11y: {
+    collapsed: 'eingeklappt',
     plus: 'plus {{value}}',
     minus: 'minus {{value}}',
     zero: 'plus minus {{value}}',

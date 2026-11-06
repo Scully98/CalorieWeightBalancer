@@ -2,6 +2,7 @@ import type { de } from './de';
 
 export const en: typeof de = {
   common: {
+    introTitle: 'Introduction',
     next: 'Next',
     skip: 'Skip',
     stepOf: 'Step {{current}} of {{count}}',
@@ -71,6 +72,10 @@ export const en: typeof de = {
     analysis: {
       title: 'Comparison with the scale',
       body: 'From the change in fat and lean mass ({{fat}} and {{lean}} kcal per kg, Hall 2008) and your food, the app estimates your actual burn. From {{days}} days and {{measurements}} measurements; start and end as a {{trend}}-day trend.',
+    },
+    keyboard: {
+      title: 'Keyboard use',
+      body: 'Every action also works by keyboard. Turn on Full Keyboard Access under Keyboards in the iOS Accessibility settings.',
     },
     medical: {
       title: 'Not medical advice',
@@ -265,14 +270,14 @@ export const en: typeof de = {
       weekFooter_other: '{{days}} days · {{count}} measurements',
     },
     a11y: {
-      summaryDay_one: 'Balance per day, {{count}} bar.',
+        summaryDay_one: 'Balance per day, {{count}} bar.',
       summaryDay_other: 'Balance per day, {{count}} bars.',
       summaryWeek_one: 'Balance per week, {{count}} bar.',
       summaryWeek_other: 'Balance per week, {{count}} bars.',
       weight: 'Weight {{value}} kilograms since {{date}}.',
       kcal: '{{value}} kilocalories',
       noSelection: 'No bar selected',
-      hint: 'Swipe up or down to go through the bars.',
+      hint: 'Adjust the value to go through the bars.',
       chart: 'Chart',
     },
   },
@@ -327,9 +332,11 @@ export const en: typeof de = {
     prevMonth: 'Previous month',
     nextMonth: 'Next month',
     field: '{{label}}, {{date}}',
+    announce: '{{from}} to {{to}}, {{days}}',
   },
   // Spoken by VoiceOver instead of signs and units.
   a11y: {
+    collapsed: 'collapsed',
     plus: 'plus {{value}}',
     minus: 'minus {{value}}',
     zero: 'plus minus {{value}}',

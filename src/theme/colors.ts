@@ -39,6 +39,9 @@ const dark: ColorTokens = {
   minus: '#F4F4F4',
 };
 
+// Bars next to the selected one: still 3:1 against the background.
+export const DIMMED_OPACITY = 0.45;
+
 // "#RRGGBB" plus alpha 0–1 → "#RRGGBBAA".
 export function withAlpha(color: string, alpha: number): string {
   const byte = Math.round(Math.min(1, Math.max(0, alpha)) * 255);

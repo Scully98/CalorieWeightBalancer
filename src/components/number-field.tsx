@@ -1,6 +1,7 @@
 import { StyleSheet, TextInput, View } from 'react-native';
 
 import { AppText } from './app-text';
+import { useAnnounceChange } from '@/hooks/use-announce';
 import { border, space, touchTarget } from '@/theme/spacing';
 import { typography } from '@/theme/typography';
 import { useColors } from '@/theme/use-colors';
@@ -26,6 +27,7 @@ export function NumberField({
   invalid = false,
 }: NumberFieldProps) {
   const colors = useColors();
+  useAnnounceChange(invalid ? hint : undefined);
 
   return (
     <View style={styles.container}>
@@ -42,6 +44,7 @@ export function NumberField({
           style={[
             { fontSize: typography.body.fontSize },
             styles.input,
+            invalid && styles.invalid,
             { color: colors.foreground, borderColor: colors.foreground },
           ]}
         />
@@ -65,6 +68,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: space.s,
+  },
+  // Not just the text below: the field itself shows the error.
+  invalid: {
+    borderWidth: border.thick,
+    paddingHorizontal: space.xs,
   },
   input: {
     minWidth: 72,

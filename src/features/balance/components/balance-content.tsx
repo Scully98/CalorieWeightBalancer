@@ -10,6 +10,7 @@ import { ToleranceCard } from './tolerance-card';
 import { heroModel } from '../hero';
 import type { BalanceReport } from '../use-balance';
 import type { Settings } from '@/core/settings';
+import { useAnnounceChange } from '@/hooks/use-announce';
 import { formatLocale } from '@/i18n';
 import { useSettings, useSettingsStore } from '@/storage/settings-context';
 
@@ -42,6 +43,13 @@ export function BalanceContent({
   const [open, setOpen] = useState(toleranceOpen);
   const shown = draft ?? tolerance;
   const model = heroModel(report.balance, shown, formatLocale(), t);
+  // The stored tolerance: spoken on release, not at every step of a drag.
+  const settled = draft
+    ? heroModel(report.balance, tolerance, formatLocale(), t)
+    : model;
+  useAnnounceChange(
+    `${t('picker.days', { count: report.days })}, ${settled.label}, ${settled.fatLabel}`,
+  );
 
   function complete(next: Settings['tolerance']) {
     store.updateSettings({ tolerance: next });

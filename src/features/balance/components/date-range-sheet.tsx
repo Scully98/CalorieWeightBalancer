@@ -17,8 +17,10 @@ import {
 import { numericDate } from '../period-subtitle';
 import { AppText } from '@/components/app-text';
 import { Button } from '@/components/button';
+import { SHEET_ORIENTATIONS } from '@/components/sheet-orientations';
 import { fromDateKey } from '@/core/day-record';
 import { useHealthSource } from '@/health/source-context';
+import { useAnnounceChange } from '@/hooks/use-announce';
 import { formatLocale } from '@/i18n';
 import { border, space, touchTarget } from '@/theme/spacing';
 import { useColors } from '@/theme/use-colors';
@@ -84,6 +86,15 @@ export function DateRangeSheet({
     now,
     locale,
     t,
+  );
+
+  useAnnounceChange(
+    t('picker.announce', {
+      from: spokenDate(selection.from, t),
+      to: spokenDate(selection.to, t),
+      days: summary.days,
+    }),
+    { skipFirst: true },
   );
 
   function editField(editing: 'from' | 'to') {
@@ -191,7 +202,7 @@ export function DateRangeSheet({
           <AppText
             tone={end ? 'inverse' : 'foreground'}
             // The grid keeps its size; the month stays usable at AX sizes.
-            maxFontSizeMultiplier={1.4}
+            maxFontSizeMultiplier={2}
             style={[
               styles.dayText,
               (end || cell.isToday) && styles.dayTextStrong,
@@ -209,7 +220,7 @@ export function DateRangeSheet({
       transparent
       animationType="fade"
       onRequestClose={onCancel}
-      supportedOrientations={['portrait']}
+      supportedOrientations={SHEET_ORIENTATIONS}
     >
       <Pressable
         accessibilityElementsHidden
@@ -225,6 +236,8 @@ export function DateRangeSheet({
           {
             backgroundColor: colors.background,
             paddingBottom: insets.bottom + space.l,
+            paddingLeft: insets.left + SHEET_PADDING,
+            paddingRight: insets.right + SHEET_PADDING,
           },
         ]}
       >
@@ -300,6 +313,7 @@ export function DateRangeSheet({
   );
 }
 
+const SHEET_PADDING = 20;
 // Slightly under 100 / 7, so rounding never pushes Sunday into the next row.
 const CELL = '14.28%';
 
@@ -313,7 +327,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 14,
     maxHeight: '92%',
     paddingTop: 6,
-    paddingHorizontal: 20,
     gap: space.l,
   },
   scroll: {

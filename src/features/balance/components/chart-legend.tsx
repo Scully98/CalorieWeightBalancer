@@ -12,6 +12,7 @@ import { AppText } from '@/components/app-text';
 import { QualitySwatch } from '@/components/quality-pattern';
 import type { DayFlag } from '@/core/day-balance';
 import { border } from '@/theme/spacing';
+import { withAlpha } from '@/theme/colors';
 import { useColors } from '@/theme/use-colors';
 
 const HINT_SWATCH: Partial<Record<LegendHint, DayFlag>> = {
@@ -23,6 +24,7 @@ const HINT_SWATCH: Partial<Record<LegendHint, DayFlag>> = {
 
 const SWATCH_SIZE = 10;
 const CHIP_ICON = { width: 22, height: 8 };
+// Border and icon of a hidden chip; its text stays readable in muted.
 const HIDDEN_OPACITY = 0.35;
 
 function HintMark({ hint }: { hint: LegendHint }) {
@@ -109,13 +111,19 @@ export function ChartLegend({ legend, onToggle }: ChartLegendProps) {
             style={[
               styles.chip,
               {
-                borderColor: colors.foreground,
-                opacity: chip.visible ? 1 : HIDDEN_OPACITY,
+                borderColor: chip.visible
+                  ? colors.foreground
+                  : withAlpha(colors.foreground, HIDDEN_OPACITY),
               },
             ]}
           >
-            <ChipIcon series={chip.series} />
-            <AppText variant="footnote">
+            <View style={{ opacity: chip.visible ? 1 : HIDDEN_OPACITY }}>
+              <ChipIcon series={chip.series} />
+            </View>
+            <AppText
+              variant="footnote"
+              tone={chip.visible ? 'foreground' : 'muted'}
+            >
               {t(`chart.chips.${chip.series}`)}
             </AppText>
           </Pressable>

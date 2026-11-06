@@ -109,7 +109,7 @@ export function MarkedSlider({
         onResponderTerminate={finish}
         style={styles.area}
       >
-        <View style={[styles.track, { backgroundColor: colors.separator }]} />
+        <View style={[styles.track, { backgroundColor: colors.muted }]} />
         <View
           style={[
             styles.band,

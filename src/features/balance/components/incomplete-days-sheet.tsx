@@ -7,6 +7,7 @@ import { incompleteDays, type IncompleteGroup } from '../quality';
 import { AppText } from '@/components/app-text';
 import { LinkButton } from '@/components/link-button';
 import { QualitySwatch } from '@/components/quality-pattern';
+import { SHEET_ORIENTATIONS } from '@/components/sheet-orientations';
 import type { DayBalance } from '@/core/day-balance';
 import type { Settings } from '@/core/settings';
 import { formatLocale } from '@/i18n';
@@ -87,7 +88,7 @@ export function IncompleteDaysSheet({
       transparent
       animationType="fade"
       onRequestClose={onClose}
-      supportedOrientations={['portrait']}
+      supportedOrientations={SHEET_ORIENTATIONS}
     >
       <Pressable
         accessibilityElementsHidden
@@ -100,7 +101,12 @@ export function IncompleteDaysSheet({
         onAccessibilityEscape={onClose}
         style={[
           styles.sheet,
-          { top: insets.top + TOP, backgroundColor: colors.background },
+          {
+            top: insets.top + TOP,
+            paddingLeft: insets.left,
+            paddingRight: insets.right,
+            backgroundColor: colors.background,
+          },
         ]}
       >
         <View style={[styles.grabber, { backgroundColor: colors.muted }]} />
